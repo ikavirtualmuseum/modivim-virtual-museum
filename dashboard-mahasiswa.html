@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Mahasiswa — MODIVIM Virtual Museum</title>
+
+  <!-- Font Utama: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==================================================
+       DESIGN SYSTEM & VARIABLES (KONSISTEN MODIVIM)
+       ================================================== */
+    :root {
+      --color-eggshell: #fdfcfc;
+      --color-warm-taupe: #f5f3f1;
+      --color-stone: #ebe8e4;
+      --color-ink: #000000;
+      --color-graphite: #44403b;
+      --color-smoke: #777169;
+      --color-ash: #a59f97;
+      --color-violet-spark: #0447ff;
+      --color-ember-orange: #ff4704;
+
+      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background-color: var(--color-eggshell);
+      color: var(--color-smoke);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      display: flex;
+    }
+
+    /* ==================================================
+       TYPOGRAPHY
+       ================================================== */
+    h1, h2, h3, h4 {
+      color: var(--color-ink);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+    }
+
+    .font-caption {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-ash);
+      font-weight: 500;
+    }
+
+    /* ==================================================
+       SIDEBAR NAVIGATION
+       ================================================== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--color-warm-taupe);
+      border-right: 1px solid var(--color-stone);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      padding: 32px 24px;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-decoration: none;
+      margin-bottom: 40px;
+    }
+
+    .sidebar-brand-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: -0.01em;
+    }
+
+    .sidebar-brand-sub {
+      font-size: 11px;
+      color: var(--color-ash);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: var(--color-smoke);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-link svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-smoke);
+      stroke-width: 1.75;
+      fill: none;
+      transition: stroke 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+      color: var(--color-ink);
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .sidebar-link:hover svg {
+      stroke: var(--color-ink);
+    }
+
+    .sidebar-link.active {
+      color: var(--color-ink);
+      background-color: var(--color-eggshell);
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .sidebar-link.active svg {
+      stroke: var(--color-ink);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--color-stone);
+      padding-top: 20px;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      color: var(--color-graphite);
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background-color 0.2s ease;
+      font-family: inherit;
+      text-align: left;
+    }
+
+    .btn-logout svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-graphite);
+      stroke-width: 1.75;
+      fill: none;
+    }
+
+    .btn-logout:hover {
+      background-color: rgba(220, 38, 38, 0.08);
+      color: #dc2626;
+    }
+
+    .btn-logout:hover svg {
+      stroke: #dc2626;
+    }
+
+    /* ==================================================
+       MAIN CONTENT LAYOUT
+       ================================================== */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex-grow: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-eggshell);
+      width: calc(100% - var(--sidebar-width));
+    }
+
+    /* Top Mobile Bar & Header */
+    .top-header {
+      padding: 24px 48px;
+      border-bottom: 1px solid var(--color-stone);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-eggshell);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-title-group h1 {
+      font-size: 24px;
+      color: var(--color-ink);
+    }
+
+    .header-title-group p {
+      font-size: 13px;
+      color: var(--color-ash);
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-color: var(--color-warm-taupe);
+      border: 1px solid var(--color-stone);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--color-ink);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-ink);
+      line-height: 1.2;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--color-ash);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      color: var(--color-ink);
+    }
+
+    /* Main Container Padding */
+    .content-body {
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      flex-grow: 1;
+    }
+
+    /* ==================================================
+       COMPONENTS & CARDS
+       ================================================== */
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-ink);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-graphite);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-eggshell);
+      color: var(--color-ink);
+      border: 1px solid var(--color-stone);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-ash);
+      background-color: #ffffff;
+    }
+
+    /* Welcome Banner */
+    .welcome-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 20px;
+      padding: 36px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-text-group {
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .welcome-text-group h2 {
+      font-size: 26px;
+      line-height: 1.25;
+    }
+
+    .welcome-text-group p {
+      font-size: 15px;
+      color: var(--color-graphite);
+    }
+
+    /* Grid Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--color-ink);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--color-smoke);
+    }
+
+    /* Learning Progress Widget */
+    .progress-section-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 20px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background-color: var(--color-stone);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--color-ink);
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Section Headers */
+    .section-title-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    /* Koleksi Terbaru Grid */
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .artifact-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+
+    .artifact-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .artifact-img-placeholder {
+      aspect-ratio: 4 / 3;
+      background-color: #eae6e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .artifact-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .artifact-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--color-ink);
+      line-height: 1.3;
+    }
+
+    /* Timeline Section */
+    .timeline-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .timeline-track {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      padding-top: 16px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: var(--color-stone);
+      z-index: 1;
+    }
+
+    .timeline-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 20%;
+    }
+
+    .node-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--color-ink);
+      border: 3px solid var(--color-warm-taupe);
+      margin-bottom: 12px;
+    }
+
+    /* Aktivitas Saya List */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background-color: var(--color-warm-taupe);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    .activity-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--color-graphite);
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-violet-spark);
+    }
+
+    /* ==================================================
+       FOOTER
+       ================================================== */
+    .footer {
+      padding: 32px 48px;
+      border-top: 1px solid var(--color-stone);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--color-ash);
+      margin-top: auto;
+    }
+
+    /* Overlay untuk Mobile Sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+      z-index: 95;
+    }
+
+    /* ==================================================
+       RESPONSIVE DESIGN
+       ================================================== */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .artifact-grid { grid-template-columns: repeat(2, 1fr); }
+      .welcome-card { flex-direction: column; align-items: flex-start; gap: 20px; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .main-wrapper {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .top-header {
+        padding: 16px 24px;
+      }
+
+      .mobile-nav-toggle {
+        display: block;
+      }
+
+      .content-body {
+        padding: 24px;
+        gap: 32px;
+      }
+
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .artifact-grid { grid-template-columns: 1fr; }
+      
+      .timeline-track {
+        flex-direction: column;
+        gap: 20px;
+        padding-top: 0;
+      }
+
+      .timeline-line { display: none; }
+      .timeline-node {
+        width: 100%;
+        flex-direction: row;
+        text-align: left;
+        gap: 16px;
+      }
+
+      .node-dot { margin-bottom: 0; }
+      
+      .footer {
+        padding: 24px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OVERLAY UNTUK MOBILE SIDEBAR -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <a href="dashboard-mahasiswa.html" class="sidebar-brand">
+        <span class="sidebar-brand-title">MODIVIM</span>
+        <span class="sidebar-brand-sub">Virtual Museum</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li>
+          <a href="dashboard-mahasiswa.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="artefak.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>Artefak</span>
+          </a>
+        </li>
+        <li>
+          <a href="timeline.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Timeline</span>
+          </a>
+        </li>
+        <li>
+          <a href="peta.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            <span>Peta</span>
+          </a>
+        </li>
+        <li>
+          <a href="jawaban.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Jawaban</span>
+          </a>
+        </li>
+        <li>
+          <a href="nilai.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Nilai</span>
+          </a>
+        </li>
+        <li>
+          <a href="profil.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logoutUser()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="header-title-group">
+          <h1>Dashboard Mahasiswa</h1>
+          <p>Virtual Museum Sejarah Indonesia Masa Islam</p>
+        </div>
+      </div>
+
+      <div class="user-profile-badge">
+        <div class="avatar-circle" id="userAvatar">MC</div>
+        <div class="user-info">
+          <span class="user-name" id="userNameDisplay">Mahasiswa Contoh</span>
+          <span class="user-role" id="userRoleDisplay">Mahasiswa</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="content-body">
+
+      <!-- WELCOME CARD -->
+      <section class="welcome-card">
+        <div class="welcome-text-group">
+          <span class="font-caption">MODUL PEMBELAJARAN INTERAKTIF</span>
+          <h2>Selamat datang di MODIVIM</h2>
+          <p>Jelajahi peninggalan sejarah Islam di Indonesia, pahami konteksnya, dan bangun interpretasi berdasarkan bukti sejarah.</p>
+        </div>
+        <div>
+          <a href="artefak.html" class="btn btn-primary">Mulai Eksplorasi</a>
+        </div>
+      </section>
+
+      <!-- STATISTIK (4 CARDS) -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="font-caption">PROGRES EKSPLORASI</span>
+          <div class="stat-value" id="statArtefak">12</div>
+          <span class="stat-label">Artefak Dijelajahi</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="font-caption">EVALUASI KRITIS</span>
+          <div class="stat-value" id="statPertanyaan">8</div>
+          <span class="stat-label">Pertanyaan Dijawab</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="font-caption">CAPAIAN MODUL</span>
+          <div class="stat-value" id="statProgress">65%</div>
+          <span class="stat-label">Progress Pembelajaran</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="font-caption">KUALITAS ANALISIS</span>
+          <div class="stat-value" id="statNilai">85</div>
+          <span class="stat-label">Nilai Rata-rata</span>
+        </div>
+      </section>
+
+      <!-- PROGRESS PEMBELAJARAN DETAIL -->
+      <section class="progress-section-card">
+        <div class="progress-header">
+          <div>
+            <span class="font-caption">STATUS CAPAIAN</span>
+            <h3 style="font-size: 18px; margin-top: 2px;">Progress Eksplorasi Museum</h3>
+          </div>
+          <span style="font-size: 14px; font-weight: 500; color: var(--color-ink);" id="progressPercentText">65%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFillBar" style="width: 65%;"></div>
+        </div>
+        <p style="font-size: 13px; color: var(--color-smoke);">Anda telah menjelajahi sebagian koleksi Virtual Museum. Selesaikan analisis pertanyaan pada setiap artefak untuk meningkatkan capaian nilai.</p>
+      </section>
+
+      <!-- KOLEKSI TERBARU -->
+      <section>
+        <div class="section-title-wrapper">
+          <div>
+            <span class="font-caption">DATABASE ARTEFAK</span>
+            <h2>Koleksi Terbaru</h2>
+          </div>
+          <a href="artefak.html" class="btn btn-secondary">Lihat Semua</a>
+        </div>
+
+        <div class="artifact-grid" id="artifactGridContainer">
+          <!-- Card Artefak Rendered via JS Placeholder -->
+        </div>
+      </section>
+
+      <!-- TIMELINE SINGKAT (JEJAK WAKTU) -->
+      <section>
+        <div class="section-title-wrapper">
+          <div>
+            <span class="font-caption">PERSPEKTIF KRONOLOGIS</span>
+            <h2>Jejak Waktu</h2>
+          </div>
+          <a href="timeline.html" class="btn btn-secondary">Lihat Timeline Complete</a>
+        </div>
+
+        <div class="timeline-card">
+          <div class="timeline-track">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-node">
+              <div class="node-dot"></div>
+              <span class="font-caption">FASE I</span>
+              <p style="font-size: 13px; color: var(--color-ink); margin-top: 4px; font-weight: 500;">Masuknya Islam</p>
+            </div>
+
+            <div class="timeline-node">
+              <div class="node-dot"></div>
+              <span class="font-caption">FASE II</span>
+              <p style="font-size: 13px; color: var(--color-ink); margin-top: 4px; font-weight: 500;">Perkembangan Kesultanan</p>
+            </div>
+
+            <div class="timeline-node">
+              <div class="node-dot"></div>
+              <span class="font-caption">FASE III</span>
+              <p style="font-size: 13px; color: var(--color-ink); margin-top: 4px; font-weight: 500;">Perkembangan Nusantara</p>
+            </div>
+
+            <div class="timeline-node">
+              <div class="node-dot"></div>
+              <span class="font-caption">FASE IV</span>
+              <p style="font-size: 13px; color: var(--color-ink); margin-top: 4px; font-weight: 500;">Warisan Islam Indonesia</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AKTIVITAS SAYA -->
+      <section>
+        <div class="section-title-wrapper">
+          <div>
+            <span class="font-caption">LOG PEMBELAJARAN</span>
+            <h2>Aktivitas Saya</h2>
+          </div>
+        </div>
+
+        <div class="activity-list" id="activityListContainer">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div>
+        <strong style="color: var(--color-ink);">MODIVIM</strong> — Virtual Museum untuk Pembelajaran Sejarah Indonesia Masa Islam
+      </div>
+      <div>
+        Jurusan Sejarah &bull; Universitas Negeri Medan &bull; &copy; <span id="year"></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT VANILLA -->
+  <script>
+    /* ==========================================================================
+       1. STRUKTUR DATA PLACEHOLDER
+       Catatan Integrasi Backend:
+       Pada tahap selanjutnya, data di bawah ini akan diisi secara dinamis
+       menggunakan hasil response dari Google Apps Script (GAS) via fetch()
+       atau dibaca dari sessionStorage hasil Login.
+       ========================================================================== */
+
+    // Data Identitas Mahasiswa (Tanpa data sensitif/password)
+    const currentUser = {
+      userId: "MHS-2026-001",
+      nama: "Mahasiswa Contoh",
+      username: "mahasiswa@unimed.ac.id",
+      role: "MAHASISWA"
+    };
+
+    // Data Statistik Dashboard (Metrik Pembelajaran)
+    const dashboardData = {
+      artefakDijelajahi: 12,
+      pertanyaanDijawab: 8,
+      progress: 65,
+      nilai: 85
+    };
+
+    // Data Koleksi Artefak Terbaru (Representasi Sheet "ARTEFAK")
+    const latestArtifacts = [
+      {
+        id: "ART-001",
+        nama: "Nisan Sultan Malik al-Saleh",
+        lokasi: "Samudera Pasai",
+        periode: "Abad ke-13"
+      },
+      {
+        id: "ART-002",
+        nama: "Koin Dirham Kesultanan Cirebon",
+        lokasi: "Cirebon",
+        periode: "Abad ke-16"
+      },
+      {
+        id: "ART-003",
+        nama: "Manuskrip Bustan al-Salatin",
+        lokasi: "Aceh",
+        periode: "Abad ke-17"
+      },
+      {
+        id: "ART-004",
+        nama: "Menara Masjid Agung Kudus",
+        lokasi: "Kudus",
+        periode: "Abad ke-15"
+      }
+    ];
+
+    // Log Aktivitas Pembelajaran Terakhir
+    const recentActivities = [
+      {
+        deskripsi: "Melihat Artefak Nisan Sultan Malik al-Saleh",
+        waktu: "Hari ini, 10.15 WIB"
+      },
+      {
+        deskripsi: "Menjawab Pertanyaan Reflektif Modul 2",
+        waktu: "Kemarin, 14.30 WIB"
+      },
+      {
+        deskripsi: "Menyelesaikan Penjelajahan Peta Kesultanan Demak",
+        waktu: "10 Agustus 2026"
+      }
+    ];
+
+    /* ==========================================================================
+       2. FUNCTIONS RENDER & UI CONTROLLER
+       ========================================================================== */
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Automatic Year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Mobile Menu Navigation Toggle
+      setupMobileSidebar();
+
+      // Load Profile Data
+      loadUserProfile();
+
+      // Load Dashboard Stats
+      loadDashboardStats();
+
+      // Render Artifact Cards
+      renderArtifactCards();
+
+      // Render Activity Log
+      renderActivities();
+    });
+
+    function setupMobileSidebar() {
+      const mobileToggle = document.getElementById('mobileNavToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (mobileToggle && sidebar && overlay) {
+        mobileToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        });
+      }
+    }
+
+    function loadUserProfile() {
+      // Inisialisasi dari Object Data / Session
+      const nameElem = document.getElementById('userNameDisplay');
+      const roleElem = document.getElementById('userRoleDisplay');
+      const avatarElem = document.getElementById('userAvatar');
+
+      if (nameElem) nameElem.textContent = currentUser.nama;
+      if (roleElem) roleElem.textContent = currentUser.role;
+
+      // Inisial Nama untuk Avatar
+      if (avatarElem && currentUser.nama) {
+        const initials = currentUser.nama
+          .split(' ')
+          .map(n => n[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase();
+        avatarElem.textContent = initials;
+      }
+    }
+
+    function loadDashboardStats() {
+      document.getElementById('statArtefak').textContent = dashboardData.artefakDijelajahi;
+      document.getElementById('statPertanyaan').textContent = dashboardData.pertanyaanDijawab;
+      document.getElementById('statProgress').textContent = dashboardData.progress + '%';
+      document.getElementById('statNilai').textContent = dashboardData.nilai;
+
+      // Update Progress Bar Widget
+      document.getElementById('progressPercentText').textContent = dashboardData.progress + '%';
+      document.getElementById('progressFillBar').style.width = dashboardData.progress + '%';
+    }
+
+    function renderArtifactCards() {
+      const container = document.getElementById('artifactGridContainer');
+      if (!container) return;
+
+      container.innerHTML = ''; // Clear container
+
+      latestArtifacts.forEach(art => {
+        const cardHTML = `
+          <div class="artifact-card">
+            <div class="artifact-img-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a59f97" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+            </div>
+            <div class="artifact-card-body">
+              <div>
+                <span class="font-caption">${art.periode.toUpperCase()} &bull; ${art.lokasi.toUpperCase()}</span>
+                <h3 class="artifact-title" style="margin-top: 4px;">${art.nama}</h3>
+              </div>
+              <a href="artefak.html?id=${art.id}" class="btn btn-secondary" style="width: 100%; padding: 8px 0; font-size: 12px;">Lihat Artefak</a>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    function renderActivities() {
+      const container = document.getElementById('activityListContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      recentActivities.forEach(act => {
+        const actHTML = `
+          <div class="activity-item">
+            <div class="activity-info">
+              <span class="activity-dot"></span>
+              <span>${act.deskripsi}</span>
+            </div>
+            <span style="font-size: 12px; color: var(--color-ash);">${act.waktu}</span>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', actHTML);
+      });
+    }
+
+    /* ==========================================================================
+       3. LOGOUT USER HANDLER (PLACEHOLDER FOR SESSION CLEAR)
+       ========================================================================== */
+    function logoutUser() {
+      const confirmLogout = confirm("Apakah Anda yakin ingin keluar dari MODIVIM?");
+      if (confirmLogout) {
+        // Hapus data session jika nanti digunakan
+        sessionStorage.clear();
+        localStorage.removeItem('modivim_user');
+        
+        // Redirect kembali ke login.html
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>
