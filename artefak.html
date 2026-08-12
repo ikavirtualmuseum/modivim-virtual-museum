@@ -339,7 +339,10 @@
   });
 
   function fetchArtifacts() {
-    fetch(GAS_API_URL)
+    fetch(GAS_API_URL, {
+      method: "GET",
+      redirect: "follow"
+    })
       .then(function(response) {
         if (!response.ok) {
           throw new Error("HTTP Error " + response.status);
@@ -536,7 +539,14 @@
     `;
 
     document.getElementById("btnSaveAnswer").addEventListener("click", function() {
-      const answerText = document.getElementById("studentAnswer").value;
+      const answerText = document.getElementById("studentAnswer").value.trim();
+      
+      if (!answerText) {
+        alert("Mohon tuliskan analisis atau jawaban Anda terlebih dahulu.");
+        return;
+      }
+      
+      const mahasiswaId = localStorage.getItem("username") || localStorage.getItem("mahasiswaId") || "M001";
       
       // Simpan juga ke localStorage sebagai cadangan offline di browser
       localStorage.setItem(savedAnswerKey, answerText);
@@ -546,7 +556,7 @@
       statusSpan.style.color = "#0447ff";
       statusSpan.style.display = "inline";
 
-      // Kirim data ke Google Apps Script via POST
+      // Kirim data ke Google Apps Script via POST dengan parameter lengkap
       fetch(GAS_API_URL, {
         method: "POST",
         headers: {
@@ -556,6 +566,8 @@
           action: "saveAnswer",
           artefakId: artifact.ArtefakID,
           namaArtefak: artifact.NamaArtefak,
+          mahasiswaId: mahasiswaId,
+          pertanyaanId: "Q001",
           jawaban: answerText
         })
       })
