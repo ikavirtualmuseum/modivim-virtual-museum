@@ -542,14 +542,27 @@
           body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
-        return result;
+        const result = await response.json(); // Hasil respon dari GAS
 
-      } catch (error) {
-        console.error("Error saat menghubungi backend:", error);
-        return {
-          success: false,
-          message: "Tidak dapat terhubung ke server. Periksa koneksi internet Anda."
+if (result.success) {
+  // 1. Simpan data user ke sessionStorage
+  sessionStorage.setItem("modivim_user", JSON.stringify(result.user));
+
+  // 2. Tampilkan Alert (Opsional)
+  alert("Login Berhasil! Role: " + result.user.role);
+
+  // 3. PENGALIHAN HALAMAN (Gunakan relative path tanpa '/' diawal)
+  if (result.user.role === "MAHASISWA") {
+    window.location.href = "dashboard-mahasiswa.html"; 
+  } else if (result.user.role === "DOSEN" || result.user.role === "ADMIN") {
+    window.location.href = "dashboard-dosen.html"; // Sesuaikan jika ada dashboard dosen
+  } else {
+    window.location.href = "dashboard-mahasiswa.html";
+  }
+
+} else {
+  alert(result.message || "Username atau password salah!");
+}
         };
       }
     }
