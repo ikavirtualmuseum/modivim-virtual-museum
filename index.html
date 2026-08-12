@@ -458,6 +458,63 @@
     }
 
     /* ==================================================
+       MODAL POPUP SYSTEM (INTERAKTIF DETAIL ARTEFAK)
+       ================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background-color: var(--color-eggshell);
+      border-radius: 24px;
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--color-smoke);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--color-ink);
+    }
+
+    /* ==================================================
        FOOTER
        ================================================== */
     .footer {
@@ -569,24 +626,19 @@
           <p class="font-subheading">MODIVIM menghadirkan pengalaman belajar sejarah melalui eksplorasi artefak, sumber sejarah, konteks ruang dan waktu, serta pertanyaan yang mendorong berpikir kritis-historis.</p>
           <div class="hero-buttons">
             <a href="#koleksi" class="btn btn-primary">Mulai Eksplorasi</a>
-            <a href="#koleksi" class="btn btn-secondary">Lihat Koleksi</a>
+            <a href="#timeline" class="btn btn-secondary">Lihat Timeline</a>
           </div>
         </div>
 
         <!-- Editorial Artifact Visual Placeholder -->
         <div class="hero-visual">
           <svg class="artifact-illustration" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background Frame Line -->
             <rect x="20" y="20" width="280" height="200" rx="12" stroke="#EBE8E4" stroke-width="1" stroke-dasharray="4 4"/>
-            <!-- Arch Siluet Arsitektur Islam -->
             <path d="M110 180V120C110 92.3858 132.386 70 160 70C187.614 70 210 92.3858 210 120V180" stroke="#000000" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M160 50V70" stroke="#000000" stroke-width="1.5"/>
-            <!-- Geometric Calligraphy / Circle Element -->
             <circle cx="160" cy="125" r="28" stroke="#777169" stroke-width="1"/>
-            <!-- Akses Warna Terbatas (Aksen Violet & Ember Orange) -->
             <circle cx="210" cy="80" r="4" fill="#0447ff"/>
             <circle cx="110" cy="160" r="4" fill="#ff4704"/>
-            <!-- Editorial Horizontal Grid Lines -->
             <line x1="50" y1="180" x2="270" y2="180" stroke="#44403b" stroke-width="1"/>
             <line x1="60" y1="200" x2="260" y2="200" stroke="#A59F97" stroke-width="1" stroke-dasharray="2 2"/>
           </svg>
@@ -645,8 +697,8 @@
       </div>
     </section>
 
-    <!-- SECTION BERPIKIR KRITIS-HISTORIS -->
-    <section class="section-padding">
+    <!-- SECTION BERPIKIR KRITIS-HISTORIS (PANDUAN) -->
+    <section class="section-padding" id="panduan">
       <div class="container">
         <div class="large-feature-card">
           <div>
@@ -693,7 +745,7 @@
           <div>
             <span class="font-caption">DATABASE ARTEFAK</span>
             <h2 class="font-heading" style="margin-top: 8px;">Koleksi Artefak</h2>
-            <p class="font-body" style="margin-top: 8px;">Jelajahi peninggalan sejarah Islam dari berbagai ruang dan periode.</p>
+            <p class="font-body" style="margin-top: 8px;">Klik pada artefak untuk melihat preview detail dan pertanyaan reflektif.</p>
           </div>
         </div>
 
@@ -709,10 +761,10 @@
             </div>
             <div class="artifact-card-body">
               <div class="artifact-meta">
-                <span class="font-caption">PERIODE &bull; LOKASI</span>
-                <h3 class="artifact-title">Artefak 01</h3>
+                <span class="font-caption">ABAD KE-13 &bull; SAMUDERA PASAI</span>
+                <h3 class="artifact-title">Nisan Sultan Malik al-Saleh</h3>
               </div>
-              <a href="login.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</a>
+              <button onclick="openArtifactModal('Nisan Sultan Malik al-Saleh', 'Abad ke-13 • Samudera Pasai', 'Nisan ini menjadi salah satu bukti epigrafis tertua mengenai keberadaan kerajaan Islam di Nusantara. Kaligrafi Arab gaya Khufi yang terukir menunjukkan pengaruh seni ukir dan jalur perdagangan lintas samudra.')" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</button>
             </div>
           </div>
 
@@ -727,10 +779,10 @@
             </div>
             <div class="artifact-card-body">
               <div class="artifact-meta">
-                <span class="font-caption">PERIODE &bull; LOKASI</span>
-                <h3 class="artifact-title">Artefak 02</h3>
+                <span class="font-caption">ABAD KE-16 &bull; JAWA BARAT</span>
+                <h3 class="artifact-title">Koin Dirham Kesultanan Cirebon</h3>
               </div>
-              <a href="login.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</a>
+              <button onclick="openArtifactModal('Koin Dirham Kesultanan Cirebon', 'Abad ke-16 • Kesultanan Cirebon', 'Mata uang logam perak dan emas ini digunakan dalam kegiatan ekonomi dan transaksi perdagangan pelabuhan di pesisir utara Jawa pada era kesultanan Islam.')" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</button>
             </div>
           </div>
 
@@ -745,10 +797,10 @@
             </div>
             <div class="artifact-card-body">
               <div class="artifact-meta">
-                <span class="font-caption">PERIODE &bull; LOKASI</span>
-                <h3 class="artifact-title">Artefak 03</h3>
+                <span class="font-caption">ABAD KE-17 &bull; ACEH</span>
+                <h3 class="artifact-title">Manuskrip Bustan al-Salatin</h3>
               </div>
-              <a href="login.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</a>
+              <button onclick="openArtifactModal('Manuskrip Bustan al-Salatin', 'Abad ke-17 • Kesultanan Aceh', 'Naskah historiografi klasik karya Nuruddin ar-Raniri yang memuat konsep ketatanegaraan, silsilah raja-raja, dan filosofi kepemimpinan Islam di Nusantara.')" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</button>
             </div>
           </div>
 
@@ -763,10 +815,10 @@
             </div>
             <div class="artifact-card-body">
               <div class="artifact-meta">
-                <span class="font-caption">PERIODE &bull; LOKASI</span>
-                <h3 class="artifact-title">Artefak 04</h3>
+                <span class="font-caption">ABAD KE-15 &bull; JAWA TENGAH</span>
+                <h3 class="artifact-title">Menara Masjid Agung Kudus</h3>
               </div>
-              <a href="login.html" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</a>
+              <button onclick="openArtifactModal('Menara Masjid Agung Kudus', 'Abad ke-15 • Kudus', 'Arsitektur unik gabungan corak Hindu-Buddha dengan fungsi menara masjid Islam, mencerminkan strategi akulturasi budaya yang harmonis oleh Sunan Kudus.')" class="btn btn-secondary" style="width: 100%; font-size: 13px; padding: 8px 0;">Lihat Artefak</button>
             </div>
           </div>
         </div>
@@ -817,13 +869,33 @@
         <div class="cta-card">
           <span class="font-caption">AKSES PEMBELAJARAN</span>
           <h2 class="font-heading">Mulai Menjelajahi Sejarah</h2>
-          <p class="font-body" style="max-width: 540px;">Masuk ke MODIVIM dan mulai eksplorasi artefak, sumber sejarah, dan aktivitas pembelajaran.</p>
-          <a href="login.html" class="btn btn-primary" style="margin-top: 12px;">Login</a>
+          <p class="font-body" style="max-width: 540px;">Masuk ke MODIVIM untuk mengumpulkan artefak, mengisi lembar kerja analisis kritis, dan mengikuti perkuliahan interaktif.</p>
+          <a href="login.html" class="btn btn-primary" style="margin-top: 12px;">Login ke Portal Pembelajaran</a>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- MODAL DETAIL ARTEFAK INTERAKTIF -->
+  <div class="modal-overlay" id="artifactModal" onclick="closeModalOnOuter(event)">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeArtifactModal()" aria-label="Tutup">&times;</button>
+      <div>
+        <span class="font-caption" id="modalMeta">PERIODE • LOKASI</span>
+        <h3 class="font-heading-small" id="modalTitle" style="margin-top: 4px; color: var(--color-ink);">Nama Artefak</h3>
+      </div>
+      <p class="font-body" id="modalDesc" style="color: var(--color-graphite);">Deskripsi detail artefak akan muncul di sini.</p>
+      <div style="background-color: var(--color-warm-taupe); padding: 16px; border-radius: 12px; font-size: 13px;">
+        <strong style="color: var(--color-ink);">Pertanyaan Kritis-Historis:</strong>
+        <p style="margin-top: 4px;">Bagaimana bentuk fisik artefak ini mencerminkan dinamika interaksi budaya lokal dan tradisi Islam pada zamannya?</p>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;">
+        <button class="btn btn-secondary" onclick="closeArtifactModal()">Tutup</button>
+        <a href="login.html" class="btn btn-primary">Login untuk Analisis Mendalam</a>
+      </div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -838,8 +910,8 @@
         <ul class="footer-links">
           <li><a href="#beranda" class="nav-link">Beranda</a></li>
           <li><a href="#tentang" class="nav-link">Tentang</a></li>
-          <li><a href="#koleksi" class="nav-link">Panduan</a></li>
-          <li><a href="login.html" class="nav-link">Login</a></li>
+          <li><a href="#panduan" class="nav-link">Panduan Discovery</a></li>
+          <li><a href="login.html" class="nav-link">Login Portal</a></li>
         </ul>
       </div>
 
@@ -855,7 +927,7 @@
   <!-- JAVASCRIPT VANILLA -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Set Tahun Otomatis pada Footer
+      // Set Tahun Otomatis
       document.getElementById('year').textContent = new Date().getFullYear();
 
       // Mobile Menu Toggle
@@ -868,7 +940,7 @@
         });
       }
 
-      // Smooth scroll & Active Link Highlight
+      // Smooth scroll & Nav Close
       const navLinks = document.querySelectorAll('.nav-link');
       navLinks.forEach(link => {
         link.addEventListener('click', function() {
@@ -878,6 +950,24 @@
         });
       });
     });
+
+    // Fungsi Modal Artefak Interaktif
+    function openArtifactModal(title, meta, desc) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMeta').textContent = meta;
+      document.getElementById('modalDesc').textContent = desc;
+      document.getElementById('artifactModal').classList.add('active');
+    }
+
+    function closeArtifactModal() {
+      document.getElementById('artifactModal').classList.remove('active');
+    }
+
+    function closeModalOnOuter(e) {
+      if (e.target.classList.contains('modal-overlay')) {
+        closeArtifactModal();
+      }
+    }
   </script>
 </body>
 </html>
