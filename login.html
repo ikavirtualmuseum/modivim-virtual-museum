@@ -437,10 +437,11 @@
     </div>
   </main>
 
-  <!-- JAVASCRIPT VANILLA -->
+  <!-- JAVASCRIPT LOGIC LOGIN -->
   <script>
     let selectedRole = 'MAHASISWA';
 
+    // 1. Pilih Role
     function selectRole(role) {
       selectedRole = role;
       const btnMahasiswa = document.getElementById('btnMahasiswa');
@@ -460,6 +461,7 @@
       hideError();
     }
 
+    // 2. Toggle Intip Password
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('password');
       const eyeIcon = document.getElementById('eyeIcon');
@@ -479,6 +481,7 @@
       }
     }
 
+    // 3. Menampilkan dan Menyembunyikan Pesan Error
     function showError(message) {
       const errorBox = document.getElementById('errorBox');
       errorBox.textContent = message || 'Username atau password tidak valid.';
@@ -490,6 +493,35 @@
       errorBox.style.display = 'none';
     }
 
+    // 4. URL Web App Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+
+    // 5. Fungsi Panggil Backend API
+    async function loginUser(username, password, role) {
+      try {
+        const payload = {
+          username: username,
+          password: password,
+          role: role
+        };
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error("Error saat menghubungi backend:", error);
+        return { success: false, message: "Gagal terhubung ke server backend." };
+      }
+    }
+
+    // 6. Fungsi Utama Penanganan Form Login & Navigasi Halaman
     async function handleFormSubmit(event) {
       event.preventDefault();
       
@@ -510,60 +542,28 @@
       try {
         const response = await loginUser(usernameInput, passwordInput, selectedRole);
 
-        if (response.success) {
-          alert(`Login Berhasil! Role: ${selectedRole}`);
+        if (response && response.success) {
+          // Simpan data login pengguna ke browser
+          sessionStorage.setItem("modivim_user", JSON.stringify(response.user || { username: usernameInput, role: selectedRole }));
+
+          // Alihkan halaman otomatis ke dashboard yang sesuai
+          if (selectedRole === "MAHASISWA") {
+            window.location.href = "dashboard-mahasiswa.html";
+          } else {
+            window.location.href = "dashboard-dosen.html";
+          }
         } else {
-          showError(response.message || 'Username atau password tidak valid.');
+          showError(response ? response.message : 'Username atau password tidak valid.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Masuk';
         }
       } catch (error) {
+        console.error("System Error:", error);
         showError('Terjadi kesalahan sistem. Silakan coba lagi.');
-      } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Masuk';
       }
     }
-
-    // 1. URL Web App Google Apps Script
-const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
-
-// 2. Fungsi Login Utuh (Perhatikan penutup kurung di paling bawah)
-async function loginUser(username, password, role) {
-  try {
-    const payload = {
-      username: username,
-      password: password,
-      role: role
-    };
-
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      // 1. Simpan data user ke sessionStorage
-      sessionStorage.setItem("modivim_user", JSON.stringify(result.user));
-
-      // 2. Alihkan Halaman sesuai Role
-      if (role === "MAHASISWA") {
-        window.location.href = "dashboard-mahasiswa.html";
-      } else {
-        window.location.href = "dashboard-dosen.html";
-      }
-    } else {
-      alert(result.message || "Username atau password salah!");
-    }
-
-    return result;
-
-  } catch (error) {
-    // KODE CATCH INI WAJIB ADA SETELAH TRY
-    console.error("Error saat menghubungi backend:", error);
-    alert("Gagal terhubung ke server backend.");
-  }
-} // <-- HANYA ADA SATU KURUNG PENUTUP DI SINI UNTUK MEMATIKAN FUNGSI
+  </script>
+</body>
+</html>
