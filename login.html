@@ -523,9 +523,10 @@
       }
     }
 
-    // URL Web App GAS Anda
+    // 1. URL Web App Google Apps Script
 const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
+// 2. Fungsi Login Utuh (Perhatikan penutup kurung di paling bawah)
 async function loginUser(username, password, role) {
   try {
     const payload = {
@@ -565,3 +566,4 @@ async function loginUser(username, password, role) {
     console.error("Error saat menghubungi backend:", error);
     alert("Gagal terhubung ke server backend.");
   }
+} // <-- HANYA ADA SATU KURUNG PENUTUP DI SINI UNTUK MEMATIKAN FUNGSI
