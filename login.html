@@ -547,18 +547,36 @@
       }
     }
 
-   /**
-     * PLACEHOLDER FUNGSI LOGIN (AKAN DIHUBUNGKAN KE GOOGLE APPS SCRIPT API)
+  // GANTI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA (akhiran /exec)
+    const API_URL = "https://script.google.com/macros/s/AKfycbx.../exec"; 
+
+    /**
+     * FUNGSI LOGIN DENGAN INTEGRASI GOOGLE APPS SCRIPT
      */
     async function loginUser(username, password, role) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          // Untuk tahap awal pengujian UI, fungsi ini mensimulasikan penolakan/error.
-          // Saat integrasi Google Apps Script siap, bagian ini akan menggantikan panggilan fetch().
-          resolve({
-            success: false,
-            message: 'Username atau password tidak valid.'
-          });
-        }, 1200);
-      });
+      try {
+        const payload = {
+          username: username,
+          password: password,
+          role: role
+        };
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        return result;
+
+      } catch (error) {
+        console.error("Error saat menghubungi backend:", error);
+        return {
+          success: false,
+          message: "Tidak dapat terhubung ke server. Periksa koneksi internet Anda."
+        };
+      }
     }
