@@ -523,45 +523,48 @@
       }
     }
 
-    // TEMPILKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI (akhiran /exec)
-    const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec"; 
+    // URL Web App GAS Anda
+const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
-    async function loginUser(username, password, role) {
-      try {
-        const payload = {
-          username: username,
-          password: password,
-          role: role
-        };
+async function loginUser(username, password, role) {
+  try {
+    const payload = {
+      username: username,
+      password: password,
+      role: role
+    };
 
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(payload)
-        });
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
 
-        const result = await response.json(); // Hasil respon dari GAS
+    const result = await response.json();
 
-if (result.success) {
-  // 1. Simpan data user ke sessionStorage
-  sessionStorage.setItem("modivim_user", JSON.stringify(result.user));
+    if (result.success) {
+      // 1. Simpan data user ke sessionStorage
+      sessionStorage.setItem("modivim_user", JSON.stringify(result.user));
 
-  // 2. Tampilkan Alert (Opsional)
-  alert("Login Berhasil! Role: " + result.user.role);
+      // 2. Alihkan Halaman sesuai Role
+      if (role === "MAHASISWA") {
+        window.location.href = "dashboard-mahasiswa.html";
+      } else {
+        window.location.href = "dashboard-dosen.html";
+      }
+    } else {
+      alert(result.message || "Username atau password salah!");
+    }
 
-  // 3. PENGALIHAN HALAMAN (Gunakan relative path tanpa '/' diawal)
-  if (result.user.role === "MAHASISWA") {
-    window.location.href = "dashboard-mahasiswa.html"; 
-  } else if (result.user.role === "DOSEN" || result.user.role === "ADMIN") {
-    window.location.href = "dashboard-dosen.html"; // Sesuaikan jika ada dashboard dosen
-  } else {
-    window.location.href = "dashboard-mahasiswa.html";
+    return result;
+
+  } catch (error) {
+    // KODE CATCH INI WAJIB ADA SETELAH TRY
+    console.error("Error saat menghubungi backend:", error);
+    alert("Gagal terhubung ke server backend.");
   }
-
-} else {
-  alert(result.message || "Username atau password salah!");
 }
         };
       }
