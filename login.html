@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — MODIVIM Virtual Museum</title>
+  
+  <!-- Font Utama: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==================================================
+       CSS VARIABLES & DESIGN SYSTEM (SAMA DENGAN INDEX)
+       ================================================== */
+    :root {
+      --color-eggshell: #fdfcfc;
+      --color-warm-taupe: #f5f3f1;
+      --color-stone: #ebe8e4;
+      --color-ink: #000000;
+      --color-graphite: #44403b;
+      --color-smoke: #777169;
+      --color-ash: #a59f97;
+      --color-violet-spark: #0447ff;
+      --color-ember-orange: #ff4704;
+
+      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-eggshell);
+      color: var(--color-smoke);
+      font-family: var(--font-main);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Layout Container */
+    .login-container {
+      max-width: 1120px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 64px;
+    }
+
+    .login-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    /* Left Side: Editorial Info & Visual */
+    .info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--color-smoke);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      width: fit-content;
+    }
+
+    .back-link:hover {
+      color: var(--color-ink);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: -0.02em;
+    }
+
+    .editorial-heading {
+      font-size: 36px;
+      font-weight: 300;
+      line-height: 1.25;
+      color: var(--color-ink);
+      letter-spacing: -0.02em;
+    }
+
+    .editorial-desc {
+      font-size: 16px;
+      color: var(--color-graphite);
+      max-width: 480px;
+    }
+
+    /* SVG Editorial Illustration */
+    .visual-wrapper {
+      background-color: var(--color-warm-taupe);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+      margin-top: 8px;
+    }
+
+    .artifact-illustration {
+      width: 100%;
+      height: 100%;
+      max-width: 280px;
+    }
+
+    /* Right Side: Login Card */
+    .login-card {
+      background-color: var(--color-warm-taupe);
+      border-radius: 24px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--color-ink);
+      letter-spacing: -0.02em;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--color-smoke);
+    }
+
+    /* Role Selector (Segmented Control) */
+    .role-selector-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .role-selector {
+      display: flex;
+      background-color: var(--color-eggshell);
+      border: 1px solid var(--color-stone);
+      border-radius: 9999px;
+      padding: 4px;
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-smoke);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .role-btn.active {
+      background-color: var(--color-ink);
+      color: #ffffff;
+    }
+
+    .role-indicator {
+      font-size: 12px;
+      color: var(--color-ash);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Form Fields */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-graphite);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--color-stone);
+      background-color: var(--color-eggshell);
+      font-family: var(--font-main);
+      font-size: 14px;
+      color: var(--color-ink);
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .form-input::placeholder {
+      color: var(--color-ash);
+    }
+
+    .form-input:focus {
+      border-color: var(--color-graphite);
+      background-color: #ffffff;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--color-smoke);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+
+    .toggle-password:hover {
+      color: var(--color-ink);
+    }
+
+    /* Error Message Box */
+    .error-box {
+      display: none;
+      background-color: #fdf3f2;
+      border: 1px solid #f8d7da;
+      color: var(--color-ember-orange);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 9999px;
+      background-color: var(--color-ink);
+      color: #ffffff;
+      border: none;
+      font-family: var(--font-main);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-top: 4px;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--color-graphite);
+    }
+
+    .btn-submit:disabled {
+      background-color: var(--color-ash);
+      cursor: not-allowed;
+    }
+
+    /* Footer Copyright on Login */
+    .login-footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-ash);
+      margin-top: 8px;
+    }
+
+    /* ==================================================
+       RESPONSIVE DESIGN (TABLET & MOBILE)
+       ================================================== */
+    @media (max-width: 900px) {
+      .login-container {
+        padding: 32px 24px;
+      }
+
+      .login-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .editorial-heading {
+        font-size: 28px;
+      }
+
+      .visual-wrapper {
+        display: none; /* Disembunyikan di mobile agar layout tetap ringkas */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="login-container">
+    <div class="login-grid">
+      
+      <!-- SISI KIRI: INFORMASI & VISUAL -->
+      <section class="info-section">
+        <div>
+          <a href="index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Kembali ke Beranda
+          </a>
+        </div>
+
+        <div>
+          <div class="brand-title">MODIVIM</div>
+          <p class="font-caption" style="color: var(--color-ash); margin-top: 4px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em;">
+            Virtual Museum &bull; Sejarah Indonesia Masa Islam
+          </p>
+        </div>
+
+        <div>
+          <h1 class="editorial-heading">Ruang Belajar Eksplorasi Historis</h1>
+          <p class="editorial-desc" style="margin-top: 12px;">
+            Eksplorasi artefak, sumber sejarah, konteks ruang dan waktu, serta bangun kemampuan berpikir kritis-historis secara mendalam.
+          </p>
+        </div>
+
+        <!-- Visual Line Art Minimalis -->
+        <div class="visual-wrapper">
+          <svg class="artifact-illustration" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="220" height="120" rx="8" stroke="#EBE8E4" stroke-width="1" stroke-dasharray="3 3"/>
+            <!-- Siluet Kubah / Arch -->
+            <path d="M80 110V70C80 47.9086 97.9086 30 120 30C142.091 30 160 47.9086 160 70V110" stroke="#000000" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="120" cy="70" r="18" stroke="#777169" stroke-width="1"/>
+            <!-- Aksen Warna Terbatas -->
+            <circle cx="160" cy="45" r="3" fill="#0447ff"/>
+            <circle cx="80" cy="95" r="3" fill="#ff4704"/>
+            <line x1="40" y1="110" x2="200" y2="110" stroke="#44403b" stroke-width="1"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- SISI KANAN: KARTU LOGIN -->
+      <section class="login-card">
+        <div class="card-header">
+          <h2 class="card-title">Masuk ke MODIVIM</h2>
+          <p class="card-subtitle">Mulai pengalaman belajar Sejarah Indonesia Masa Islam melalui Virtual Museum.</p>
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector-wrapper">
+          <div class="role-selector" role="tablist" aria-label="Pilih Jenis Pengguna">
+            <button type="button" class="role-btn active" id="btnMahasiswa" onclick="selectRole('MAHASISWA')">Mahasiswa</button>
+            <button type="button" class="role-btn" id="btnDosen" onclick="selectRole('DOSEN')">Dosen / Admin</button>
+          </div>
+          <span class="role-indicator" id="roleLabel">Login sebagai Mahasiswa</span>
+        </div>
+
+        <!-- Error Box -->
+        <div class="error-box" id="errorBox" role="alert">
+          Username atau password tidak valid.
+        </div>
+
+        <!-- Form Login -->
+        <form class="login-form" id="loginForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              class="form-input" 
+              placeholder="Masukkan username" 
+              required 
+              autocomplete="username"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input 
+                type="password" 
+                id="password" 
+                class="form-input" 
+                placeholder="Masukkan password" 
+                required 
+                autocomplete="current-password"
+                style="padding-right: 48px;"
+              >
+              <button type="button" class="toggle-password" onclick="togglePasswordVisibility()" aria-label="Tampilkan atau sembunyikan password">
+                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">Masuk</button>
+        </form>
+
+        <div class="login-footer">
+          Universitas Negeri Medan
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- JAVASCRIPT VANILLA -->
+  <script>
+    // State Pengguna Default
+    let selectedRole = 'MAHASISWA';
+
+    /**
+     * Memilih Role Pengguna (Mahasiswa vs Dosen/Admin)
+     */
+    function selectRole(role) {
+      selectedRole = role;
+      const btnMahasiswa = document.getElementById('btnMahasiswa');
+      const btnDosen = document.getElementById('btnDosen');
+      const roleLabel = document.getElementById('roleLabel');
+
+      if (role === 'MAHASISWA') {
+        btnMahasiswa.classList.add('active');
+        btnDosen.classList.remove('active');
+        roleLabel.textContent = 'Login sebagai Mahasiswa';
+      } else {
+        btnDosen.classList.add('active');
+        btnMahasiswa.classList.remove('active');
+        roleLabel.textContent = 'Login sebagai Dosen / Admin';
+      }
+
+      // Sembunyikan pesan error jika role diubah
+      hideError();
+    }
+
+    /**
+     * Show / Hide Password Toggle
+     */
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        // Icon mata tertutup / slash
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        passwordInput.type = 'password';
+        // Icon mata terbuka
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+
+    /**
+     * Menampilkan dan Menyembunyikan Pesan Error
+     */
+    function showError(message) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.textContent = message || 'Username atau password tidak valid.';
+      errorBox.style.display = 'block';
+    }
+
+    function hideError() {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.style.display = 'none';
+    }
+
+    /**
+     * Handling Submit Form
+     */
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      const usernameInput = document.getElementById('username').value.trim();
+      const passwordInput = document.getElementById('password').value;
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!usernameInput || !passwordInput) {
+        showError('Mohon isi username dan password.');
+        return;
+      }
+
+      hideError();
+
+      // Set Loading State
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Memeriksa...';
+
+      try {
+        // Memanggil fungsi placeholder autentikasi
+        const response = await loginUser(usernameInput, passwordInput, selectedRole);
+
+        if (response.success) {
+          // Pengalihan dashboard nantinya dilakukan di sini
+          alert(`Login Berhasil! Role: ${selectedRole}`);
+        } else {
+          showError(response.message || 'Username atau password tidak valid.');
+        }
+      } catch (error) {
+        showError('Terjadi kesalahan sistem. Silakan coba lagi.');
+      } finally {
+        // Kembalikan State Tombol
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Masuk';
+      }
+    }
+
+    /**
+     * PLACEHOLDER FUNGSI LOGIN (AKAN DIHUBUNGKAN KE GOOGLE APPS SCRIPT API)
+     */
+    async function loginUser(username, password, role) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          // Untuk tahap awal pengujian UI, fungsi ini mensimulasikan penolakan/error.
+          // Saat integrasi Google Apps Script siap, bagian ini akan menggantikan panggilan fetch().
+          resolve({
+            success: false,
+            message: 'Username atau password tidak valid.'
+          });
+        }, 1200);
+      });
+    }
+  </script>
+</body>
+</html>
