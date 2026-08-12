@@ -997,6 +997,193 @@
   }
 
 </script>
+  // ==========================================
+// KONFIGURASI URL WEB APP GOOGLE APPS SCRIPT
+// ==========================================
+// PETUNJUK: Ganti tulisan di dalam tanda kutip di bawah ini dengan URL Web App GAS Anda,
+// dan pastikan parameter ?action=getArtifacts tetap berada di bagian paling belakang.
+const GAS_API_URL = "https://script.google.com/macros/s/MASUKKAN_URL_WEB_APP_ANDA_DISINI/exec?action=getArtifacts";
+
+let allArtifacts = [];
+
+// Jalankan saat halaman selesai dimuat
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("URL API:", GAS_API_URL);
+    loadArtifactsFromAPI();
+    setupModalEvents();
+});
+
+// Fungsi untuk mengambil data dari Google Apps Script
+function loadArtifactsFromAPI() {
+    const gridContainer = document.getElementById("artifactGrid");
+    if (gridContainer) {
+        gridContainer.innerHTML = `<p style="text-align:center; grid-column:1/-1; padding:20px;">Memuat data artefak dari database...</p>`;
+    }
+
+    fetch(GAS_API_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP Error " + response.status);
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log("Response GAS:", result);
+
+            if (!result.success) {
+                throw new Error(result.message || "API GAS gagal");
+            }
+
+            allArtifacts = result.data || [];
+            console.log("Jumlah artefak:", allArtifacts.length);
+
+            renderGallery(allArtifacts);
+            
+            // Periksa parameter URL jika ada yang langsung membuka modal ID tertentu
+            checkUrlParamAndOpenModal();
+        })
+        .catch(error => {
+            console.error("ERROR:", error);
+            if (gridContainer) {
+                gridContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; color: #d9534f; padding: 30px; background: #fdf7f7; border: 1px solid #ebccd1; border-radius: 4px;">
+                        <h3>Gagal memuat data artefak.</h3>
+                        <p>${error.message}</p>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">Pastikan URL Web App GAS benar dan deployment sudah diset ke "Anyone".</p>
+                    </div>`;
+            }
+        });
+}
+
+// Render kartu-kartu galeri artefak ke halaman
+function renderGallery(artifacts) {
+    const gridContainer = document.getElementById("artifactGrid");
+    if (!gridContainer) return;
+
+    if (artifacts.length === 0) {
+        gridContainer.innerHTML = `<p style="text-align:center; grid-column:1/-1;">Belum ada data artefak yang aktif.</p>`;
+        return;
+    }
+
+    let htmlContent = "";
+    artifacts.forEach(item => {
+        let imgSrc = (item.FotoURL && item.FotoURL !== "-" && item.FotoURL.startsWith("http")) 
+            ? item.FotoURL 
+            : "https://via.placeholder.com/400x300?text=MODIVIM+Artefak";
+
+        htmlContent += `
+            <div class="artifact-card" data-id="${item.ArtefakID}">
+                <div class="artifact-img-wrap">
+                    <img src="${imgSrc}" alt="${item.NamaArtefak}" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                </div>
+                <div class="artifact-info">
+                    <span class="artifact-period">${item.Periode} (${item.TahunAbad})</span>
+                    <h3>${item.NamaArtefak}</h3>
+                    <p class="artifact-location"><i class="fas fa-map-marker-alt"></i> ${item.Lokasi}, ${item.Provinsi}</p>
+                    <button class="btn-detail" onclick="openArtifactModal('${item.ArtefakID}')">Lihat Detail</button>
+                </div>
+            </div>
+        `;
+    });
+
+    gridContainer.innerHTML = htmlContent;
+}
+
+// Membuka Modal Detail Artefak
+function openArtifactModal(artifactId) {
+    const artifact = allArtifacts.find(item => item.ArtefakID === artifactId);
+    console.log("Artefak yang dipilih:", artifact);
+
+    if (!artifact) {
+        console.error("Artefak dengan ID " + artifactId + " tidak ditemukan!");
+        return;
+    }
+
+    renderArtifactDetail(artifact);
+
+    const modalOverlay = document.getElementById("artifactModalOverlay");
+    if (modalOverlay) {
+        modalOverlay.classList.add("active");
+        document.body.style.overflow = "hidden"; // Mencegah body discroll
+    }
+}
+
+// Menutup Modal Detail Artefak
+function closeArtifactModal() {
+    const modalOverlay = document.getElementById("artifactModalOverlay");
+    if (modalOverlay) {
+        modalOverlay.classList.remove("active");
+        document.body.style.overflow = "auto"; // Mengembalikan scroll body
+    }
+}
+
+// Render Konten di dalam Modal
+function renderArtifactDetail(artifact) {
+    const modalBody = document.getElementById("modalBody");
+    if (!modalBody) return;
+
+    let imgSrc = (artifact.FotoURL && artifact.FotoURL !== "-" && artifact.FotoURL.startsWith("http")) 
+        ? artifact.FotoURL 
+        : "https://via.placeholder.com/600x400?text=MODIVIM+Artefak";
+
+    modalBody.innerHTML = `
+        <div class="modal-detail-container">
+            <div class="modal-image-pane">
+                <img src="${imgSrc}" alt="${artifact.NamaArtefak}">
+            </div>
+            <div class="modal-info-pane">
+                <h2>${artifact.NamaArtefak}</h2>
+                <div class="meta-grid">
+                    <p><strong>Artefak ID:</strong> ${artifact.ArtefakID}</p>
+                    <p><strong>Periode:</strong> ${artifact.Periode}</p>
+                    <p><strong>Tahun/Abad:</strong> ${artifact.TahunAbad}</p>
+                    <p><strong>Jenis Artefak:</strong> ${artifact.JenisArtefak}</p>
+                    <p><strong>Lokasi:</strong> ${artifact.Lokasi}</p>
+                    <p><strong>Provinsi:</strong> ${artifact.Provinsi}</p>
+                    <p><strong>Pulau:</strong> ${artifact.Pulau}</p>
+                </div>
+                <div class="section-block">
+                    <h3>Deskripsi</h3>
+                    <p>${artifact.Deskripsi}</p>
+                </div>
+                <div class="section-block">
+                    <h3>Nilai Historis</h3>
+                    <p>${artifact.NilaiHistoris}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Event listener pendukung untuk tombol tutup dan tombol Escape
+function setupModalEvents() {
+    const modalOverlay = document.getElementById("artifactModalOverlay");
+    
+    // Klik area gelap di luar modal untuk menutup
+    if (modalOverlay) {
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) {
+                closeArtifactModal();
+            }
+        });
+    }
+
+    // Tombol Escape untuk menutup modal
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeArtifactModal();
+        }
+    });
+}
+
+// Mengecek parameter URL (misalnya ?id=A001) untuk langsung membuka modal tertentu
+function checkUrlParamAndOpenModal() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const idParam = urlParams.get("id");
+    if (idParam) {
+        openArtifactModal(idParam);
+    }
+}
 
 </body>
 </html>
