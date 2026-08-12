@@ -12,7 +12,7 @@
 
   <style>
     /* ==================================================
-       CSS VARIABLES & DESIGN SYSTEM (SAMA DENGAN INDEX)
+       CSS VARIABLES & DESIGN SYSTEM
        ================================================== */
     :root {
       --color-eggshell: #fdfcfc;
@@ -306,9 +306,7 @@
       margin-top: 8px;
     }
 
-    /* ==================================================
-       RESPONSIVE DESIGN (TABLET & MOBILE)
-       ================================================== */
+    /* RESPONSIVE DESIGN */
     @media (max-width: 900px) {
       .login-container {
         padding: 32px 24px;
@@ -324,7 +322,7 @@
       }
 
       .visual-wrapper {
-        display: none; /* Disembunyikan di mobile agar layout tetap ringkas */
+        display: none;
       }
     }
   </style>
@@ -363,10 +361,8 @@
         <div class="visual-wrapper">
           <svg class="artifact-illustration" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="10" y="10" width="220" height="120" rx="8" stroke="#EBE8E4" stroke-width="1" stroke-dasharray="3 3"/>
-            <!-- Siluet Kubah / Arch -->
             <path d="M80 110V70C80 47.9086 97.9086 30 120 30C142.091 30 160 47.9086 160 70V110" stroke="#000000" stroke-width="1.2" stroke-linecap="round"/>
             <circle cx="120" cy="70" r="18" stroke="#777169" stroke-width="1"/>
-            <!-- Aksen Warna Terbatas -->
             <circle cx="160" cy="45" r="3" fill="#0447ff"/>
             <circle cx="80" cy="95" r="3" fill="#ff4704"/>
             <line x1="40" y1="110" x2="200" y2="110" stroke="#44403b" stroke-width="1"/>
@@ -443,12 +439,8 @@
 
   <!-- JAVASCRIPT VANILLA -->
   <script>
-    // State Pengguna Default
     let selectedRole = 'MAHASISWA';
 
-    /**
-     * Memilih Role Pengguna (Mahasiswa vs Dosen/Admin)
-     */
     function selectRole(role) {
       selectedRole = role;
       const btnMahasiswa = document.getElementById('btnMahasiswa');
@@ -465,27 +457,21 @@
         roleLabel.textContent = 'Login sebagai Dosen / Admin';
       }
 
-      // Sembunyikan pesan error jika role diubah
       hideError();
     }
 
-    /**
-     * Show / Hide Password Toggle
-     */
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('password');
       const eyeIcon = document.getElementById('eyeIcon');
 
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        // Icon mata tertutup / slash
         eyeIcon.innerHTML = `
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
           <line x1="1" y1="1" x2="23" y2="23"></line>
         `;
       } else {
         passwordInput.type = 'password';
-        // Icon mata terbuka
         eyeIcon.innerHTML = `
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
@@ -493,9 +479,6 @@
       }
     }
 
-    /**
-     * Menampilkan dan Menyembunyikan Pesan Error
-     */
     function showError(message) {
       const errorBox = document.getElementById('errorBox');
       errorBox.textContent = message || 'Username atau password tidak valid.';
@@ -507,9 +490,6 @@
       errorBox.style.display = 'none';
     }
 
-    /**
-     * Handling Submit Form
-     */
     async function handleFormSubmit(event) {
       event.preventDefault();
       
@@ -524,16 +504,13 @@
 
       hideError();
 
-      // Set Loading State
       submitBtn.disabled = true;
       submitBtn.textContent = 'Memeriksa...';
 
       try {
-        // Memanggil fungsi placeholder autentikasi
         const response = await loginUser(usernameInput, passwordInput, selectedRole);
 
         if (response.success) {
-          // Pengalihan dashboard nantinya dilakukan di sini
           alert(`Login Berhasil! Role: ${selectedRole}`);
         } else {
           showError(response.message || 'Username atau password tidak valid.');
@@ -541,18 +518,14 @@
       } catch (error) {
         showError('Terjadi kesalahan sistem. Silakan coba lagi.');
       } finally {
-        // Kembalikan State Tombol
         submitBtn.disabled = false;
         submitBtn.textContent = 'Masuk';
       }
     }
 
-  // GANTI DENGAN WEB APP URL GOOGLE APPS SCRIPT ANDA (akhiran /exec)
+    // TEMPILKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI (akhiran /exec)
     const API_URL = "https://script.google.com/macros/s/AKfycbx.../exec"; 
 
-    /**
-     * FUNGSI LOGIN DENGAN INTEGRASI GOOGLE APPS SCRIPT
-     */
     async function loginUser(username, password, role) {
       try {
         const payload = {
@@ -580,3 +553,6 @@
         };
       }
     }
+  </script>
+</body>
+</html>
