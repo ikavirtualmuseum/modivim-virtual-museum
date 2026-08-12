@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MODIVIM - Galeri Artefak</title>
-  
-  <!-- Font Inter -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* DESIGN SYSTEM MODIVIM */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       background-color: #fdfcfc;
       color: #44403b;
@@ -38,7 +40,7 @@
       padding: 32px 16px;
     }
 
-    /* GRID GALERI */
+    /* GALERI */
     .artifact-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -52,12 +54,12 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: 0.2s ease;
     }
 
     .artifact-card:hover {
       border-color: #a59f97;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
     .card-img-wrap {
@@ -84,7 +86,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       color: #000000;
-      margin: 0 0 8px 0;
+      margin: 0 0 8px;
     }
 
     .card-subtitle {
@@ -96,14 +98,13 @@
     .btn-detail {
       margin-top: auto;
       background-color: #0447ff;
-      color: #ffffff;
+      color: white;
       border: none;
       padding: 10px;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       width: 100%;
-      transition: background-color 0.2s;
     }
 
     .btn-detail:hover {
@@ -116,115 +117,117 @@
       color: #777169;
     }
 
-    /* ==========================================
-       STYLING MODAL DETAIL ARTEFAK
-       ========================================== */
+    /* ==========================
+       MODAL
+       ========================== */
+
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+
+      display: none;
+
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      padding: 16px;
-      box-sizing: border-box;
+
+      padding: 20px;
+
+      z-index: 99999;
     }
 
     .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
+      display: flex;
     }
 
     .modal-container {
-      background-color: #fdfcfc;
-      border: 1px solid #ebe8e4;
-      border-radius: 12px;
+      position: relative;
+
       width: 100%;
       max-width: 900px;
       max-height: 90vh;
+
       overflow-y: auto;
-      position: relative;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      font-family: 'Inter', sans-serif;
-      color: #44403b;
+
+      background: #fdfcfc;
+
+      border-radius: 16px;
+
+      box-shadow:
+        0 25px 50px rgba(0,0,0,0.25);
     }
 
     .modal-close-btn {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 36px;
-      height: 36px;
+      top: 15px;
+      right: 15px;
+
+      width: 40px;
+      height: 40px;
+
       border-radius: 50%;
-      background-color: #f5f3f1;
       border: 1px solid #ebe8e4;
-      color: #000000;
-      font-size: 20px;
-      font-weight: bold;
+
+      background: white;
+      color: #000;
+
+      font-size: 24px;
+
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
       z-index: 10;
-      transition: background-color 0.2s, color 0.2s;
     }
 
     .modal-close-btn:hover {
-      background-color: #ff4704;
-      color: #ffffff;
-      border-color: #ff4704;
+      background: #ff4704;
+      color: white;
     }
 
     .modal-body {
-      padding: 28px;
+      padding: 30px;
     }
 
     .modal-header-image {
       width: 100%;
-      max-height: 380px;
-      background-color: #f5f3f1;
-      border-radius: 8px;
+      height: 360px;
+
+      background: #f5f3f1;
+
+      border-radius: 12px;
+
       overflow: hidden;
-      margin-bottom: 20px;
+
+      margin-bottom: 25px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #ebe8e4;
     }
 
     .modal-img {
       width: 100%;
       height: 100%;
-      max-height: 380px;
       object-fit: contain;
     }
 
     .modal-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #000000;
-      margin-top: 0;
-      margin-bottom: 20px;
-      line-height: 1.3;
+      font-size: 1.8rem;
+      color: #000;
+      margin: 0 0 20px;
     }
 
     .modal-grid-info {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      background-color: #f5f3f1;
-      padding: 16px;
-      border-radius: 8px;
-      border: 1px solid #ebe8e4;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+
+      background: #f5f3f1;
+
+      padding: 20px;
+
+      border-radius: 10px;
+
+      margin-bottom: 25px;
     }
 
     .info-item {
@@ -233,294 +236,767 @@
     }
 
     .info-label {
-      font-size: 0.75rem;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #777169;
       margin-bottom: 4px;
-      font-weight: 600;
     }
 
     .info-value {
-      font-size: 0.95rem;
-      color: #000000;
+      color: #000;
       font-weight: 500;
     }
 
     .modal-section {
-      margin-bottom: 24px;
+      margin-bottom: 25px;
     }
 
     .modal-section h3 {
+      color: #000;
       font-size: 1.1rem;
-      font-weight: 600;
-      color: #000000;
-      margin-bottom: 8px;
-      border-bottom: 2px solid #ebe8e4;
-      padding-bottom: 6px;
+      border-bottom: 1px solid #ebe8e4;
+      padding-bottom: 8px;
     }
 
     .modal-section p {
-      line-height: 1.6;
+      line-height: 1.7;
       color: #44403b;
-      margin: 0;
-      white-space: pre-line;
     }
 
     .placeholder-box {
-      background-color: #f5f3f1;
+      background: #f5f3f1;
       border: 1px dashed #a59f97;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
+      border-radius: 10px;
+      padding: 20px;
       text-align: center;
+      margin-top: 20px;
     }
 
     .placeholder-box h4 {
-      margin: 0 0 6px 0;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
+      margin: 0 0 8px;
       color: #0447ff;
     }
 
     .placeholder-box p {
       margin: 0;
-      font-size: 0.85rem;
       color: #777169;
-      font-style: italic;
+      font-size: 14px;
     }
 
     .modal-actions {
       display: flex;
       justify-content: flex-end;
-      margin-top: 24px;
-      padding-top: 16px;
+
       border-top: 1px solid #ebe8e4;
+
+      margin-top: 25px;
+      padding-top: 20px;
     }
 
     .btn-close-modal {
-      background-color: #ebe8e4;
-      color: #000000;
+      background: #000;
+      color: white;
+
       border: none;
-      padding: 10px 24px;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.95rem;
+
+      padding: 11px 25px;
+
+      border-radius: 999px;
+
       cursor: pointer;
-      transition: background-color 0.2s, color 0.2s;
+
+      font-weight: 600;
     }
 
     .btn-close-modal:hover {
-      background-color: #ff4704;
-      color: #ffffff;
+      background: #44403b;
+    }
+
+    @media (max-width: 600px) {
+
+      .modal-overlay {
+        padding: 10px;
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      .modal-header-image {
+        height: 240px;
+      }
+
+      .modal-grid-info {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-title {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>MODIVIM — Galeri Artefak</h1>
-  </header>
+<header>
+  <h1>MODIVIM — Galeri Artefak</h1>
+</header>
 
-  <div class="container">
-    <div id="loading" class="loading-text">Memuat data artefak dari server...</div>
-    <div id="artifactGrid" class="artifact-grid"></div>
+<div class="container">
+
+  <div id="loading" class="loading-text">
+    Memuat data artefak dari server...
   </div>
 
-  <!-- OVERLAY & MODAL DETAIL ARTEFAK -->
-  <div id="artifactModalOverlay" class="modal-overlay" onclick="closeArtifactModalOnOverlay(event)" aria-hidden="true">
-    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close-btn" onclick="closeArtifactModal()" aria-label="Tutup modal">&times;</button>
-      <div id="modalBody" class="modal-body"></div>
-    </div>
+  <div id="artifactGrid" class="artifact-grid"></div>
+
+</div>
+
+
+<!-- ==========================
+     MODAL DETAIL
+     ========================== -->
+
+<div
+  id="artifactModalOverlay"
+  class="modal-overlay"
+  aria-hidden="true"
+>
+
+  <div
+    class="modal-container"
+    role="dialog"
+    aria-modal="true"
+  >
+
+    <button
+      id="modalCloseButton"
+      class="modal-close-btn"
+      type="button"
+      aria-label="Tutup modal"
+    >
+      ×
+    </button>
+
+    <div id="modalBody" class="modal-body"></div>
+
   </div>
 
-  <script>
-    // URL Web App Google Apps Script Anda (Sesuai yang sudah berhasil)
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+</div>
 
-    let allArtifacts = [];
 
-    // Mengambil Data saat halaman dimuat
-    document.addEventListener("DOMContentLoaded", function() {
-      fetchArtifacts();
-    });
+<script>
 
-    function fetchArtifacts() {
-      fetch(GAS_API_URL)
-        .then(response => response.json())
-        .then(res => {
-          document.getElementById("loading").style.display = "none";
-          if (res.success && Array.isArray(res.data)) {
-            allArtifacts = res.data;
-            renderGallery(allArtifacts);
-            
-            // Periksa apakah ada parameter ?id=A001 pada URL
-            checkUrlParamAndOpenModal();
-          } else {
-            document.getElementById("loading").innerText = "Gagal memuat data artefak.";
-            document.getElementById("loading").style.display = "block";
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("loading").innerText = "Terjadi kesalahan koneksi server.";
-          document.getElementById("loading").style.display = "block";
-        });
+  /*
+   * =====================================================
+   * URL GOOGLE APPS SCRIPT
+   * =====================================================
+   *
+   * GANTI dengan URL GAS Anda yang sudah berhasil.
+   */
+
+  const GAS_API_URL =
+    "MASUKKAN_URL_GAS_ANDA_DI_SINI";
+
+
+  let allArtifacts = [];
+
+
+  /*
+   * =====================================================
+   * LOAD DATA
+   * =====================================================
+   */
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    fetchArtifacts();
+
+    document
+      .getElementById("modalCloseButton")
+      .addEventListener("click", closeArtifactModal);
+
+    document
+      .getElementById("artifactModalOverlay")
+      .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+          closeArtifactModal();
+        }
+
+      });
+
+  });
+
+
+  function fetchArtifacts() {
+
+    fetch(GAS_API_URL)
+
+      .then(function(response) {
+
+        if (!response.ok) {
+          throw new Error("HTTP Error " + response.status);
+        }
+
+        return response.json();
+
+      })
+
+      .then(function(result) {
+
+        document.getElementById("loading").style.display = "none";
+
+        if (
+          result.success &&
+          Array.isArray(result.data)
+        ) {
+
+          allArtifacts = result.data;
+
+          renderGallery(allArtifacts);
+
+          checkUrlParamAndOpenModal();
+
+        } else {
+
+          showError("Data artefak tidak tersedia.");
+
+        }
+
+      })
+
+      .catch(function(error) {
+
+        console.error("GAS ERROR:", error);
+
+        showError(
+          "Koleksi artefak belum dapat dimuat."
+        );
+
+      });
+
+  }
+
+
+  /*
+   * =====================================================
+   * GALERI
+   * =====================================================
+   */
+
+  function renderGallery(artifacts) {
+
+    const grid =
+      document.getElementById("artifactGrid");
+
+    grid.innerHTML = "";
+
+
+    if (!artifacts.length) {
+
+      grid.innerHTML =
+        "<p>Belum ada artefak yang tersedia.</p>";
+
+      return;
+
     }
 
-    function renderGallery(artifacts) {
-      const grid = document.getElementById("artifactGrid");
-      grid.innerHTML = "";
 
-      const placeholderSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="%23f5f3f1"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23777169" font-family="Inter, sans-serif" font-size="14">Gambar Tidak Tersedia</text></svg>`;
+    artifacts.forEach(function(item) {
 
-      artifacts.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "artifact-card";
+      const card =
+        document.createElement("div");
 
-        const fotoUrl = (item.FotoURL && item.FotoURL !== '-' && item.FotoURL.trim() !== '') ? item.FotoURL.trim() : placeholderSvg;
+      card.className =
+        "artifact-card";
 
-        card.innerHTML = `
-          <div class="card-img-wrap">
-            <img src="${fotoUrl}" alt="${item.NamaArtefak}" class="card-img" onerror="this.onerror=null; this.src='${placeholderSvg}';">
-          </div>
-          <div class="card-body">
-            <h3 class="card-title">${item.NamaArtefak || 'Tanpa Nama'}</h3>
-            <div class="card-subtitle">${item.Lokasi || '-'} • ${item.Periode || '-'}</div>
-            <button class="btn-detail" onclick="openArtifactModal('${item.ArtefakID}')">Lihat Detail</button>
+
+      const foto =
+        item.FotoURL &&
+        item.FotoURL !== "-"
+          ? item.FotoURL
+          : "";
+
+
+      const imageHTML = foto
+
+        ? `
+          <img
+            src="${escapeHTML(foto)}"
+            alt="${escapeHTML(item.NamaArtefak || "Artefak")}"
+            class="card-img"
+            onerror="this.style.display='none'"
+          >
+        `
+
+        : `
+          <div style="
+            width:100%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#777169;
+          ">
+            Foto tidak tersedia
           </div>
         `;
-        grid.appendChild(card);
-      });
-    }
 
-    // ==========================================
-    // LOGIKA MODAL DETAIL ARTEFAK
-    // ==========================================
 
-    function openArtifactModal(artifactId) {
-      if (!allArtifacts || allArtifacts.length === 0) return;
+      card.innerHTML = `
 
-      const artifact = allArtifacts.find(item => String(item.ArtefakID).trim() === String(artifactId).trim());
-
-      if (!artifact) {
-        console.warn("Artefak dengan ID " + artifactId + " tidak ditemukan.");
-        return;
-      }
-
-      renderArtifactDetail(artifact);
-
-      const overlay = document.getElementById('artifactModalOverlay');
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeArtifactModal() {
-      const overlay = document.getElementById('artifactModalOverlay');
-      if (overlay) {
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-    }
-
-    function closeArtifactModalOnOverlay(event) {
-      if (event.target.id === 'artifactModalOverlay') {
-        closeArtifactModal();
-      }
-    }
-
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape' || event.key === 'Esc') {
-        closeArtifactModal();
-      }
-    });
-
-    function renderArtifactDetail(artifact) {
-      const modalBody = document.getElementById('modalBody');
-
-      const fotoUrl = (artifact.FotoURL && artifact.FotoURL !== '-' && artifact.FotoURL.trim() !== '') 
-        ? artifact.FotoURL.trim() 
-        : null;
-
-      const placeholderSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="%23f5f3f1"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23777169" font-family="Inter, sans-serif" font-size="16">Gambar Tidak Tersedia</text></svg>`;
-
-      const tahunAbadVal = artifact.TahunAbad || artifact['Tahun/Abad'] || '-';
-
-      modalBody.innerHTML = `
-        <div class="modal-header-image">
-          <img src="${fotoUrl || placeholderSvg}" 
-               alt="${artifact.NamaArtefak || 'Artefak'}" 
-               onerror="this.onerror=null; this.src='${placeholderSvg}';" 
-               class="modal-img">
-        </div>
-        
-        <h2 id="modalTitle" class="modal-title">${artifact.NamaArtefak || 'Nama Artefak Tidak Tersedia'}</h2>
-        
-        <div class="modal-grid-info">
-          <div class="info-item">
-            <span class="info-label">Artefak ID</span>
-            <span class="info-value">${artifact.ArtefakID || '-'}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Periode</span>
-            <span class="info-value">${artifact.Periode || '-'}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Tahun / Abad</span>
-            <span class="info-value">${tahunAbadVal}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Jenis Artefak</span>
-            <span class="info-value">${artifact.JenisArtefak || '-'}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Lokasi</span>
-            <span class="info-value">${artifact.Lokasi || '-'}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Provinsi / Pulau</span>
-            <span class="info-value">${artifact.Provinsi || '-'} / ${artifact.Pulau || '-'}</span>
-          </div>
+        <div class="card-img-wrap">
+          ${imageHTML}
         </div>
 
-        <div class="modal-section">
-          <h3>Deskripsi</h3>
-          <p>${artifact.Deskripsi || 'Tidak ada deskripsi.'}</p>
-        </div>
+        <div class="card-body">
 
-        <div class="modal-section">
-          <h3>Nilai Historis</h3>
-          <p>${artifact.NilaiHistoris || 'Tidak ada catatan nilai historis.'}</p>
-        </div>
+          <h3 class="card-title">
+            ${escapeHTML(
+              item.NamaArtefak || "Tanpa Nama"
+            )}
+          </h3>
 
-        <!-- PLACEHOLDER QR CODE -->
-        <div class="placeholder-box">
-          <h4>QR CODE</h4>
-          <p>Fitur QR Code akan tersedia pada tahap berikutnya.</p>
-        </div>
+          <div class="card-subtitle">
+            ${escapeHTML(item.Lokasi || "-")}
+            •
+            ${escapeHTML(item.Periode || "-")}
+          </div>
 
-        <!-- PLACEHOLDER PERTANYAAN HISTORIS -->
-        <div class="placeholder-box">
-          <h4>PERTANYAAN HISTORIS</h4>
-          <p>Pertanyaan historis akan tersedia pada tahap berikutnya.</p>
-        </div>
+          <button
+            class="btn-detail"
+            type="button"
+          >
+            Lihat Detail
+          </button>
 
-        <div class="modal-actions">
-          <button class="btn-close-modal" onclick="closeArtifactModal()">Tutup</button>
         </div>
       `;
+
+
+      /*
+       * Event listener langsung dipasang
+       * ke tombol card.
+       */
+
+      const button =
+        card.querySelector(".btn-detail");
+
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          openArtifactModal(item.ArtefakID);
+
+        }
+      );
+
+
+      grid.appendChild(card);
+
+    });
+
+  }
+
+
+  /*
+   * =====================================================
+   * BUKA MODAL
+   * =====================================================
+   */
+
+  function openArtifactModal(artifactId) {
+
+    console.log(
+      "Membuka artefak:",
+      artifactId
+    );
+
+
+    const artifact =
+      allArtifacts.find(function(item) {
+
+        return String(item.ArtefakID).trim()
+          ===
+          String(artifactId).trim();
+
+      });
+
+
+    if (!artifact) {
+
+      console.error(
+        "Artefak tidak ditemukan:",
+        artifactId
+      );
+
+      alert(
+        "Data artefak tidak ditemukan."
+      );
+
+      return;
+
     }
 
-    function checkUrlParamAndOpenModal() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetId = urlParams.get('id');
-      if (targetId) {
-        openArtifactModal(targetId);
+
+    renderArtifactDetail(artifact);
+
+
+    const overlay =
+      document.getElementById(
+        "artifactModalOverlay"
+      );
+
+
+    overlay.classList.add("active");
+
+    overlay.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+
+  /*
+   * =====================================================
+   * TUTUP MODAL
+   * =====================================================
+   */
+
+  function closeArtifactModal() {
+
+    const overlay =
+      document.getElementById(
+        "artifactModalOverlay"
+      );
+
+
+    overlay.classList.remove("active");
+
+    overlay.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    document.body.style.overflow =
+      "";
+
+  }
+
+
+  /*
+   * =====================================================
+   * ESC KEY
+   * =====================================================
+   */
+
+  document.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Escape") {
+
+        closeArtifactModal();
+
       }
+
     }
-  </script>
+  );
+
+
+  /*
+   * =====================================================
+   * DETAIL ARTEFAK
+   * =====================================================
+   */
+
+  function renderArtifactDetail(artifact) {
+
+    const modalBody =
+      document.getElementById("modalBody");
+
+
+    const foto =
+      artifact.FotoURL &&
+      artifact.FotoURL !== "-"
+        ? artifact.FotoURL
+        : "";
+
+
+    const tahunAbad =
+      artifact.TahunAbad ||
+      artifact["Tahun/Abad"] ||
+      "-";
+
+
+    modalBody.innerHTML = `
+
+      <div class="modal-header-image">
+
+        ${
+          foto
+
+          ? `
+            <img
+              src="${escapeHTML(foto)}"
+              alt="${escapeHTML(
+                artifact.NamaArtefak || "Artefak"
+              )}"
+              class="modal-img"
+            >
+          `
+
+          : `
+            <span>
+              Foto artefak tidak tersedia
+            </span>
+          `
+        }
+
+      </div>
+
+
+      <h2 class="modal-title">
+
+        ${escapeHTML(
+          artifact.NamaArtefak ||
+          "Nama Artefak Tidak Tersedia"
+        )}
+
+      </h2>
+
+
+      <div class="modal-grid-info">
+
+        ${createInfo(
+          "Artefak ID",
+          artifact.ArtefakID
+        )}
+
+        ${createInfo(
+          "Periode",
+          artifact.Periode
+        )}
+
+        ${createInfo(
+          "Tahun / Abad",
+          tahunAbad
+        )}
+
+        ${createInfo(
+          "Jenis Artefak",
+          artifact.JenisArtefak
+        )}
+
+        ${createInfo(
+          "Lokasi",
+          artifact.Lokasi
+        )}
+
+        ${createInfo(
+          "Provinsi / Pulau",
+          (artifact.Provinsi || "-")
+          + " / "
+          + (artifact.Pulau || "-")
+        )}
+
+      </div>
+
+
+      <div class="modal-section">
+
+        <h3>
+          Deskripsi
+        </h3>
+
+        <p>
+          ${escapeHTML(
+            artifact.Deskripsi ||
+            "Tidak ada deskripsi."
+          )}
+        </p>
+
+      </div>
+
+
+      <div class="modal-section">
+
+        <h3>
+          Nilai Historis
+        </h3>
+
+        <p>
+          ${escapeHTML(
+            artifact.NilaiHistoris ||
+            "Tidak ada catatan nilai historis."
+          )}
+        </p>
+
+      </div>
+
+
+      <div class="placeholder-box">
+
+        <h4>
+          QR CODE
+        </h4>
+
+        <p>
+          Fitur QR Code akan tersedia
+          pada tahap berikutnya.
+        </p>
+
+      </div>
+
+
+      <div class="placeholder-box">
+
+        <h4>
+          PERTANYAAN HISTORIS
+        </h4>
+
+        <p>
+          Pertanyaan historis akan tersedia
+          pada tahap berikutnya.
+        </p>
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn-close-modal"
+          id="modalBottomClose"
+        >
+          Tutup
+        </button>
+
+      </div>
+
+    `;
+
+
+    document
+      .getElementById("modalBottomClose")
+      .addEventListener(
+        "click",
+        closeArtifactModal
+      );
+
+  }
+
+
+  /*
+   * =====================================================
+   * INFO ITEM
+   * =====================================================
+   */
+
+  function createInfo(label, value) {
+
+    return `
+
+      <div class="info-item">
+
+        <span class="info-label">
+          ${escapeHTML(label)}
+        </span>
+
+        <span class="info-value">
+          ${escapeHTML(value || "-")}
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * =====================================================
+   * URL ?id=A001
+   * =====================================================
+   */
+
+  function checkUrlParamAndOpenModal() {
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const targetId =
+      params.get("id");
+
+
+    if (targetId) {
+
+      openArtifactModal(targetId);
+
+    }
+
+  }
+
+
+  /*
+   * =====================================================
+   * ERROR
+   * =====================================================
+   */
+
+  function showError(message) {
+
+    const loading =
+      document.getElementById("loading");
+
+    loading.innerText = message;
+
+    loading.style.display = "block";
+
+  }
+
+
+  /*
+   * =====================================================
+   * KEAMANAN OUTPUT
+   * =====================================================
+   */
+
+  function escapeHTML(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+      return "";
+
+    }
+
+
+    return String(value)
+
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+</script>
+
 </body>
 </html>
