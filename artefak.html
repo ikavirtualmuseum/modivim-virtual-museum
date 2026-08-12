@@ -537,13 +537,46 @@
 
     document.getElementById("btnSaveAnswer").addEventListener("click", function() {
       const answerText = document.getElementById("studentAnswer").value;
+      
+      // Simpan juga ke localStorage sebagai cadangan offline di browser
       localStorage.setItem(savedAnswerKey, answerText);
       
       const statusSpan = document.getElementById("saveStatus");
+      statusSpan.innerText = "Menyimpan ke database...";
+      statusSpan.style.color = "#0447ff";
       statusSpan.style.display = "inline";
-      setTimeout(function() {
-        statusSpan.style.display = "none";
-      }, 2500);
+
+      // Kirim data ke Google Apps Script via POST
+      fetch(GAS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8" // Menghindari kendala CORS preflight pada Apps Script
+        },
+        body: JSON.stringify({
+          action: "saveAnswer",
+          artefakId: artifact.ArtefakID,
+          namaArtefak: artifact.NamaArtefak,
+          jawaban: answerText
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          statusSpan.innerText = "Jawaban tersimpan di database!";
+          statusSpan.style.color = "#2e7d32";
+        } else {
+          statusSpan.innerText = "Gagal: " + result.message;
+          statusSpan.style.color = "#d32f2f";
+        }
+        setTimeout(function() {
+          statusSpan.style.display = "none";
+        }, 3000);
+      })
+      .catch(function(error) {
+        console.error("Gagal menyimpan:", error);
+        statusSpan.innerText = "Gagal terhubung ke server.";
+        statusSpan.style.color = "#d32f2f";
+      });
     });
 
     document.getElementById("modalBottomClose").addEventListener("click", closeArtifactModal);
