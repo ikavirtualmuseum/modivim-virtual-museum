@@ -321,7 +321,8 @@
 </div>
 
 <script>
-  const GAS_API_URL = ""https://script.google.com/macros/s/URL_GOOGLE_APPS_SCRIPT_SAYA/exec?action=getArtifacts";
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+
   let allArtifacts = [];
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -446,7 +447,7 @@
     const tahunAbad = artifact.TahunAbad || artifact["Tahun/Abad"] || "-";
 
     const currentUrl = window.location.origin + window.location.pathname + "?id=" + artifact.ArtefakID;
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`;
+    const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentUrl);
 
     const savedAnswerKey = "modivim_answer_" + artifact.ArtefakID;
     const existingAnswer = localStorage.getItem(savedAnswerKey) || "";
