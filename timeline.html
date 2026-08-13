@@ -18,15 +18,21 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
         
-        /* Sidebar */
+        /* Sidebar Modern */
         .sidebar { width: 260px; background-color: var(--panel-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
-        .sidebar-brand { padding: 24px; font-size: 20px; font-weight: 700; color: var(--heading-color); border-bottom: 1px solid var(--border-color); }
-        .sidebar-brand span { color: var(--primary-color); display: block; font-size: 12px; font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .sidebar-menu { list-style: none; padding: 20px 0; overflow-y: auto; flex-grow: 1; }
-        .sidebar-menu li a { display: block; padding: 12px 24px; color: var(--text-color); text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s; border-left: 3px solid transparent; }
-        .sidebar-menu li a:hover { background-color: rgba(4, 71, 255, 0.05); color: var(--primary-color); }
-        .sidebar-menu li a.active { background-color: rgba(4, 71, 255, 0.08); color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600; }
+        .sidebar-brand { padding: 24px; font-size: 20px; font-weight: 700; color: var(--heading-color); }
+        .sidebar-brand span { color: #78716c; display: block; font-size: 12px; font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sidebar-menu { list-style: none; padding: 12px 16px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-menu li a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-color); text-decoration: none; font-weight: 500; font-size: 14px; border-radius: 8px; transition: all 0.2s; }
+        .sidebar-menu li a:hover { background-color: rgba(0, 0, 0, 0.04); color: var(--heading-color); }
+        .sidebar-menu li a.active { background-color: #ffffff; color: var(--heading-color); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .sidebar-menu li a svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--border-color); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #dc2626; text-decoration: none; font-weight: 500; font-size: 14px; border-radius: 8px; transition: background 0.2s; }
+        .sidebar-footer a:hover { background-color: rgba(220, 38, 38, 0.05); }
+        .sidebar-footer a svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
         /* Main Content */
         .main-content { margin-left: 260px; flex-grow: 1; padding: 40px; max-width: calc(100% - 260px); }
         header { margin-bottom: 30px; }
@@ -95,9 +101,9 @@
         /* Responsive */
         @media (max-width: 900px) {
             .sidebar { width: 70px; }
-            .sidebar-brand span, .sidebar-menu span { display: none; }
+            .sidebar-brand span, .sidebar-menu span, .sidebar-footer span { display: none; }
             .sidebar-brand { padding: 20px 10px; font-size: 16px; text-align: center; }
-            .sidebar-menu li a { padding: 14px; text-align: center; font-size: 18px; }
+            .sidebar-menu li a, .sidebar-footer a { padding: 14px; justify-content: center; }
             .main-content { margin-left: 70px; max-width: calc(100% - 70px); padding: 20px; }
         }
         @media (max-width: 600px) {
@@ -117,14 +123,55 @@
             <span>Virtual Museum</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="dashboard-mahasiswa.html">📊 <span>Dashboard</span></a></li>
-            <li><a href="artefak.html">🏛️ <span>Artefak</span></a></li>
-            <li><a href="timeline.html" class="active">⏳ <span>Timeline</span></a></li>
-            <li><a href="peta.html">🗺️ <span>Peta</span></a></li>
-            <li><a href="jawaban.html">📝 <span>Jawaban</span></a></li>
-            <li><a href="nilai.html">⭐ <span>Nilai</span></a></li>
-            <li><a href="profil.html">👤 <span>Profil</span></a></li>
+            <li>
+                <a href="dashboard-mahasiswa.html">
+                    <svg viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="artefak.html">
+                    <svg viewBox="0 0 24 24"><path d="M4 22h16M6 18V6l6-4 6 4v12M10 12h4"/></svg>
+                    <span>Artefak</span>
+                </a>
+            </li>
+            <li>
+                <a href="timeline.html" class="active">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Timeline</span>
+                </a>
+            </li>
+            <li>
+                <a href="peta.html">
+                    <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2؍16 8 22 1 18"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                    <span>Peta</span>
+                </a>
+            </li>
+            <li>
+                <a href="jawaban.html">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <span>Jawaban</span>
+                </a>
+            </li>
+            <li>
+                <a href="nilai.html">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>Nilai</span>
+                </a>
+            </li>
+            <li>
+                <a href="profil.html">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Profil</span>
+                </a>
+            </li>
         </ul>
+        <div class="sidebar-footer">
+            <a href="#" onclick="handleLogout(event)">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Keluar</span>
+            </a>
+        </div>
     </nav>
 
     <!-- Main Content Container -->
@@ -189,12 +236,9 @@
     </div>
 
     <script>
-        // Konfigurasi API Endpoint Google Apps Script (Diperbaiki: menggunakan action=getArtefak dan menghapus kutip ganda berlebih)
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec?action=getArtefak";
-
         let allArtifacts = [];
 
-        // Fungsi Keamanan untuk Escape HTML
         function escapeHTML(str) {
             if (!str) return '';
             return String(str)
@@ -205,17 +249,14 @@
                 .replace(/'/g, '&#039;');
         }
 
-        // Saat Dokumen Dimuat
         document.addEventListener('DOMContentLoaded', () => {
             fetchArtifacts();
 
-            // Event Listeners untuk Filter & Search
             document.getElementById('filterPeriode').addEventListener('change', applyFiltersAndSearch);
             document.getElementById('filterPulau').addEventListener('change', applyFiltersAndSearch);
             document.getElementById('filterJenis').addEventListener('change', applyFiltersAndSearch);
             document.getElementById('searchInput').addEventListener('input', applyFiltersAndSearch);
 
-            // Event Listener untuk Modal Close
             document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
             document.getElementById('detailModal').addEventListener('click', (e) => {
                 if (e.target === document.getElementById('detailModal')) {
@@ -224,7 +265,6 @@
             });
         });
 
-        // Fetch Data dari API Google Apps Script
         async function fetchArtifacts() {
             const contentArea = document.getElementById('contentArea');
             contentArea.innerHTML = `
@@ -238,35 +278,54 @@
             try {
                 const response = await fetch(GAS_API_URL);
                 const result = await response.json();
+                console.log("Respons dari GAS:", result);
 
-                if (result.success && Array.isArray(result.data)) {
-                    // Saring hanya yang Status = "Aktif"
-                    allArtifacts = result.data.filter(item => String(item.Status).trim().toLowerCase() === 'aktif');
-
-                    if (allArtifacts.length === 0) {
-                        contentArea.innerHTML = `
-                            <div class="state-container">
-                                <h3>Belum ada data artefak.</h3>
-                                <p>Database saat ini tidak memiliki data artefak aktif.</p>
-                            </div>
-                        `;
-                        updateStats([]);
-                        return;
+                let rawData = [];
+                if (Array.isArray(result)) {
+                    rawData = result;
+                } else if (result && typeof result === 'object') {
+                    if (Array.isArray(result.data)) {
+                        rawData = result.data;
+                    } else if (Array.isArray(result.items)) {
+                        rawData = result.items;
+                    } else if (Array.isArray(result.artefak)) {
+                        rawData = result.artefak;
+                    } else {
+                        const foundKey = Object.keys(result).find(key => Array.isArray(result[key]));
+                        if (foundKey) rawData = result[foundKey];
                     }
-
-                    // Urutkan berdasarkan UrutanKronologi dari kecil ke besar (fallback 0 jika kosong)
-                    allArtifacts.sort((a, b) => {
-                        let valA = parseInt(a.UrutanKronologi) || 0;
-                        let valB = parseInt(b.UrutanKronologi) || 0;
-                        return valA - valB;
-                    });
-
-                    populateFilters(allArtifacts);
-                    updateStats(allArtifacts);
-                    renderTimeline(allArtifacts);
-                } else {
-                    throw new Error('Format respons API tidak valid.');
                 }
+
+                if (!Array.isArray(rawData) || rawData.length === 0) {
+                    contentArea.innerHTML = `
+                        <div class="state-container">
+                            <h3>Belum ada data artefak atau format kosong.</h3>
+                            <p>Database tidak mengembalikan data yang valid.</p>
+                        </div>
+                    `;
+                    updateStats([]);
+                    return;
+                }
+
+                allArtifacts = rawData.filter(item => {
+                    if (!item.Status) return true;
+                    return String(item.Status).trim().toLowerCase() === 'aktif';
+                });
+
+                if (allArtifacts.length === 0) {
+                    allArtifacts = rawData;
+                }
+
+                allArtifacts.sort((a, b) => {
+                    let valA = parseInt(a.UrutanKronologi) || 0;
+                    let valB = parseInt(b.UrutanKronologi) || 0;
+                    return valA - valB;
+                });
+
+                populateFilters(allArtifacts);
+                updateStats(allArtifacts);
+                renderTimeline(allArtifacts);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 contentArea.innerHTML = `
@@ -279,7 +338,6 @@
             }
         }
 
-        // Update Statistik Header
         function updateStats(data) {
             const totalArtefak = data.length;
             const totalPeriode = new Set(data.map(item => item.Periode).filter(Boolean)).size;
@@ -290,7 +348,6 @@
             document.getElementById('statPulau').textContent = totalPulau;
         }
 
-        // Mengisi Opsi Filter Otomatis
         function populateFilters(data) {
             const periodeSet = new Set();
             const pulauSet = new Set();
@@ -322,7 +379,6 @@
             selectEl.value = currentValue;
         }
 
-        // Filter & Search Logic
         function applyFiltersAndSearch() {
             const selectedPeriode = document.getElementById('filterPeriode').value;
             const selectedPulau = document.getElementById('filterPulau').value;
@@ -350,7 +406,6 @@
             renderTimeline(filtered);
         }
 
-        // Render Timeline Vertikal
         function renderTimeline(data) {
             const contentArea = document.getElementById('contentArea');
 
@@ -364,7 +419,6 @@
                 return;
             }
 
-            // Kelompokkan berdasarkan Tahun/Abad secara otomatis
             const grouped = {};
             data.forEach(item => {
                 const abadKey = item['Tahun/Abad'] || 'Periode Lainnya';
@@ -421,7 +475,6 @@
             contentArea.innerHTML = html;
         }
 
-        // Modal Popup Detail
         function openModal(artefakId) {
             const item = allArtifacts.find(a => String(a.ArtefakID) === String(artefakId));
             if (!item) return;
@@ -481,6 +534,14 @@
         function closeModal() {
             document.getElementById('detailModal').classList.remove('active');
             document.body.style.overflow = 'auto';
+        }
+
+        function handleLogout(event) {
+            event.preventDefault();
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
         }
     </script>
 </body>
