@@ -496,10 +496,11 @@
     // 4. URL Web App Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
-    // 5. Fungsi Panggil Backend API
+// 5. Fungsi Panggil Backend API
     async function loginUser(username, password, role) {
       try {
         const payload = {
+          action: "login", // <--- TAMBAHKAN BARIS INI
           username: username,
           password: password,
           role: role
