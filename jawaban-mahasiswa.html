@@ -770,7 +770,6 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // PERHATIAN: Gunakan URL Web App GAS Anda yang sudah terhubung dengan project
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
     let allAnswersData = [];
@@ -1001,7 +1000,7 @@
         if (result.success) {
           alert(result.message || "Penilaian berhasil disimpan");
           closeDetailModal();
-          loadAnswers(); // Refresh data tabel
+          loadAnswers();
         } else {
           alert("Gagal menyimpan: " + (result.message || "Terjadi kesalahan"));
         }
