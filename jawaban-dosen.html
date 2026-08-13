@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MODIVIM — Jawaban Mahasiswa</title>
+  <title>Manajemen Jawaban Mahasiswa — MODIVIM Dosen</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +21,7 @@
       --ash: #a59f97;
       --blue: #0447ff;
       --orange: #ff4704;
+      --success: #008000;
     }
 
     * {
@@ -150,7 +151,6 @@
       min-width: 0;
     }
 
-    /* HEADER */
     header.dosen-header {
       background-color: var(--warm-taupe);
       border-bottom: 1px solid var(--stone);
@@ -208,7 +208,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* MOBILE BAR */
     .mobile-bar {
       display: none;
       background-color: var(--warm-taupe);
@@ -226,44 +225,11 @@
       color: var(--black);
     }
 
-    /* CONTAINER BODY */
     .dashboard-body {
       padding: 32px;
       max-width: 1300px;
       width: 100%;
       margin: 0 auto;
-    }
-
-    /* STATS / KARTU RINGKASAN */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-
-    .stat-card {
-      background-color: var(--warm-taupe);
-      border: 1px solid var(--stone);
-      border-radius: 8px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--smoke);
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--black);
     }
 
     /* FILTER & SEARCH AREA */
@@ -272,7 +238,7 @@
       border: 1px solid var(--stone);
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
@@ -284,7 +250,7 @@
       flex-direction: column;
       gap: 6px;
       flex: 1;
-      min-width: 160px;
+      min-width: 180px;
     }
 
     .filter-group label {
@@ -313,11 +279,6 @@
       border-color: var(--black);
     }
 
-    .filter-actions {
-      display: flex;
-      gap: 10px;
-    }
-
     .btn-filter-reset {
       background-color: var(--stone);
       color: var(--graphite);
@@ -327,6 +288,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
+      height: 41px;
       transition: background 0.2s;
     }
 
@@ -391,12 +353,12 @@
     }
 
     .badge-status.dinilai {
-      background: rgba(0, 150, 0, 0.1);
-      color: #008000;
+      background: rgba(0, 128, 0, 0.1);
+      color: var(--success);
     }
 
     .btn-action {
-      background-color: var(--blue);
+      background-color: var(--black);
       color: #ffffff;
       padding: 6px 12px;
       border-radius: 4px;
@@ -410,14 +372,14 @@
     }
 
     .btn-action:hover {
-      background-color: #0037cc;
+      background-color: var(--graphite);
     }
 
     .state-msg {
-      padding: 30px;
+      padding: 40px;
       text-align: center;
       color: var(--smoke);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     /* ================= MODAL / POPUP DETAIL ================= */
@@ -448,7 +410,7 @@
       border: 1px solid var(--stone);
       border-radius: 8px;
       width: 100%;
-      max-width: 650px;
+      max-width: 700px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
@@ -481,7 +443,7 @@
     .modal-close {
       background: none;
       border: none;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       cursor: pointer;
       color: var(--smoke);
     }
@@ -543,25 +505,84 @@
       white-space: pre-wrap;
     }
 
+    .form-group-assessment {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group-assessment label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--smoke);
+    }
+
+    .form-group-assessment input,
+    .form-group-assessment textarea {
+      background-color: var(--bg-color);
+      border: 1px solid var(--stone);
+      color: var(--graphite);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group-assessment input:focus,
+    .form-group-assessment textarea:focus {
+      border-color: var(--black);
+    }
+
+    .form-group-assessment textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
     .modal-footer {
       padding: 16px 24px;
       border-top: 1px solid var(--stone);
       display: flex;
       justify-content: flex-end;
+      gap: 10px;
       background-color: var(--warm-taupe);
       border-bottom-left-radius: 8px;
       border-bottom-right-radius: 8px;
     }
 
-    .btn-close-modal {
-      background-color: var(--black);
+    .btn-secondary {
+      background-color: var(--stone);
+      color: var(--graphite);
+      border: 1px solid var(--ash);
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: var(--blue);
       color: #ffffff;
-      padding: 8px 16px;
+      padding: 10px 16px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #0337cc;
+    }
+
+    .btn-primary:disabled {
+      background-color: var(--ash);
+      cursor: not-allowed;
     }
 
     /* RESPONSIVE DESIGN */
@@ -601,7 +622,7 @@
   </div>
 
   <!-- SIDEBAR -->
-  <aside.sidebar id="sidebarNav">
+  <aside class="sidebar" id="sidebarNav">
     <div class="sidebar-brand">
       <h2>MODIVIM</h2>
       <p>Virtual Museum</p>
@@ -659,12 +680,11 @@
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main.main-content>
-    <!-- HEADER -->
+  <main class="main-content">
     <header class="dosen-header">
       <div class="header-title">
-        <h1>Jawaban Mahasiswa</h1>
-        <p>Respons mahasiswa terhadap pertanyaan kritis-historis pada Virtual Museum MODIVIM</p>
+        <h1>Manajemen Jawaban Mahasiswa</h1>
+        <p>Kelola dan berikan penilaian serta feedback terhadap respons kritis-historis mahasiswa</p>
       </div>
       <div class="header-profile">
         <div class="profile-info">
@@ -675,83 +695,53 @@
       </div>
     </header>
 
-    <!-- DASHBOARD BODY -->
     <div class="dashboard-body">
-
-      <!-- RINGKASAN KARTU (3 KARTU) -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-label">Total Jawaban</span>
-          <span class="stat-value" id="statTotalJawaban">0</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Jumlah Terkirim</span>
-          <span class="stat-value" id="statJumlahTerkirim">0</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Belum Dinilai</span>
-          <span class="stat-value" id="statBelumDinilai">0</span>
-        </div>
-      </div>
 
       <!-- FILTER & PENCARIAN AREA -->
       <div class="filter-box">
         <div class="filter-group">
-          <label for="searchBox">Cari Jawaban</label>
-          <input type="text" id="searchBox" placeholder="Cari ID, Mahasiswa, Artefak..." oninput="applyFilterAndSearch()">
+          <label for="searchBox">Pencarian Umum</label>
+          <input type="text" id="searchBox" placeholder="Cari ID, Mahasiswa, Artefak, Isi..." oninput="applyFilterAndSearch()">
         </div>
         <div class="filter-group">
-          <label for="filterMahasiswa">MahasiswaID</label>
+          <label for="filterMahasiswa">Semua Mahasiswa</label>
           <select id="filterMahasiswa" onchange="applyFilterAndSearch()">
             <option value="">Semua Mahasiswa</option>
           </select>
         </div>
         <div class="filter-group">
-          <label for="filterArtefak">ArtefakID</label>
-          <select id="filterArtefak" onchange="applyFilterAndSearch()">
-            <option value="">Semua Artefak</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="filterPertanyaan">PertanyaanID</label>
-          <select id="filterPertanyaan" onchange="applyFilterAndSearch()">
-            <option value="">Semua Pertanyaan</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="filterStatus">Status</label>
+          <label for="filterStatus">Semua Status</label>
           <select id="filterStatus" onchange="applyFilterAndSearch()">
-            <option value="">Semua</option>
+            <option value="">Semua Status</option>
             <option value="Terkirim">Terkirim</option>
-            <option value="Sudah Dinilai">Sudah Dinilai</option>
+            <option value="Dinilai">Dinilai</option>
           </select>
         </div>
-        <div class="filter-actions">
+        <div>
           <button class="btn-filter-reset" onclick="resetFilters()">Reset Filter</button>
         </div>
       </div>
 
-      <!-- TABEL JAWABAN -->
+      <!-- TABEL SECTION -->
       <div class="section-box">
         <div class="section-title">Daftar Respons Jawaban Mahasiswa</div>
         <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
-                <th>No</th>
-                <th>JawabanID</th>
+                <th>Jawaban ID</th>
                 <th>Tanggal</th>
-                <th>Waktu</th>
-                <th>MahasiswaID</th>
-                <th>ArtefakID</th>
-                <th>PertanyaanID</th>
+                <th>Mahasiswa</th>
+                <th>Artefak</th>
+                <th>Pertanyaan</th>
                 <th>Status</th>
+                <th>Nilai</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody id="answersTableBody">
               <tr>
-                <td colspan="9" class="state-msg">Memuat jawaban mahasiswa...</td>
+                <td colspan="8" class="state-msg">Memuat data jawaban mahasiswa...</td>
               </tr>
             </tbody>
           </table>
@@ -761,32 +751,34 @@
     </div>
   </main>
 
-  <!-- MODAL / POPUP DETAIL JAWABAN -->
+  <!-- MODAL / POPUP DETAIL JAWABAN & PENILAIAN -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal-container">
       <div class="modal-header">
-        <h3 id="modalTitle">DETAIL JAWABAN</h3>
+        <h3 id="modalTitle">DETAIL JAWABAN MAHASISWA</h3>
         <button class="modal-close" onclick="closeDetailModal()">&times;</button>
       </div>
       <div class="modal-body" id="modalBodyContent">
         <!-- Konten detail dinamis -->
       </div>
       <div class="modal-footer">
-        <button class="btn-close-modal" onclick="closeDetailModal()">Tutup</button>
+        <button class="btn-secondary" onclick="closeDetailModal()">Tutup</button>
+        <button class="btn-primary" id="btnSaveAssessment" onclick="saveAssessment()">Simpan Penilaian</button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC & GAS INTEGRATION -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    const GAS_API_URL = "GANTI_DENGAN_URL_GAS_ANDA";
+    // PERHATIAN: Gunakan URL Web App GAS Anda yang sudah terhubung dengan project
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
     let allAnswersData = [];
+    let currentSelectedJawabanID = null;
 
     document.addEventListener("DOMContentLoaded", function() {
       loadDosenProfile();
 
-      // Mobile Sidebar Toggle
       const sidebarToggle = document.getElementById("sidebarToggle");
       const sidebarNav = document.getElementById("sidebarNav");
       if (sidebarToggle && sidebarNav) {
@@ -795,7 +787,6 @@
         });
       }
 
-      // Cek URL param jika ada auto-open dari halaman lain (misal ?id=J001)
       loadAnswers();
     });
 
@@ -814,14 +805,8 @@
       }
     }
 
-    // Memuat data jawaban dari GAS
     async function loadAnswers() {
       const tbody = document.getElementById("answersTableBody");
-
-      if (GAS_API_URL === "GANTI_DENGAN_URL_GAS_ANDA") {
-        tbody.innerHTML = `<tr><td colspan="9" class="state-msg">Konfigurasi URL GAS diperlukan.</td></tr>`;
-        return;
-      }
 
       try {
         const response = await fetch(GAS_API_URL + "?action=getAnswers");
@@ -831,71 +816,30 @@
           allAnswersData = result.data;
           
           if (allAnswersData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="state-msg">Belum ada jawaban mahasiswa.</td></tr>`;
-            updateSummaryCards(0, 0, 0);
+            tbody.innerHTML = `<tr><td colspan="8" class="state-msg">Belum ada jawaban mahasiswa yang tersimpan.</td></tr>`;
             return;
           }
 
-          // Urutkan terbaru berdasarkan urutan data atau parsing Tanggal+Waktu jika memungkinkan
-          populateFilterDropdowns(allAnswersData);
+          populateFilterMahasiswa(allAnswersData);
           renderTableData(allAnswersData);
-          updateSummaryCardsStats(allAnswersData);
-
-          // Periksa apakah ada parameter ?id=... di URL untuk langsung buka detail modal
-          const urlParams = new URLSearchParams(window.location.search);
-          const targetId = urlParams.get("id");
-          if (targetId) {
-            const found = allAnswersData.find(item => item.JawabanID === targetId);
-            if (found) {
-              openDetailModal(found);
-            }
-          }
-
         } else {
-          tbody.innerHTML = `<tr><td colspan="9" class="state-msg">Data jawaban belum dapat dimuat dari server.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" class="state-msg">Gagal memuat data jawaban mahasiswa.</td></tr>`;
         }
       } catch (error) {
-        console.error("GAS Answers Error:", error);
-        tbody.innerHTML = `<tr><td colspan="9" class="state-msg">Data jawaban belum dapat dimuat dari server.</td></tr>`;
+        console.error("API Error:", error);
+        tbody.innerHTML = `<tr><td colspan="8" class="state-msg">Gagal memuat data jawaban mahasiswa.</td></tr>`;
       }
     }
 
-    // Update Kartu Ringkasan
-    function updateSummaryCardsStats(data) {
-      const total = data.length;
-      const terkirim = data.filter(item => item.Status && item.Status.toLowerCase() === "terkirim").length;
-      const belumDinilai = data.filter(item => !item.Nilai || item.Nilai === "-" || item.Nilai.toString().trim() === "").length;
-      updateSummaryCards(total, terkirim, belumDinilai);
-    }
-
-    function updateSummaryCards(total, terkirim, belumDinilai) {
-      document.getElementById("statTotalJawaban").innerText = total;
-      document.getElementById("statJumlahTerkirim").innerText = terkirim;
-      document.getElementById("statBelumDinilai").innerText = belumDinilai;
-    }
-
-    // Mengisi pilihan dropdown filter secara dinamis dari data
-    function populateFilterDropdowns(data) {
+    function populateFilterMahasiswa(data) {
       const mhsSet = new Set();
-      const artSet = new Set();
-      const qSet = new Set();
-
       data.forEach(item => {
         if (item.MahasiswaID) mhsSet.add(item.MahasiswaID);
-        if (item.ArtefakID) artSet.add(item.ArtefakID);
-        if (item.PertanyaanID) qSet.add(item.PertanyaanID);
       });
 
-      fillSelectOptions("filterMahasiswa", mhsSet);
-      fillSelectOptions("filterArtefak", artSet);
-      fillSelectOptions("filterPertanyaan", qSet);
-    }
-
-    function fillSelectOptions(elementId, setValues) {
-      const select = document.getElementById(elementId);
-      const defaultText = select.options[0].text;
-      select.innerHTML = `<option value="">${defaultText}</option>`;
-      Array.from(setValues).sort().forEach(val => {
+      const select = document.getElementById("filterMahasiswa");
+      select.innerHTML = `<option value="">Semua Mahasiswa</option>`;
+      Array.from(mhsSet).sort().forEach(val => {
         const opt = document.createElement("option");
         opt.value = val;
         opt.textContent = val;
@@ -903,70 +847,53 @@
       });
     }
 
-    // Render Tabel Utama
     function renderTableData(data) {
       const tbody = document.getElementById("answersTableBody");
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="state-msg">Tidak ada data yang sesuai dengan filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="state-msg">Tidak ada data yang sesuai dengan filter.</td></tr>`;
         return;
       }
 
       let html = "";
-      data.forEach((row, index) => {
-        const statusText = row.Status || "Terkirim";
-        const isDinilai = row.Nilai && row.Nilai !== "-" && row.Nilai.toString().trim() !== "";
+      data.forEach(row => {
+        const status = row.Status || "Terkirim";
+        const isDinilai = status.toLowerCase() === "dinilai";
         const badgeClass = isDinilai ? "badge-status dinilai" : "badge-status";
-        const displayStatus = isDinilai ? "Sudah Dinilai" : statusText;
+        const nilaiDisplay = (row.Nilai && row.Nilai !== "-") ? row.Nilai : "-";
 
         html += `
           <tr>
-            <td>${index + 1}</td>
             <td><strong>${escapeHtml(row.JawabanID)}</strong></td>
-            <td>${escapeHtml(row.Tanggal)}</td>
-            <td>${escapeHtml(row.Waktu)}</td>
+            <td>${escapeHtml(row.Tanggal)}<br><small style="color:var(--smoke);">${escapeHtml(row.Waktu)}</small></td>
             <td>${escapeHtml(row.MahasiswaID)}</td>
             <td>${escapeHtml(row.ArtefakID)}</td>
             <td>${escapeHtml(row.PertanyaanID)}</td>
-            <td><span class="${badgeClass}">${escapeHtml(displayStatus)}</span></td>
-            <td><button class="btn-action" onclick='openDetailModalById("${escapeHtml(row.JawabanID)}")'>Lihat Jawaban</button></td>
+            <td><span class="${badgeClass}">${escapeHtml(status)}</span></td>
+            <td><strong>${escapeHtml(nilaiDisplay)}</strong></td>
+            <td><button class="btn-action" onclick="openDetailModal('${escapeHtml(row.JawabanID)}')">Lihat Detail</button></td>
           </tr>
         `;
       });
       tbody.innerHTML = html;
     }
 
-    // Filter & Pencarian Gabungan
     function applyFilterAndSearch() {
       const keyword = document.getElementById("searchBox").value.toLowerCase().trim();
       const fMhs = document.getElementById("filterMahasiswa").value;
-      const fArt = document.getElementById("filterArtefak").value;
-      const fQ = document.getElementById("filterPertanyaan").value;
       const fStatus = document.getElementById("filterStatus").value;
 
       const filtered = allAnswersData.filter(item => {
-        // Search check
         const matchSearch = !keyword || 
           (item.JawabanID && item.JawabanID.toLowerCase().includes(keyword)) ||
           (item.MahasiswaID && item.MahasiswaID.toLowerCase().includes(keyword)) ||
           (item.ArtefakID && item.ArtefakID.toLowerCase().includes(keyword)) ||
-          (item.PertanyaanID && item.PertanyaanID.toLowerCase().includes(keyword));
+          (item.PertanyaanID && item.PertanyaanID.toLowerCase().includes(keyword)) ||
+          (item.Jawaban && item.Jawaban.toLowerCase().includes(keyword));
 
-        // Dropdown filters
         const matchMhs = !fMhs || item.MahasiswaID === fMhs;
-        const matchArt = !fArt || item.ArtefakID === fArt;
-        const matchQ = !fQ || item.PertanyaanID === fQ;
-        
-        let matchStatus = true;
-        if (fStatus) {
-          const isDinilai = item.Nilai && item.Nilai !== "-" && item.Nilai.toString().trim() !== "";
-          if (fStatus === "Sudah Dinilai") {
-            matchStatus = isDinilai;
-          } else if (fStatus === "Terkirim") {
-            matchStatus = !isDinilai;
-          }
-        }
+        const matchStatus = !fStatus || (item.Status && item.Status.toLowerCase() === fStatus.toLowerCase());
 
-        return matchSearch && matchMhs && matchArt && matchQ && matchStatus;
+        return matchSearch && matchMhs && matchStatus;
       });
 
       renderTableData(filtered);
@@ -975,28 +902,21 @@
     function resetFilters() {
       document.getElementById("searchBox").value = "";
       document.getElementById("filterMahasiswa").value = "";
-      document.getElementById("filterArtefak").value = "";
-      document.getElementById("filterPertanyaan").value = "";
       document.getElementById("filterStatus").value = "";
       renderTableData(allAnswersData);
     }
 
-    // Modal Detail
-    function openDetailModalById(jawabanId) {
-      const found = allAnswersData.find(item => item.JawabanID === jawabanId);
-      if (found) {
-        openDetailModal(found);
-      }
-    }
+    function openDetailModal(jawabanId) {
+      const item = allAnswersData.find(i => i.JawabanID === jawabanId);
+      if (!item) return;
 
-    function openDetailModal(item) {
+      currentSelectedJawabanID = item.JawabanID;
       const modal = document.getElementById("detailModal");
       const modalBody = document.getElementById("modalBodyContent");
       document.getElementById("modalTitle").innerText = `DETAIL JAWABAN — ${item.JawabanID}`;
 
-      const nilaiDisplay = (!item.Nilai || item.Nilai === "-" || item.Nilai.toString().trim() === "") ? "Belum dinilai" : item.Nilai;
-      const feedbackDisplay = (!item.Feedback || item.Feedback === "-" || item.Feedback.toString().trim() === "") ? "Belum ada feedback" : item.Feedback;
-      const statusDisplay = item.Status || "Terkirim";
+      const currentNilai = (item.Nilai && item.Nilai !== "-") ? item.Nilai : "";
+      const currentFeedback = (item.Feedback && item.Feedback !== "-") ? item.Feedback : "";
 
       modalBody.innerHTML = `
         <div class="detail-grid">
@@ -1005,7 +925,7 @@
             <span>${escapeHtml(item.JawabanID)}</span>
           </div>
           <div class="detail-item">
-            <label>Tanggal & Waktu</label>
+            <label>Waktu Pengiriman</label>
             <span>${escapeHtml(item.Tanggal)} - ${escapeHtml(item.Waktu)} WIB</span>
           </div>
           <div class="detail-item">
@@ -1013,18 +933,13 @@
             <span>${escapeHtml(item.MahasiswaID)}</span>
           </div>
           <div class="detail-item">
-            <label>Artefak ID</label>
-            <span>${escapeHtml(item.ArtefakID)}</span>
+            <label>Artefak ID / Pertanyaan ID</label>
+            <span>${escapeHtml(item.ArtefakID)} / ${escapeHtml(item.PertanyaanID)}</span>
           </div>
           <div class="detail-item" style="grid-column: span 2;">
-            <label>Pertanyaan ID</label>
-            <span>${escapeHtml(item.PertanyaanID)}</span>
+            <label>Status Saat Ini</label>
+            <span style="color: var(--blue);">${escapeHtml(item.Status || "Terkirim")}</span>
           </div>
-        </div>
-
-        <div class="detail-content-box">
-          <h4>Pertanyaan Kritis-Historis</h4>
-          <p>Pertanyaan terkait artefak ${escapeHtml(item.ArtefakID)} (${escapeHtml(item.PertanyaanID)}).</p>
         </div>
 
         <div class="detail-content-box">
@@ -1032,20 +947,14 @@
           <p>${escapeHtml(item.Jawaban)}</p>
         </div>
 
-        <div class="detail-grid">
-          <div class="detail-item">
-            <label>Status Pengiriman</label>
-            <span>${escapeHtml(statusDisplay)}</span>
-          </div>
-          <div class="detail-item">
-            <label>Nilai</label>
-            <span style="color: var(--blue);">${escapeHtml(nilaiDisplay)}</span>
-          </div>
+        <div class="form-group-assessment">
+          <label for="inputNilai">Nilai (0 - 100)</label>
+          <input type="number" id="inputNilai" min="0" max="100" placeholder="Contoh: 85" value="${escapeHtml(currentNilai)}">
         </div>
 
-        <div class="detail-content-box">
-          <h4>Feedback Dosen</h4>
-          <p>${escapeHtml(feedbackDisplay)}</p>
+        <div class="form-group-assessment">
+          <label for="inputFeedback">Feedback Dosen</label>
+          <textarea id="inputFeedback" placeholder="Berikan catatan atau ulasan analitis untuk mahasiswa...">${escapeHtml(currentFeedback)}</textarea>
         </div>
       `;
 
@@ -1055,32 +964,72 @@
     function closeDetailModal() {
       const modal = document.getElementById("detailModal");
       modal.classList.remove("active");
-      // Bersihkan parameter query jika ada
-      if (window.history.replaceState) {
-        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        window.history.replaceState({path: cleanUrl}, '', cleanUrl);
+      currentSelectedJawabanID = null;
+    }
+
+    async function saveAssessment() {
+      if (!currentSelectedJawabanID) return;
+
+      const nilaiInput = document.getElementById("inputNilai").value.trim();
+      const feedbackInput = document.getElementById("inputFeedback").value.trim();
+
+      const nilaiNum = Number(nilaiInput);
+      if (nilaiInput === "" || isNaN(nilaiNum) || nilaiNum < 0 || nilaiNum > 100) {
+        alert("Masukkan nilai yang valid antara 0 sampai 100.");
+        return;
+      }
+
+      const btnSave = document.getElementById("btnSaveAssessment");
+      btnSave.disabled = true;
+      btnSave.innerText = "Menyimpan...";
+
+      const payload = {
+        action: "updateAssessment",
+        JawabanID: currentSelectedJawabanID,
+        Nilai: nilaiNum,
+        Feedback: feedbackInput
+      };
+
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          alert(result.message || "Penilaian berhasil disimpan");
+          closeDetailModal();
+          loadAnswers(); // Refresh data tabel
+        } else {
+          alert("Gagal menyimpan: " + (result.message || "Terjadi kesalahan"));
+        }
+      } catch (error) {
+        console.error("Save Error:", error);
+        alert("Terjadi kesalahan jaringan saat menyimpan penilaian.");
+      } finally {
+        btnSave.disabled = false;
+        btnSave.innerText = "Simpan Penilaian";
       }
     }
 
-    // Logout
     function logoutUser() {
-      if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
+      if (confirm("Apakah Anda yakin ingin keluar?")) {
         sessionStorage.clear();
         localStorage.removeItem("modivim_user");
         window.location.href = "login.html";
       }
     }
 
-    // HTML escape helper untuk keamanan XSS
-function escapeHtml(str) {
-    if (!str) return "";
-    return String(str)
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
     }
   </script>
 </body>
