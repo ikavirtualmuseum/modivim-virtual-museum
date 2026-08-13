@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Sejarah - MODIVIM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfcfc;
+            --panel-color: #f5f3f1;
+            --border-color: #ebe8e4;
+            --text-color: #44403b;
+            --heading-color: #000000;
+            --primary-color: #0447ff;
+            --hover-color: #0037cc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--panel-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar-brand { padding: 24px; font-size: 20px; font-weight: 700; color: var(--heading-color); border-bottom: 1px solid var(--border-color); }
+        .sidebar-brand span { color: var(--primary-color); display: block; font-size: 12px; font-weight: 500; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sidebar-menu { list-style: none; padding: 20px 0; overflow-y: auto; flex-grow: 1; }
+        .sidebar-menu li a { display: block; padding: 12px 24px; color: var(--text-color); text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.2s; border-left: 3px solid transparent; }
+        .sidebar-menu li a:hover { background-color: rgba(4, 71, 255, 0.05); color: var(--primary-color); }
+        .sidebar-menu li a.active { background-color: rgba(4, 71, 255, 0.08); color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600; }
+        
+        /* Main Content */
+        .main-content { margin-left: 260px; flex-grow: 1; padding: 40px; max-width: calc(100% - 260px); }
+        header { margin-bottom: 30px; }
+        header h1 { font-size: 28px; font-weight: 700; color: var(--heading-color); margin-bottom: 8px; }
+        header p { color: var(--text-color); font-size: 15px; max-width: 800px; line-height: 1.5; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background-color: var(--panel-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: 700; color: var(--heading-color); margin-bottom: 4px; }
+        .stat-label { font-size: 13px; font-weight: 500; color: var(--text-color); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Toolbar (Filter & Search) */
+        .toolbar { background-color: var(--panel-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; align-items: center; justify-content: space-between; }
+        .filter-group { display: flex; flex-wrap: wrap; gap: 12px; flex-grow: 1; }
+        .filter-group select, .search-box input { padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #ffffff; color: var(--text-color); font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .filter-group select:focus, .search-box input:focus { border-color: var(--primary-color); }
+        .search-box { flex-grow: 1; max-width: 350px; }
+        .search-box input { width: 100%; }
+
+        /* Timeline Container */
+        .timeline-container { position: relative; padding-left: 30px; margin-top: 20px; }
+        .timeline-container::before { content: ''; position: absolute; left: 9px; top: 0; bottom: 0; width: 3px; background-color: var(--border-color); }
+        
+        .timeline-period-group { margin-bottom: 40px; position: relative; }
+        .timeline-period-badge { display: inline-flex; align-items: center; background-color: var(--heading-color); color: #ffffff; font-weight: 600; font-size: 13px; padding: 6px 14px; border-radius: 20px; margin-bottom: 24px; position: relative; left: -39px; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .timeline-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        
+        /* Artifact Card */
+        .artifact-card { background-color: var(--panel-color); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+        .artifact-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .artifact-img-container { width: 100%; height: 180px; background-color: #eae6e1; position: relative; overflow: hidden; }
+        .artifact-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .img-placeholder { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #888; font-size: 13px; text-align: center; padding: 10px; }
+        .artifact-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+        .artifact-badge { display: inline-block; background: rgba(4,71,255,0.1); color: var(--primary-color); font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; align-self: flex-start; }
+        .artifact-title { font-size: 18px; font-weight: 700; color: var(--heading-color); margin-bottom: 8px; line-height: 1.3; }
+        .artifact-meta { font-size: 13px; color: #666; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .artifact-desc { font-size: 14px; color: var(--text-color); margin-bottom: 20px; line-height: 1.5; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .artifact-btn { display: inline-block; background-color: var(--primary-color); color: #ffffff; text-align: center; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; transition: background-color 0.2s; border: none; cursor: pointer; }
+        .artifact-btn:hover { background-color: var(--hover-color); }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background-color: var(--bg-color); border-radius: 16px; max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; border: 1px solid var(--border-color); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: var(--panel-color); border: 1px solid var(--border-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; color: var(--heading-color); transition: background 0.2s; }
+        .modal-close:hover { background: #e0deda; }
+        .modal-img { width: 100%; height: 280px; border-radius: 10px; object-fit: cover; margin-bottom: 20px; background-color: #eae6e1; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; font-size: 14px; background: var(--panel-color); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .modal-grid-item span { display: block; font-size: 12px; color: #777; font-weight: 500; margin-bottom: 2px; }
+        .modal-grid-item strong { color: var(--heading-color); }
+        .modal-section-title { font-size: 15px; font-weight: 700; color: var(--heading-color); margin-bottom: 6px; margin-top: 16px; }
+        .modal-text { font-size: 14px; line-height: 1.6; color: var(--text-color); margin-bottom: 14px; }
+
+        /* Status States (Loading, Error, Empty) */
+        .state-container { text-align: center; padding: 60px 20px; background-color: var(--panel-color); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 20px; }
+        .state-container h3 { font-size: 18px; color: var(--heading-color); margin-bottom: 10px; font-weight: 600; }
+        .state-container p { color: var(--text-color); font-size: 14px; margin-bottom: 20px; }
+        .retry-btn { background-color: var(--primary-color); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .retry-btn:hover { background-color: var(--hover-color); }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar { width: 70px; }
+            .sidebar-brand span, .sidebar-menu span { display: none; }
+            .sidebar-brand { padding: 20px 10px; font-size: 16px; text-align: center; }
+            .sidebar-menu li a { padding: 14px; text-align: center; font-size: 18px; }
+            .main-content { margin-left: 70px; max-width: calc(100% - 70px); padding: 20px; }
+        }
+        @media (max-width: 600px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; max-width: 100%; padding: 15px; }
+            .modal-grid { grid-template-columns: 1fr; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            MODIVIM
+            <span>Virtual Museum</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard-mahasiswa.html">📊 <span>Dashboard</span></a></li>
+            <li><a href="artefak.html">🏛️ <span>Artefak</span></a></li>
+            <li><a href="timeline.html" class="active">⏳ <span>Timeline</span></a></li>
+            <li><a href="peta.html">🗺️ <span>Peta</span></a></li>
+            <li><a href="jawaban.html">📝 <span>Jawaban</span></a></li>
+            <li><a href="nilai.html">⭐ <span>Nilai</span></a></li>
+            <li><a href="profil.html">👤 <span>Profil</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        <header>
+            <h1>Timeline Sejarah Islam Indonesia</h1>
+            <p>Jelajahi perjalanan sejarah Islamisasi Indonesia berdasarkan urutan waktu. Amati perubahan artefak, lokasi, dan karakteristiknya dari satu periode ke periode berikutnya.</p>
+        </header>
+
+        <!-- Statistics Section -->
+        <section class="stats-grid" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-number" id="statArtefak">-</div>
+                <div class="stat-label">Total Artefak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statPeriode">-</div>
+                <div class="stat-label">Total Periode</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statPulau">-</div>
+                <div class="stat-label">Total Pulau</div>
+            </div>
+        </section>
+
+        <!-- Toolbar (Filters & Search) -->
+        <section class="toolbar">
+            <div class="filter-group">
+                <select id="filterPeriode">
+                    <option value="">Semua Periode</option>
+                </select>
+                <select id="filterPulau">
+                    <option value="">Semua Pulau</option>
+                </select>
+                <select id="filterJenis">
+                    <option value="">Semua Jenis</option>
+                </select>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Cari artefak, lokasi, jenis, abad...">
+            </div>
+        </section>
+
+        <!-- Dynamic Content Area -->
+        <div id="contentArea">
+            <div class="state-container" id="loadingState">
+                <div class="spinner"></div>
+                <h3>Memuat timeline sejarah...</h3>
+                <p>Mohon tunggu sebentar sementara data diambil dari server.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detail Modal Popup -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <div id="modalBody">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi API Endpoint Google Apps Script
+        const GAS_API_URL = "https://script.google.com/macros/s/URL_GOOGLE_APPS_SCRIPT_SAYA/exec?action=getArtifacts";
+
+        let allArtifacts = [];
+
+        // Fungsi Keamanan untuk Escape HTML
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Saat Dokumen Dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchArtifacts();
+
+            // Event Listeners untuk Filter & Search
+            document.getElementById('filterPeriode').addEventListener('change', applyFiltersAndSearch);
+            document.getElementById('filterPulau').addEventListener('change', applyFiltersAndSearch);
+            document.getElementById('filterJenis').addEventListener('change', applyFiltersAndSearch);
+            document.getElementById('searchInput').addEventListener('input', applyFiltersAndSearch);
+
+            // Event Listener untuk Modal Close
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('detailModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('detailModal')) {
+                    closeModal();
+                }
+            });
+        });
+
+        // Fetch Data dari API Google Apps Script
+        async function fetchArtifacts() {
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `
+                <div class="state-container">
+                    <div class="spinner"></div>
+                    <h3>Memuat timeline sejarah...</h3>
+                    <p>Mohon tunggu sebentar sementara data diambil dari server.</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(GAS_API_URL);
+                const result = await response.json();
+
+                if (result.success && Array.isArray(result.data)) {
+                    // Saring hanya yang Status = "Aktif"
+                    allArtifacts = result.data.filter(item => String(item.Status).trim().toLowerCase() === 'aktif');
+
+                    if (allArtifacts.length === 0) {
+                        contentArea.innerHTML = `
+                            <div class="state-container">
+                                <h3>Belum ada data artefak.</h3>
+                                <p>Database saat ini tidak memiliki data artefak aktif.</p>
+                            </div>
+                        `;
+                        updateStats([]);
+                        return;
+                    }
+
+                    // Urutkan berdasarkan UrutanKronologi dari kecil ke besar (fallback 0 jika kosong)
+                    allArtifacts.sort((a, b) => {
+                        let valA = parseInt(a.UrutanKronologi) || 0;
+                        let valB = parseInt(b.UrutanKronologi) || 0;
+                        return valA - valB;
+                    });
+
+                    populateFilters(allArtifacts);
+                    updateStats(allArtifacts);
+                    renderTimeline(allArtifacts);
+                } else {
+                    throw new Error('Format respons API tidak valid.');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                contentArea.innerHTML = `
+                    <div class="state-container">
+                        <h3>Gagal memuat timeline dari server.</h3>
+                        <p>Terjadi kesalahan saat menghubungkan ke database Google Sheets.</p>
+                        <button class="retry-btn" onclick="fetchArtifacts()">Coba Lagi</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Update Statistik Header
+        function updateStats(data) {
+            const totalArtefak = data.length;
+            const totalPeriode = new Set(data.map(item => item.Periode).filter(Boolean)).size;
+            const totalPulau = new Set(data.map(item => item.Pulau).filter(Boolean)).size;
+
+            document.getElementById('statArtefak').textContent = totalArtefak;
+            document.getElementById('statPeriode').textContent = totalPeriode;
+            document.getElementById('statPulau').textContent = totalPulau;
+        }
+
+        // Mengisi Opsi Filter Otomatis
+        function populateFilters(data) {
+            const periodeSet = new Set();
+            const pulauSet = new Set();
+            const jenisSet = new Set();
+
+            data.forEach(item => {
+                if (item.Periode) periodeSet.add(item.Periode);
+                if (item.Pulau) pulauSet.add(item.Pulau);
+                if (item.JenisArtefak) jenisSet.add(item.JenisArtefak);
+            });
+
+            populateSelect('filterPeriode', periodeSet, 'Semua Periode');
+            populateSelect('filterPulau', pulauSet, 'Semua Pulau');
+            populateSelect('filterJenis', jenisSet, 'Semua Jenis');
+        }
+
+        function populateSelect(elementId, setValues, defaultLabel) {
+            const selectEl = document.getElementById(elementId);
+            const currentValue = selectEl.value;
+            
+            selectEl.innerHTML = `<option value="">${defaultLabel}</option>`;
+            Array.from(setValues).sort().forEach(val => {
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val;
+                selectEl.appendChild(option);
+            });
+
+            selectEl.value = currentValue;
+        }
+
+        // Filter & Search Logic
+        function applyFiltersAndSearch() {
+            const selectedPeriode = document.getElementById('filterPeriode').value;
+            const selectedPulau = document.getElementById('filterPulau').value;
+            const selectedJenis = document.getElementById('filterJenis').value;
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const filtered = allArtifacts.filter(item => {
+                const matchPeriode = !selectedPeriode || item.Periode === selectedPeriode;
+                const matchPulau = !selectedPulau || item.Pulau === selectedPulau;
+                const matchJenis = !selectedJenis || item.JenisArtefak === selectedJenis;
+
+                const matchSearch = !searchQuery || [
+                    item.NamaArtefak,
+                    item.Lokasi,
+                    item.Provinsi,
+                    item.Pulau,
+                    item.JenisArtefak,
+                    item.Periode,
+                    item['Tahun/Abad']
+                ].some(field => String(field || '').toLowerCase().includes(searchQuery));
+
+                return matchPeriode && matchPulau && matchJenis && matchSearch;
+            });
+
+            renderTimeline(filtered);
+        }
+
+        // Render Timeline Vertikal
+        function renderTimeline(data) {
+            const contentArea = document.getElementById('contentArea');
+
+            if (data.length === 0) {
+                contentArea.innerHTML = `
+                    <div class="state-container">
+                        <h3>Tidak ada artefak yang sesuai dengan pencarian.</h3>
+                        <p>Coba ubah kata kunci pencarian atau filter yang dipilih.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Kelompokkan berdasarkan Tahun/Abad secara otomatis
+            const grouped = {};
+            data.forEach(item => {
+                const abadKey = item['Tahun/Abad'] || 'Periode Lainnya';
+                if (!grouped[abadKey]) {
+                    grouped[abadKey] = [];
+                }
+                grouped[abadKey].push(item);
+            });
+
+            let html = '<div class="timeline-container">';
+
+            for (const [abad, items] of Object.entries(grouped)) {
+                html += `
+                    <div class="timeline-period-group">
+                        <div class="timeline-period-badge">${escapeHTML(abad)}</div>
+                        <div class="timeline-items">
+                `;
+
+                items.forEach(item => {
+                    const fotoUrl = item.FotoURL && item.FotoURL !== '-' ? item.FotoURL : '';
+                    const imgHtml = fotoUrl ? 
+                        `<img src="${escapeHTML(fotoUrl)}" alt="${escapeHTML(item.NamaArtefak)}" onerror="this.parentElement.innerHTML='<div class=\\'img-placeholder\\'>Gambar Gagal Dimuat</div>'">` :
+                        `<div class="img-placeholder">Gambar Tidak Tersedia</div>`;
+
+                    const lokasiFull = [item.Lokasi, item.Provinsi].filter(v => v && v !== '-').join(', ') || '-';
+
+                    html += `
+                        <div class="artifact-card">
+                            <div class="artifact-img-container">
+                                ${imgHtml}
+                            </div>
+                            <div class="artifact-body">
+                                <span class="artifact-badge">${escapeHTML(item.JenisArtefak || 'Artefak')}</span>
+                                <h3 class="artifact-title">${escapeHTML(item.NamaArtefak)}</h3>
+                                <div class="artifact-meta">
+                                    <span><strong>Abad:</strong> ${escapeHTML(item['Tahun/Abad'] || '-')}</span>
+                                    <span><strong>Lokasi:</strong> ${escapeHTML(lokasiFull)}</span>
+                                    <span><strong>Pulau:</strong> ${escapeHTML(item.Pulau || '-')}</span>
+                                </div>
+                                <p class="artifact-desc">${escapeHTML(item.Deskripsi || 'Tidak ada deskripsi singkat.')}</p>
+                                <button class="artifact-btn" onclick="openModal('${escapeHTML(item.ArtefakID)}')">Lihat Detail</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            contentArea.innerHTML = html;
+        }
+
+        // Modal Popup Detail
+        function openModal(artefakId) {
+            const item = allArtifacts.find(a => String(a.ArtefakID) === String(artefakId));
+            if (!item) return;
+
+            const modalBody = document.getElementById('modalBody');
+            const fotoUrl = item.FotoURL && item.FotoURL !== '-' ? item.FotoURL : '';
+            const imgHtml = fotoUrl ? 
+                `<img class="modal-img" src="${escapeHTML(fotoUrl)}" alt="${escapeHTML(item.NamaArtefak)}" onerror="this.style.display='none'">` : '';
+
+            modalBody.innerHTML = `
+                ${imgHtml}
+                <h2 style="font-size: 22px; font-weight: 700; color: var(--heading-color); margin-bottom: 6px;">${escapeHTML(item.NamaArtefak)}</h2>
+                <span style="display: inline-block; background: rgba(4,71,255,0.1); color: var(--primary-color); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 4px; margin-bottom: 16px;">${escapeHTML(item.Periode || 'Periode Sejarah')}</span>
+                
+                <div class="modal-grid">
+                    <div class="modal-grid-item">
+                        <span>ID Artefak</span>
+                        <strong>${escapeHTML(item.ArtefakID)}</strong>
+                    </div>
+                    <div class="modal-grid-item">
+                        <span>Tahun / Abad</span>
+                        <strong>${escapeHTML(item['Tahun/Abad'] || '-')}</strong>
+                    </div>
+                    <div class="modal-grid-item">
+                        <span>Lokasi</span>
+                        <strong>${escapeHTML(item.Lokasi || '-')}</strong>
+                    </div>
+                    <div class="modal-grid-item">
+                        <span>Provinsi</span>
+                        <strong>${escapeHTML(item.Provinsi || '-')}</strong>
+                    </div>
+                    <div class="modal-grid-item">
+                        <span>Pulau</span>
+                        <strong>${escapeHTML(item.Pulau || '-')}</strong>
+                    </div>
+                    <div class="modal-grid-item">
+                        <span>Jenis Artefak</span>
+                        <strong>${escapeHTML(item.JenisArtefak || '-')}</strong>
+                    </div>
+                </div>
+
+                <div class="modal-section-title">Deskripsi Lengkap</div>
+                <div class="modal-text">${escapeHTML(item.Deskripsi || 'Tidak ada deskripsi tersedia.')}</div>
+
+                <div class="modal-section-title">Nilai Historis</div>
+                <div class="modal-text" style="margin-bottom: 20px;">${escapeHTML(item.NilaiHistoris || 'Tidak ada catatan nilai historis.')}</div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <a href="artefak.html?id=${encodeURIComponent(item.ArtefakID)}" class="artifact-btn" style="text-decoration: none; display: inline-block;">Detail Artefak di Halaman Utama</a>
+                </div>
+            `;
+
+            document.getElementById('detailModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
