@@ -3,120 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Jawaban - MODIVIM</title>
-    <!-- Tambahkan CSS framework Anda (Bootstrap/Custom) di sini -->
+    <title>Jawaban Saya - MODIVIM Virtual Museum</title>
     <style>
-        /* Gaya Sederhana untuk Card dan Layout */
-        .status-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.8em; }
-        .bg-terkirim { background: #e3f2fd; color: #1565c0; }
-        .bg-dinilai { background: #e8f5e9; color: #2e7d32; }
-        .card { border: 1px solid #ddd; margin-bottom: 15px; padding: 15px; border-radius: 8px; }
-        .stat-card { text-align: center; padding: 10px; background: #f8f9fa; border: 1px solid #eee; }
+        :root {
+            --bg-color: #fdfcfc;
+            --panel-color: #f5f3f1;
+            --border-color: #ebe8e4;
+            --text-color: #44403b;
+            --heading-color: #000000;
+            --primary-color: #0447ff;
+            --hover-color: #0037cc;
+            --sidebar-width: 260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; }
+
+        /* Sidebar */
+        .sidebar { width: var(--sidebar-width); height: 100vh; background: var(--panel-color); border-right: 1px solid var(--border-color); position: fixed; padding: 20px; }
+        .sidebar-logo { font-weight: bold; font-size: 1.2rem; margin-bottom: 30px; color: var(--heading-color); }
+        .menu-item { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-color); border-radius: 8px; margin-bottom: 5px; transition: 0.3s; }
+        .menu-item:hover { background: #e8e6e4; }
+        .menu-item.active { background: var(--primary-color); color: #fff; }
+        
+        /* Content Area */
+        .main-content { margin-left: var(--sidebar-width); padding: 40px; width: calc(100% - var(--sidebar-width)); }
+        h1 { color: var(--heading-color); margin-bottom: 5px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+
+        /* Stats Grid */
+        .stats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fff; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); display: block; }
+        .stat-label { font-size: 0.85rem; color: #666; text-transform: uppercase; }
+
+        /* Toolbar */
+        .toolbar { display: flex; gap: 15px; margin-bottom: 25px; padding: 20px; background: var(--panel-color); border: 1px solid var(--border-color); border-radius: 12px; }
+        .toolbar input, .toolbar select { padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; flex: 1; }
+
+        /* Card Grid */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: #fff; border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; transition: 0.3s; }
+        .card:hover { border-color: var(--primary-color); }
+        .card h3 { margin-bottom: 10px; font-size: 1.1rem; }
+        .card p { font-size: 0.9rem; color: #555; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-footer { border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { padding: 8px 16px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 0.85rem; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 16px; width: 500px; max-width: 90%; max-height: 80vh; overflow-y: auto; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; width: 100%; }
+            .stats-container { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<!-- Sidebar & Layout menyesuaikan project Anda -->
-<div class="content">
-    <h2>Jawaban Saya</h2>
-    <p>Riwayat jawaban dan hasil penilaian Anda.</p>
+    <nav class="sidebar">
+        <div class="sidebar-logo">MODIVIM</div>
+        <a href="dashboard-mahasiswa.html" class="menu-item">📊 Dashboard</a>
+        <a href="artefak.html" class="menu-item">🏛️ Artefak</a>
+        <a href="timeline.html" class="menu-item">⏳ Timeline</a>
+        <a href="peta.html" class="menu-item">🗺️ Peta</a>
+        <a href="jawaban.html" class="menu-item active">📝 Jawaban</a>
+        <a href="nilai.html" class="menu-item">⭐ Nilai</a>
+        <a href="profil.html" class="menu-item">👤 Profil</a>
+    </nav>
 
-    <!-- Stat Container -->
-    <div class="row" id="stats-container">
-        <div class="stat-card">Total: <span id="total">0</span></div>
-        <div class="stat-card">Dinilai: <span id="dinilai">0</span></div>
-        <div class="stat-card">Belum: <span id="belum">0</span></div>
-        <div class="stat-card">Rata-rata: <span id="avg">0</span></div>
+    <main class="main-content">
+        <h1>Jawaban Saya</h1>
+        <p class="subtitle">Riwayat jawaban dan hasil penilaian Anda.</p>
+
+        <div class="stats-container" id="stats">
+            <div class="stat-card"><span class="stat-value" id="total">0</span><span class="stat-label">Total</span></div>
+            <div class="stat-card"><span class="stat-value" id="dinilai">0</span><span class="stat-label">Dinilai</span></div>
+            <div class="stat-card"><span class="stat-value" id="belum">0</span><span class="stat-label">Belum Dinilai</span></div>
+            <div class="stat-card"><span class="stat-value" id="rata">0</span><span class="stat-label">Rata-rata</span></div>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="Cari artefak atau jawaban...">
+            <select id="filterStatus">
+                <option value="Semua">Semua Status</option>
+                <option value="Dinilai">Sudah Dinilai</option>
+                <option value="Terkirim">Belum Dinilai</option>
+            </select>
+        </div>
+
+        <div id="loading" style="text-align: center; margin: 50px;">Memuat riwayat jawaban...</div>
+        <div id="grid" class="card-grid"></div>
+    </main>
+
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalData"></div>
     </div>
 
-    <!-- Filter/Search -->
-    <input type="text" id="searchInput" placeholder="Cari artefak, pertanyaan...">
-    
-    <div id="answer-list">Memuat riwayat jawaban...</div>
-</div>
-
-<!-- Modal Detail -->
-<div id="detailModal" style="display:none; position:fixed; top:20%; left:20%; background:white; padding:20px; border:1px solid #ccc;">
-    <div id="modalContent"></div>
-    <button onclick="closeModal()">Tutup</button>
-</div>
-
-<script>
-    const GAS_API_URL = "URL_APPS_SCRIPT_ANDA_DISINI";
-    const CURRENT_STUDENT_ID_KEY = "modivim_mahasiswa_id"; // SESUAIKAN DENGAN KEY LOGIN ANDA
-
-    const mahasiswaId = localStorage.getItem(CURRENT_STUDENT_ID_KEY);
-    let rawData = [];
-
-    function escapeHTML(str) {
-        if (!str) return "";
-        return String(str).replace(/[&<>"']/g, function(m) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-        });
-    }
-
-    async function loadAnswers() {
-        if (!mahasiswaId) { alert("Silakan login terlebih dahulu."); return; }
-        try {
-            const res = await fetch(`${GAS_API_URL}?action=getStudentAnswers&mahasiswaId=${encodeURIComponent(mahasiswaId)}`);
-            const json = await res.json();
-            if (json.success) {
-                rawData = json.data;
-                renderAnswers(rawData);
-                updateStats(rawData);
-            } else {
-                document.getElementById('answer-list').innerHTML = "Gagal memuat riwayat jawaban. <button onclick='loadAnswers()'>Coba Lagi</button>";
-            }
-        } catch (e) {
-            document.getElementById('answer-list').innerHTML = "Error sistem.";
-        }
-    }
-
-    function updateStats(data) {
-        const total = data.length;
-        const dinilai = data.filter(d => d.Status === 'Dinilai' && !isNaN(parseFloat(d.Nilai))).length;
-        const belum = total - dinilai;
-        const totalNilai = data.filter(d => !isNaN(parseFloat(d.Nilai))).reduce((sum, d) => sum + parseFloat(d.Nilai), 0);
-        const avg = dinilai > 0 ? (totalNilai / dinilai).toFixed(2) : 0;
-
-        document.getElementById('total').innerText = total;
-        document.getElementById('dinilai').innerText = dinilai;
-        document.getElementById('belum').innerText = belum;
-        document.getElementById('avg').innerText = avg;
-    }
-
-    function renderAnswers(data) {
-        const list = document.getElementById('answer-list');
-        if (data.length === 0) { list.innerHTML = "Belum ada jawaban. Jawaban yang Anda kirim akan muncul di halaman ini."; return; }
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec"; // Ganti dengan URL Anda
+        const CURRENT_STUDENT_ID_KEY = "modivim_mahasiswa_id"; // Pastikan sama dengan sistem login
         
-        list.innerHTML = data.map(d => `
-            <div class="card">
-                <h5>${escapeHTML(d.NamaArtefak)}</h5>
-                <p>Pertanyaan: ${escapeHTML(d.Pertanyaan.substring(0, 50))}...</p>
-                <span class="status-badge ${d.Status === 'Dinilai' ? 'bg-dinilai' : 'bg-terkirim'}">${d.Status === 'Dinilai' ? 'Sudah Dinilai' : 'Menunggu Penilaian'}</span>
-                <button onclick="showDetail('${d.JawabanID}')">Lihat Detail</button>
-            </div>
-        `).join('');
-    }
+        let allAnswers = [];
 
-    function showDetail(id) {
-        const d = rawData.find(item => item.JawabanID === id);
-        const modal = document.getElementById('detailModal');
-        document.getElementById('modalContent').innerHTML = `
-            <h3>${escapeHTML(d.NamaArtefak)}</h3>
-            <p>Pertanyaan: ${escapeHTML(d.Pertanyaan)}</p>
-            <p>Jawaban: ${escapeHTML(d.Jawaban)}</p>
-            <p>Nilai: ${d.Nilai || "Belum dinilai"}</p>
-            <p>Feedback: ${d.Feedback || "Belum ada feedback dari dosen."}</p>
-            <a href="artefak.html?id=${encodeURIComponent(d.ArtefakID)}">Lihat Artefak</a>
-        `;
-        modal.style.display = 'block';
-    }
+        function escapeHTML(str) { return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
 
-    function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
+        async function fetchData() {
+            const mhsId = localStorage.getItem(CURRENT_STUDENT_ID_KEY);
+            if (!mhsId) { alert("Silakan login."); return; }
 
-    // Jalankan
-    loadAnswers();
-</script>
+            try {
+                const response = await fetch(`${GAS_API_URL}?action=getStudentAnswers&mahasiswaId=${encodeURIComponent(mhsId)}`);
+                const result = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                if(result.success) {
+                    allAnswers = result.data;
+                    render(allAnswers);
+                } else {
+                    document.getElementById('grid').innerHTML = "Gagal memuat data. <button onclick='fetchData()'>Coba Lagi</button>";
+                }
+            } catch (err) {
+                document.getElementById('grid').innerHTML = "Terjadi kesalahan server.";
+            }
+        }
+
+        function render(data) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = "";
+            if (data.length === 0) { grid.innerHTML = "<p>Belum ada jawaban.</p>"; return; }
+
+            // Stats
+            const dinilai = data.filter(d => d.Status === 'Dinilai');
+            document.getElementById('total').innerText = data.length;
+            document.getElementById('dinilai').innerText = dinilai.length;
+            document.getElementById('belum').innerText = data.length - dinilai.length;
+            const avg = dinilai.length ? (dinilai.reduce((a, b) => a + parseFloat(b.Nilai || 0), 0) / dinilai.length).toFixed(1) : 0;
+            document.getElementById('rata').innerText = avg;
+
+            data.forEach(d => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <h3>${escapeHTML(d.NamaArtefak)}</h3>
+                        <p>${escapeHTML(d.Jawaban.substring(0, 100))}...</p>
+                        <div class="card-footer">
+                            <span>${d.Status === 'Dinilai' ? '✅ Dinilai' : '⏳ Terkirim'}</span>
+                            <button class="btn" onclick="openModal('${d.JawabanID}')">Lihat Detail</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openModal(id) {
+            const d = allAnswers.find(x => x.JawabanID === id);
+            document.getElementById('modalData').innerHTML = `
+                <h2>Detail Jawaban</h2><hr><br>
+                <p><strong>Artefak:</strong> ${escapeHTML(d.NamaArtefak)}</p>
+                <p><strong>Pertanyaan:</strong> ${escapeHTML(d.Pertanyaan)}</p>
+                <p><strong>Jawaban:</strong> ${escapeHTML(d.Jawaban)}</p>
+                <p><strong>Status:</strong> ${d.Status}</p>
+                <p><strong>Nilai:</strong> ${d.Nilai || '-'}</p>
+                <p><strong>Feedback:</strong> ${d.Feedback || '-'}</p>
+                <br><button class="btn" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Filter Logic
+        document.getElementById('searchInput').addEventListener('input', filter);
+        document.getElementById('filterStatus').addEventListener('change', filter);
+
+        function filter() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('filterStatus').value;
+            const filtered = allAnswers.filter(d => {
+                const matchSearch = d.NamaArtefak.toLowerCase().includes(search) || d.Jawaban.toLowerCase().includes(search);
+                const matchStatus = status === 'Semua' || (status === 'Dinilai' ? d.Status === 'Dinilai' : d.Status !== 'Dinilai');
+                return matchSearch && matchStatus;
+            });
+            render(filtered);
+        }
+
+        window.onclick = (e) => { if(e.target.id == 'modal') e.target.style.display = 'none'; }
+        fetchData();
+    </script>
 </body>
 </html>
