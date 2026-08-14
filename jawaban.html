@@ -151,7 +151,7 @@
 
   // 4. Memanggil Endpoint API getStudentAnswers
   // Pastikan SCRIPT_URL disesuaikan dengan URL deployment Apps Script Anda
-  const SCRIPT_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA_DISINI"; 
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec"; 
 
   function loadStudentAnswers() {
     const url = `${SCRIPT_URL}?action=getStudentAnswers&mahasiswaId=${encodeURIComponent(mhsId)}`;
