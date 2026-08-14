@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peta Sejarah Islam Indonesia - MODIVIM</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #fdfcfc;
+      color: #44403b;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* LAYOUT UTAMA */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background-color: #f5f3f1;
+      border-right: 1px solid #ebe8e4;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px;
+      border-bottom: 1px solid #ebe8e4;
+    }
+
+    .sidebar-brand h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .sidebar-brand span {
+      font-size: 0.8rem;
+      color: #777169;
+    }
+
+    .sidebar-nav {
+      padding: 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #44403b;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background-color: #ebe8e4;
+      color: #000;
+    }
+
+    .sidebar-nav a.active {
+      background-color: #0447ff;
+      color: white;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      margin-left: 260px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #fdfcfc;
+    }
+
+    header {
+      background-color: #f5f3f1;
+      border-bottom: 1px solid #ebe8e4;
+      padding: 24px 32px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      color: #000;
+      font-size: 1.6rem;
+    }
+
+    header p {
+      margin: 0;
+      color: #777169;
+      font-size: 0.95rem;
+    }
+
+    .content-container {
+      padding: 24px 32px;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* STATS PANEL */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #f5f3f1;
+      border: 1px solid #ebe8e4;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #777169;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #000;
+    }
+
+    /* FILTER & SEARCH PANEL */
+    .filter-panel {
+      background: #f5f3f1;
+      border: 1px solid #ebe8e4;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box-wrap {
+      flex: 1 1 280px;
+      position: relative;
+    }
+
+    .search-box-wrap i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777169;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      border: 1px solid #a59f97;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #44403b;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .filter-select {
+      padding: 10px 14px;
+      border: 1px solid #a59f97;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #44403b;
+      cursor: pointer;
+    }
+
+    .btn-reset {
+      background: #44403b;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #000;
+    }
+
+    /* MAP CONTAINER & LEGEND */
+    .map-wrapper {
+      position: relative;
+      background: #f5f3f1;
+      border: 1px solid #ebe8e4;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    #map {
+      width: 100%;
+      height: 600px;
+      z-index: 1;
+    }
+
+    .map-legend {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 999;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #ebe8e4;
+    }
+
+    /* STATES (Loading, Error, Empty) */
+    .state-box {
+      text-align: center;
+      padding: 60px 20px;
+      background: #f5f3f1;
+      border: 1px solid #ebe8e4;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .state-box p {
+      font-size: 1.05rem;
+      color: #777169;
+      margin: 0 0 16px;
+    }
+
+    .btn-retry {
+      background: #0447ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-retry:hover {
+      background: #0037cc;
+    }
+
+    .spinner {
+      border: 3px solid #ebe8e4;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-top-color: #0447ff;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* CUSTOM LEAFLET POPUP STYLING */
+    .leaflet-popup-content-wrapper {
+      border-radius: 10px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .leaflet-popup-content {
+      margin: 0;
+      line-height: 1.5;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .popup-content-box {
+      padding: 16px;
+      max-width: 280px;
+    }
+
+    .popup-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: #f5f3f1;
+    }
+
+    .popup-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #000;
+      margin: 0 0 4px;
+    }
+
+    .popup-subtitle {
+      font-size: 0.8rem;
+      color: #777169;
+      margin-bottom: 10px;
+    }
+
+    .popup-meta {
+      font-size: 0.85rem;
+      color: #44403b;
+      margin-bottom: 12px;
+    }
+
+    .popup-meta div {
+      margin-bottom: 3px;
+    }
+
+    .popup-btn {
+      display: block;
+      width: 100%;
+      background: #0447ff;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+
+    .popup-btn:hover {
+      background: #0037cc;
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 70px;
+      }
+      .sidebar-brand h2, .sidebar-brand span, .sidebar-nav span {
+        display: none;
+      }
+      .sidebar-nav a {
+        justify-content: center;
+        padding: 12px;
+      }
+      .main-content {
+        margin-left: 70px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        display: none;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .content-container {
+        padding: 16px;
+      }
+      .filter-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>MODIVIM</h2>
+      <span>Virtual Museum</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard-mahasiswa.html"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+      <a href="artefak.html"><i class="fas fa-landmark"></i> <span>Artefak</span></a>
+      <a href="timeline.html"><i class="fas fa-stream"></i> <span>Timeline</span></a>
+      <a href="peta.html" class="active"><i class="fas fa-map-marked-alt"></i> <span>Peta</span></a>
+      <a href="jawaban.html"><i class="fas fa-book-open"></i> <span>Jawaban</span></a>
+      <a href="nilai.html"><i class="fas fa-award"></i> <span>Nilai</span></a>
+      <a href="profil.html"><i class="fas fa-user"></i> <span>Profil</span></a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <header>
+      <h1>Peta Sejarah Islam Indonesia</h1>
+      <p>Jelajahi persebaran artefak sejarah Islam Indonesia berdasarkan lokasi geografis.</p>
+    </header>
+
+    <div class="content-container">
+      <!-- STATS PANEL -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Lokasi</div>
+          <div class="stat-value" id="statLokasi">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Artefak</div>
+          <div class="stat-value" id="statArtefak">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Provinsi</div>
+          <div class="stat-value" id="statProvinsi">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Pulau</div>
+          <div class="stat-value" id="statPulau">0</div>
+        </div>
+      </div>
+
+      <!-- FILTER & SEARCH PANEL -->
+      <div class="filter-panel">
+        <div class="search-box-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Cari artefak atau lokasi...">
+        </div>
+        <div class="filter-group">
+          <select id="filterPeriode" class="filter-select">
+            <option value="">Semua Periode</option>
+          </select>
+          <select id="filterPulau" class="filter-select">
+            <option value="">Semua Pulau</option>
+          </select>
+          <select id="filterJenis" class="filter-select">
+            <option value="">Semua Jenis Artefak</option>
+          </select>
+          <select id="filterProvinsi" class="filter-select">
+            <option value="">Semua Provinsi</option>
+          </select>
+          <button type="button" id="btnReset" class="btn-reset">Reset Filter</button>
+        </div>
+      </div>
+
+      <!-- STATE BOX (Loading / Error / Empty) -->
+      <div id="stateBox" class="state-box">
+        <div class="spinner"></div>
+        <p>Memuat peta sejarah...</p>
+      </div>
+
+      <!-- MAP WRAPPER -->
+      <div id="mapWrapper" class="map-wrapper" style="display: none;">
+        <div id="map"></div>
+        <div class="map-legend">
+          📍 Lokasi Artefak
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+  const GAS_API_URL = "URL_GOOGLE_APPS_SCRIPT_SAYA";
+
+  let map = null;
+  let markersLayer = null;
+  let allMapData = [];
+
+  document.addEventListener("DOMContentLoaded", function() {
+    initMap();
+    fetchMapData();
+
+    // Event Listeners untuk Filter & Search
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    document.getElementById("filterPeriode").addEventListener("change", applyFilters);
+    document.getElementById("filterPulau").addEventListener("change", applyFilters);
+    document.getElementById("filterJenis").addEventListener("change", applyFilters);
+    document.getElementById("filterProvinsi").addEventListener("change", applyFilters);
+    document.getElementById("btnReset").addEventListener("click", resetFilters);
+  });
+
+  function initMap() {
+    // Inisialisasi peta berpusat di Indonesia
+    map = L.map('map').setView([-2.5489526, 118.0148634], 5);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    markersLayer = L.layerGroup().addTo(map);
+  }
+
+  function fetchMapData() {
+    showLoading(true);
+
+    fetch(GAS_API_URL + "?action=getMapData", {
+      method: "GET",
+      redirect: "follow"
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("HTTP Error " + response.status);
+      return response.json();
+    })
+    .then(result => {
+      if (result.success && Array.isArray(result.data)) {
+        // Validasi koordinat valid dan Status Aktif
+        allMapData = result.data.filter(item => {
+          const lat = parseFloat(item.Latitude);
+          const lng = parseFloat(item.Longitude);
+          const status = String(item.Status || "").trim().toLowerCase();
+          return !isNaN(lat) && !isNaN(lng) && status === "aktif";
+        });
+
+        if (allMapData.length === 0) {
+          showEmptyState("Belum ada data lokasi artefak.");
+          return;
+        }
+
+        hideStateBox();
+        populateDropdowns(allMapData);
+        updateStats(allMapData);
+        renderMarkers(allMapData);
+      } else {
+        showErrorState("Gagal memuat data peta dari server.");
+      }
+    })
+    .catch(error => {
+      console.error("MAP ERROR:", error);
+      showErrorState("Gagal memuat data peta dari server.");
+    });
+  }
+
+  function renderMarkers(data) {
+    if (!markersLayer) return;
+    markersLayer.clearLayers();
+
+    let bounds = [];
+
+    data.forEach(item => {
+      const lat = parseFloat(item.Latitude);
+      const lng = parseFloat(item.Longitude);
+      bounds.push([lat, lng]);
+
+      const fotoURL = item.FotoURL && item.FotoURL !== "-" ? item.FotoURL : "";
+      const imgHTML = fotoURL 
+        ? `<img src="${escapeHTML(fotoURL)}" alt="${escapeHTML(item.NamaArtefak)}" class="popup-img" onerror="this.style.display='none'">` 
+        : "";
+
+      const popupHTML = `
+        <div class="popup-content-box">
+          ${imgHTML}
+          <h3 class="popup-title">${escapeHTML(item.NamaArtefak || "Tanpa Nama")}</h3>
+          <div class="popup-subtitle">ID: ${escapeHTML(item.ArtefakID)}</div>
+          <div class="popup-meta">
+            <div><strong>Periode:</strong> ${escapeHTML(item.Periode || "-")} (${escapeHTML(item.TahunAbad || item["Tahun/Abad"] || "-")})</div>
+            <div><strong>Lokasi:</strong> ${escapeHTML(item.NamaLokasi || item.Lokasi || "-")}</div>
+            <div><strong>Wilayah:</strong> ${escapeHTML(item.Provinsi || "-")}, ${escapeHTML(item.Pulau || "-")}</div>
+            <div><strong>Jenis:</strong> ${escapeHTML(item.JenisArtefak || "-")}</div>
+            <div><strong>Keterangan:</strong> ${escapeHTML(item.Keterangan || "-")}</div>
+          </div>
+          <a href="artefak.html?id=${encodeURIComponent(item.ArtefakID)}" class="popup-btn">Lihat Detail Artefak</a>
+        </div>
+      `;
+
+      const marker = L.marker([lat, lng]).bindPopup(popupHTML);
+      markersLayer.addLayer(marker);
+    });
+
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+    }
+  }
+
+  function populateDropdowns(data) {
+    const periodeSet = new Set();
+    const pulauSet = new Set();
+    const jenisSet = new Set();
+    const provinsiSet = new Set();
+
+    data.forEach(item => {
+      if (item.Periode) periodeSet.add(item.Periode);
+      if (item.Pulau) pulauSet.add(item.Pulau);
+      if (item.JenisArtefak) jenisSet.add(item.JenisArtefak);
+      if (item.Provinsi) provinsiSet.add(item.Provinsi);
+    });
+
+    fillSelect("filterPeriode", periodeSet, "Semua Periode");
+    fillSelect("filterPulau", pulauSet, "Semua Pulau");
+    fillSelect("filterJenis", jenisSet, "Semua Jenis Artefak");
+    fillSelect("filterProvinsi", provinsiSet, "Semua Provinsi");
+  }
+
+  function fillSelect(elementId, setValues, defaultText) {
+    const select = document.getElementById(elementId);
+    const currentVal = select.value;
+    select.innerHTML = `<option value="">${defaultText}</option>`;
+    
+    Array.from(setValues).sort().forEach(val => {
+      const opt = document.createElement("option");
+      opt.value = val;
+      opt.textContent = val;
+      select.appendChild(opt);
+    });
+    select.value = currentVal;
+  }
+
+  function applyFilters() {
+    const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+    const selPeriode = document.getElementById("filterPeriode").value;
+    const selPulau = document.getElementById("filterPulau").value;
+    const selJenis = document.getElementById("filterJenis").value;
+    const selProvinsi = document.getElementById("filterProvinsi").value;
+
+    const filtered = allMapData.filter(item => {
+      // Search matching across multiple fields
+      const namaArtefak = String(item.NamaArtefak || "").toLowerCase();
+      const lokasi = String(item.Lokasi || "").toLowerCase();
+      const namaLokasi = String(item.NamaLokasi || "").toLowerCase();
+      const provinsi = String(item.Provinsi || "").toLowerCase();
+      const pulau = String(item.Pulau || "").toLowerCase();
+      const periode = String(item.Periode || "").toLowerCase();
+      const tahunAbad = String(item.TahunAbad || item["Tahun/Abad"] || "").toLowerCase();
+
+      const matchKeyword = !keyword || 
+        namaArtefak.includes(keyword) || 
+        lokasi.includes(keyword) || 
+        namaLokasi.includes(keyword) || 
+        provinsi.includes(keyword) || 
+        pulau.includes(keyword) || 
+        periode.includes(keyword) || 
+        tahunAbad.includes(keyword);
+
+      const matchPeriode = !selPeriode || item.Periode === selPeriode;
+      const matchPulau = !selPulau || item.Pulau === selPulau;
+      const matchJenis = !selJenis || item.JenisArtefak === selJenis;
+      const matchProvinsi = !selProvinsi || item.Provinsi === selProvinsi;
+
+      return matchKeyword && matchPeriode && matchPulau && matchJenis && matchProvinsi;
+    });
+
+    updateStats(filtered);
+    renderMarkers(filtered);
+  }
+
+  function resetFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("filterPeriode").value = "";
+    document.getElementById("filterPulau").value = "";
+    document.getElementById("filterJenis").value = "";
+    document.getElementById("filterProvinsi").value = "";
+    updateStats(allMapData);
+    renderMarkers(allMapData);
+  }
+
+  function updateStats(data) {
+    const uniqueLokasi = new Set(data.map(i => i.NamaLokasi || i.Lokasi)).size;
+    const uniqueArtefak = new Set(data.map(i => i.ArtefakID)).size;
+    const uniqueProvinsi = new Set(data.map(i => i.Provinsi).filter(p => p && p !== "-")).size;
+    const uniquePulau = new Set(data.map(i => i.Pulau).filter(p => p && p !== "-")).size;
+
+    document.getElementById("statLokasi").textContent = uniqueLokasi;
+    document.getElementById("statArtefak").textContent = uniqueArtefak;
+    document.getElementById("statProvinsi").textContent = uniqueProvinsi;
+    document.getElementById("statPulau").textContent = uniquePulau;
+  }
+
+  function showLoading(isLoading) {
+    const stateBox = document.getElementById("stateBox");
+    const mapWrapper = document.getElementById("mapWrapper");
+    if (isLoading) {
+      stateBox.style.display = "block";
+      stateBox.innerHTML = '<div class="spinner"></div><p>Memuat peta sejarah...</p>';
+      mapWrapper.style.display = "none";
+    }
+  }
+
+  function hideStateBox() {
+    document.getElementById("stateBox").style.display = "none";
+    document.getElementById("mapWrapper").style.display = "block";
+    if (map) map.invalidateSize();
+  }
+
+  function showEmptyState(msg) {
+    const stateBox = document.getElementById("stateBox");
+    stateBox.style.display = "block";
+    stateBox.innerHTML = `<p>${escapeHTML(msg)}</p>`;
+    document.getElementById("mapWrapper").style.display = "none";
+  }
+
+  function showErrorState(msg) {
+    const stateBox = document.getElementById("stateBox");
+    stateBox.style.display = "block";
+    stateBox.innerHTML = `
+      <p style="color: #d32f2f;">${escapeHTML(msg)}</p>
+      <button type="button" class="btn-retry" onclick="fetchMapData()">Coba Lagi</button>
+    `;
+    document.getElementById("mapWrapper").style.display = "none";
+  }
+
+  function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+</script>
+
+</body>
+</html>
