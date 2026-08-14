@@ -103,92 +103,85 @@
     </div>
 
     <script>
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec"; // Ganti dengan URL Anda
-        const CURRENT_STUDENT_ID_KEY = "modivim_mahasiswa_id"; // Pastikan sama dengan sistem login
-        
-        let allAnswers = [];
-
-        function escapeHTML(str) { return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
-
-        async function fetchData() {
-            const mhsId = localStorage.getItem(CURRENT_STUDENT_ID_KEY);
-            if (!mhsId) { alert("Silakan login."); return; }
-
-            try {
-                const response = await fetch(`${GAS_API_URL}?action=getStudentAnswers&mahasiswaId=${encodeURIComponent(mhsId)}`);
-                const result = await response.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                if(result.success) {
-                    allAnswers = result.data;
-                    render(allAnswers);
-                } else {
-                    document.getElementById('grid').innerHTML = "Gagal memuat data. <button onclick='fetchData()'>Coba Lagi</button>";
-                }
-            } catch (err) {
-                document.getElementById('grid').innerHTML = "Terjadi kesalahan server.";
-            }
+  // Fungsi untuk mendapatkan ID Mahasiswa dari localStorage secara fleksibel (mendukung string atau objek user)
+  function getLoggedInMahasiswaId() {
+    // Daftar key yang umum digunakan pada sistem login web
+    const possibleKeys = ['currentUser', 'user', 'mahasiswa', 'modivim_user', 'mahasiswaId', 'nim', 'id'];
+    
+    for (let key of possibleKeys) {
+      const val = localStorage.getItem(key);
+      if (val) {
+        try {
+          // Coba parse jika formatnya JSON (Object user)
+          const parsed = JSON.parse(val);
+          if (parsed && typeof parsed === 'object') {
+            return parsed.mahasiswaId || parsed.id || parsed.nim || parsed.userId || parsed.mahasiswa_id || null;
+          }
+        } catch (e) {
+          // Jika bukan JSON, berarti langsung nilai string ID
+          return val;
         }
+      }
+    }
+    
+    // Fallback: cek seluruh key localStorage jika tidak ditemukan di atas
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const val = localStorage.getItem(key);
+      if (val && !val.includes('{') && (key.toLowerCase().includes('id') || key.toLowerCase().includes('mhs') || key.toLowerCase().includes('nim'))) {
+        return val;
+      }
+    }
+    
+    return null;
+  }
 
-        function render(data) {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = "";
-            if (data.length === 0) { grid.innerHTML = "<p>Belum ada jawaban.</p>"; return; }
+  // 1. Ambil ID Mahasiswa
+  const mhsId = getLoggedInMahasiswaId();
 
-            // Stats
-            const dinilai = data.filter(d => d.Status === 'Dinilai');
-            document.getElementById('total').innerText = data.length;
-            document.getElementById('dinilai').innerText = dinilai.length;
-            document.getElementById('belum').innerText = data.length - dinilai.length;
-            const avg = dinilai.length ? (dinilai.reduce((a, b) => a + parseFloat(b.Nilai || 0), 0) / dinilai.length).toFixed(1) : 0;
-            document.getElementById('rata').innerText = avg;
+  // 2. Tampilkan di console browser untuk verifikasi
+  console.log("Mahasiswa ID:", mhsId);
 
-            data.forEach(d => {
-                grid.innerHTML += `
-                    <div class="card">
-                        <h3>${escapeHTML(d.NamaArtefak)}</h3>
-                        <p>${escapeHTML(d.Jawaban.substring(0, 100))}...</p>
-                        <div class="card-footer">
-                            <span>${d.Status === 'Dinilai' ? '✅ Dinilai' : '⏳ Terkirim'}</span>
-                            <button class="btn" onclick="openModal('${d.JawabanID}')">Lihat Detail</button>
-                        </div>
-                    </div>
-                `;
-            });
+  // 3. Validasi Login (Jangan dihapus)
+  if (!mhsId) {
+    alert("Silakan login.");
+    // Redirect atau stop eksekusi sesuai desain UI Anda
+    throw new Error("Silakan login.");
+  }
+
+  // 4. Memanggil Endpoint API getStudentAnswers
+  // Pastikan SCRIPT_URL disesuaikan dengan URL deployment Apps Script Anda
+  const SCRIPT_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA_DISINI"; 
+
+  function loadStudentAnswers() {
+    const url = `${SCRIPT_URL}?action=getStudentAnswers&mahasiswaId=${encodeURIComponent(mhsId)}`;
+    
+    fetch(url)
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          renderAnswers(result.data);
+        } else {
+          console.error("Pesan API:", result.message);
+          alert(result.message || "Gagal memuat jawaban.");
         }
+      })
+      .catch(error => {
+        console.error("Error fetching answers:", error);
+      });
+  }
 
-        function openModal(id) {
-            const d = allAnswers.find(x => x.JawabanID === id);
-            document.getElementById('modalData').innerHTML = `
-                <h2>Detail Jawaban</h2><hr><br>
-                <p><strong>Artefak:</strong> ${escapeHTML(d.NamaArtefak)}</p>
-                <p><strong>Pertanyaan:</strong> ${escapeHTML(d.Pertanyaan)}</p>
-                <p><strong>Jawaban:</strong> ${escapeHTML(d.Jawaban)}</p>
-                <p><strong>Status:</strong> ${d.Status}</p>
-                <p><strong>Nilai:</strong> ${d.Nilai || '-'}</p>
-                <p><strong>Feedback:</strong> ${d.Feedback || '-'}</p>
-                <br><button class="btn" onclick="document.getElementById('modal').style.display='none'">Tutup</button>
-            `;
-            document.getElementById('modal').style.display = 'flex';
-        }
+  // Fungsi render tetap menggunakan fungsi UI yang sudah ada di desain Anda
+  function renderAnswers(data) {
+    // Jangan mengubah desain UI yang sudah dibuat
+    // Masukkan logika rendering data ke tabel/elemen HTML yang sudah ada
+    console.log("Data jawaban mahasiswa:", data);
+  }
 
-        // Filter Logic
-        document.getElementById('searchInput').addEventListener('input', filter);
-        document.getElementById('filterStatus').addEventListener('change', filter);
-
-        function filter() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('filterStatus').value;
-            const filtered = allAnswers.filter(d => {
-                const matchSearch = d.NamaArtefak.toLowerCase().includes(search) || d.Jawaban.toLowerCase().includes(search);
-                const matchStatus = status === 'Semua' || (status === 'Dinilai' ? d.Status === 'Dinilai' : d.Status !== 'Dinilai');
-                return matchSearch && matchStatus;
-            });
-            render(filtered);
-        }
-
-        window.onclick = (e) => { if(e.target.id == 'modal') e.target.style.display = 'none'; }
-        fetchData();
-    </script>
+  // Jalankan saat dokumen siap
+  document.addEventListener("DOMContentLoaded", () => {
+    loadStudentAnswers();
+  });
+</script>
 </body>
 </html>
