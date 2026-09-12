@@ -3,432 +3,727 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Koleksi Artefak — MODIVIM Virtual Museum</title>
+  <title>MODIVIM - Galeri Artefak</title>
 
-  <!-- Font Utama: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* ==================================================
-       DESIGN SYSTEM & VARIABLES (KONSISTEN MODIVIM)
-       ================================================== */
-    :root {
-      --color-eggshell: #fdfcfc;
-      --color-warm-taupe: #f5f3f1;
-      --color-stone: #ebe8e4;
-      --color-ink: #000000;
-      --color-graphite: #44403b;
-      --color-smoke: #777169;
-      --color-ash: #a59f97;
-      --color-violet-spark: #0447ff;
-      --color-ember-orange: #ff4704;
-
-      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-      --sidebar-width: 260px;
+    * {
+      box-sizing: border-box;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-
     body {
-      background-color: var(--color-eggshell);
-      color: var(--color-smoke);
-      font-family: var(--font-main);
-      font-size: 15px;
-      line-height: 1.6;
+      background-color: #fdfcfc;
+      color: #44403b;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* LAYOUT UTAMA (SIDEBAR + KONTEN) */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR STYLES */
+    .sidebar {
+      width: 260px;
+      background-color: #f5f3f1;
+      border-right: 1px solid #ebe8e4;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #000000;
+      border-bottom: 1px solid #ebe8e4;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 16px 12px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: #44403b;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+      background-color: #ebe8e4;
+      color: #000000;
+    }
+
+    .sidebar-menu a.active {
+      background-color: #0447ff;
+      color: #ffffff;
+    }
+
+    /* KONTEN UTAMA DI SEBELAH KANAN */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    header {
+      background-color: #f5f3f1;
+      border-bottom: 1px solid #ebe8e4;
+      padding: 20px 32px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #000000;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 16px;
+      width: 100%;
+    }
+
+    /* GALERI */
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .artifact-card {
+      background-color: #f5f3f1;
+      border: 1px solid #ebe8e4;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: 0.2s ease;
+    }
+
+    .artifact-card:hover {
+      border-color: #a59f97;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      height: 200px;
+      background-color: #ebe8e4;
+      overflow: hidden;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000000;
+      margin: 0 0 8px;
+    }
+
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: #777169;
+      margin-bottom: 16px;
+    }
+
+    .btn-detail {
+      margin-top: auto;
+      background-color: #0447ff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-detail:hover {
+      background-color: #0037cc;
+    }
+
+    .loading-text {
+      text-align: center;
+      padding: 40px;
+      color: #777169;
+    }
+
+    /* ==========================
+       MODAL
+       ========================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 99999;
+    }
+
+    .modal-overlay.active {
       display: flex;
     }
 
-    h1, h2, h3, h4 { color: var(--color-ink); font-weight: 300; letter-spacing: -0.02em; }
-    .font-caption { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ash); font-weight: 500; }
-
-    /* LAYOUT & SIDEBAR */
-    .sidebar {
-      width: var(--sidebar-width);
-      background-color: var(--color-warm-taupe);
-      border-right: 1px solid var(--color-stone);
-      display: flex; flex-direction: column; justify-content: space-between;
-      position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
-      padding: 32px 24px; transition: transform 0.3s ease;
-    }
-    .sidebar-brand { display: flex; flex-direction: column; gap: 2px; text-decoration: none; margin-bottom: 40px; }
-    .sidebar-brand-title { font-size: 20px; font-weight: 600; color: var(--color-ink); }
-    .sidebar-brand-sub { font-size: 11px; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.06em; }
-    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
-    .sidebar-link {
-      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-      border-radius: 10px; color: var(--color-smoke); text-decoration: none; font-size: 14px; transition: all 0.2s ease;
-    }
-    .sidebar-link svg { width: 18px; height: 18px; stroke: var(--color-smoke); stroke-width: 1.75; fill: none; }
-    .sidebar-link:hover, .sidebar-link.active { color: var(--color-ink); background-color: var(--color-eggshell); font-weight: 500; }
-    .sidebar-link:hover svg, .sidebar-link.active svg { stroke: var(--color-ink); }
-
-    .sidebar-footer { border-top: 1px solid var(--color-stone); padding-top: 20px; }
-    .btn-logout {
-      display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px;
-      border: none; background: transparent; color: var(--color-graphite); font-size: 14px; cursor: pointer; border-radius: 10px;
-    }
-    .btn-logout svg { width: 18px; height: 18px; stroke: var(--color-graphite); stroke-width: 1.75; fill: none; }
-    .btn-logout:hover { background-color: rgba(220, 38, 38, 0.08); color: #dc2626; }
-    .btn-logout:hover svg { stroke: #dc2626; }
-
-    .main-wrapper {
-      margin-left: var(--sidebar-width); flex-grow: 1; min-height: 100vh;
-      display: flex; flex-direction: column; background-color: var(--color-eggshell); width: calc(100% - var(--sidebar-width));
-    }
-    .top-header {
-      padding: 24px 48px; border-bottom: 1px solid var(--color-stone); display: flex;
-      align-items: center; justify-content: space-between; background-color: var(--color-eggshell); position: sticky; top: 0; z-index: 90;
-    }
-    .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
-
-    /* CONTROLS (SEARCH & FILTER) */
-    .controls-wrapper {
-      display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      background-color: var(--color-warm-taupe); padding: 20px 24px; border-radius: 16px;
-    }
-    .search-box { flex-grow: 1; max-width: 400px; position: relative; }
-    .search-box input {
-      width: 100%; padding: 10px 16px; border-radius: 9999px; border: 1px solid var(--color-stone);
-      background-color: var(--color-eggshell); font-family: inherit; font-size: 14px; outline: none;
-    }
-    .search-box input:focus { border-color: var(--color-ash); }
-    .filter-group { display: flex; gap: 12px; }
-    .filter-select {
-      padding: 10px 16px; border-radius: 9999px; border: 1px solid var(--color-stone);
-      background-color: var(--color-eggshell); font-family: inherit; font-size: 13px; color: var(--color-graphite); outline: none; cursor: pointer;
+    .modal-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fdfcfc;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
     }
 
-    /* GRID ARTEFAK */
-    .artifact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .artifact-card {
-      background-color: var(--color-warm-taupe); border-radius: 16px; overflow: hidden;
-      display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer;
+    .modal-close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #ebe8e4;
+      background: white;
+      color: #000;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 10;
     }
-    .artifact-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
-    .artifact-img-placeholder {
-      aspect-ratio: 16 / 10; background-color: #eae6e1; display: flex; align-items: center; justify-content: center;
-    }
-    .artifact-card-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; justify-content: space-between; }
-    .artifact-title { font-size: 18px; font-weight: 500; color: var(--color-ink); }
 
-    /* MODAL DETAIL ARTEFAK */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4);
-      backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 200; padding: 24px;
+    .modal-close-btn:hover {
+      background: #ff4704;
+      color: white;
     }
-    .modal-overlay.active { display: flex; }
-    .modal-content {
-      background-color: var(--color-eggshell); width: 100%; max-width: 700px; max-height: 90vh;
-      border-radius: 20px; overflow-y: auto; padding: 36px; display: flex; flex-direction: column; gap: 24px; position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--color-ash);
-    }
-    .form-group { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .form-group textarea {
-      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--color-stone);
-      font-family: inherit; font-size: 14px; resize: vertical; min-height: 90px; outline: none;
-    }
-    .form-group textarea:focus { border-color: var(--color-ink); }
 
-    /* BUTTONS */
-    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 24px; border-radius: 9999px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; border: none; }
-    .btn-primary { background-color: var(--color-ink); color: #fff; }
-    .btn-primary:hover { background-color: var(--color-graphite); }
+    .modal-body {
+      padding: 30px;
+    }
 
-    /* FOOTER & MOBILE OVERLAY */
-    .footer { padding: 32px 48px; border-top: 1px solid var(--color-stone); display: flex; justify-content: space-between; font-size: 13px; color: var(--color-ash); margin-top: auto; }
-    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 95; }
-    .mobile-nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--color-ink); }
+    .modal-header-image {
+      width: 100%;
+      height: 360px;
+      background: #f5f3f1;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    @media (max-width: 1024px) { .artifact-grid { grid-template-columns: repeat(2, 1fr); } }
+    .modal-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      color: #000;
+      margin: 0 0 20px;
+    }
+
+    .modal-grid-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      background: #f5f3f1;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #777169;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      color: #000;
+      font-weight: 500;
+    }
+
+    .modal-section {
+      margin-bottom: 25px;
+    }
+
+    .modal-section h3 {
+      color: #000;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #ebe8e4;
+      padding-bottom: 8px;
+    }
+
+    .modal-section p {
+      line-height: 1.7;
+      color: #44403b;
+    }
+
+    .placeholder-box {
+      background: #f5f3f1;
+      border: 1px solid #a59f97;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .placeholder-box h4 {
+      margin: 0 0 8px;
+      color: #0447ff;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #ebe8e4;
+      margin-top: 25px;
+      padding-top: 20px;
+    }
+
+    .btn-close-modal {
+      background: #000;
+      color: white;
+      border: none;
+      padding: 11px 25px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-close-modal:hover {
+      background: #44403b;
+    }
+
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.active { display: block; }
-      .main-wrapper { margin-left: 0; width: 100%; }
-      .mobile-nav-toggle { display: block; }
-      .content-body, .top-header, .footer { padding: 20px; }
-      .artifact-grid { grid-template-columns: 1fr; }
+      .app-layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .modal-overlay {
+        padding: 10px;
+      }
+      .modal-body {
+        padding: 20px;
+      }
+      .modal-header-image {
+        height: 240px;
+      }
+      .modal-grid-info {
+        grid-template-columns: 1fr;
+      }
+      .modal-title {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="sidebar" id="sidebar">
-    <div>
-      <a href="dashboard-mahasiswa.html" class="sidebar-brand">
-        <span class="sidebar-brand-title">MODIVIM</span>
-        <span class="sidebar-brand-sub">Virtual Museum</span>
-      </a>
-
-      <ul class="sidebar-menu">
-        <li>
-          <a href="dashboard-mahasiswa.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="artefak.html" class="sidebar-link active">
-            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-            <span>Artefak</span>
-          </a>
-        </li>
-        <li>
-          <a href="timeline.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Timeline</span>
-          </a>
-        </li>
-        <li>
-          <a href="peta.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-            <span>Peta</span>
-          </a>
-        </li>
-        <li>
-          <a href="nilai.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Nilai</span>
-          </a>
-        </li>
-        <li>
-          <a href="profil.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Profil</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="sidebar-footer">
-      <button class="btn-logout" onclick="logoutUser()">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>Keluar</span>
-      </button>
-    </div>
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">MODIVIM</div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard-mahasiswa.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="artefak.html" class="active"><i class="fa-solid fa-landmark"></i> Artefak</a></li>
+      <li><a href="timeline.html"><i class="fa-solid fa-bars-staggered"></i> Timeline</a></li>
+      <li><a href="peta.html"><i class="fa-solid fa-map-location-dot"></i> Peta</a></li>
+      
+      <li><a href="nilai.html"><i class="fa-solid fa-award"></i> Nilai</a></li>
+      <li><a href="profil.html"><i class="fa-solid fa-user"></i> Profil</a></li>
+    </ul>
   </aside>
 
-  <!-- MAIN WRAPPER -->
-  <div class="main-wrapper">
-    <header class="top-header">
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <div class="header-title-group">
-          <h1>Eksplorasi Artefak</h1>
-          <p>Koleksi Peninggalan Sejarah Masa Islam di Indonesia</p>
-        </div>
-      </div>
+  <!-- KONTEN UTAMA -->
+  <main class="main-content">
+    <header>
+      <h1>MODIVIM — Galeri Artefak</h1>
     </header>
 
-    <main class="content-body">
-      <!-- FITUR FILTER & SEARCH -->
-      <section class="controls-wrapper">
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Cari nama artefak atau lokasi..." onkeyup="filterArtifacts()">
-        </div>
-        <div class="filter-group">
-          <select id="filterLokasi" class="filter-select" onchange="filterArtifacts()">
-            <option value="">Semua Lokasi</option>
-            <option value="Samudera Pasai">Samudera Pasai</option>
-            <option value="Cirebon">Cirebon</option>
-            <option value="Aceh">Aceh</option>
-            <option value="Kudus">Kudus</option>
-          </select>
-        </div>
-      </section>
-
-      <!-- GRID KARTU ARTEFAK -->
-      <section class="artifact-grid" id="artifactContainer">
-        <!-- Rendered via JS -->
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div><strong style="color: var(--color-ink);">MODIVIM</strong> — Virtual Museum Sejarah Islam</div>
-      <div>Universitas Negeri Medan &bull; &copy; <span id="year"></span></div>
-    </footer>
-  </div>
-
-  <!-- MODAL DETAIL ARTEFAK & ANALISIS KRITIS -->
-  <div class="modal-overlay" id="artifactModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      <div>
-        <span class="font-caption" id="modalMeta">ABAS KE-13 &bull; SAMUDERA PASAI</span>
-        <h2 id="modalTitle" style="margin-top: 4px; font-size: 24px;">Nama Artefak</h2>
+    <div class="container">
+      <div id="loading" class="loading-text">
+        Memuat data artefak dari server...
       </div>
-      <p id="modalDesc" style="color: var(--color-graphite); font-size: 14px;">Deskripsi lengkap mengenai artefak sejarah akan ditampilkan di sini.</p>
-      
-      <hr style="border: 0; border-top: 1px solid var(--color-stone);">
-
-      <!-- FORM EVALUASI KRITIS -->
-      <div>
-        <span class="font-caption" style="color: var(--color-violet-spark);">PERTANYAAN REFLEKTIF</span>
-        <h3 style="font-size: 16px; margin-top: 4px;" id="modalQuestion">Apa analisis Anda mengenai pengaruh artefak ini terhadap jaringan perdagangan masa itu?</h3>
-        <form id="analysisForm" onsubmit="submitAnalysis(event)">
-          <div class="form-group">
-            <textarea id="userAnswer" placeholder="Tuliskan jawaban analisis berbasis bukti sejarah Anda di sini..." required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary" style="margin-top: 12px; width: 100%;">Kirim Jawaban Analisis</button>
-        </form>
-      </div>
+      <div id="artifactGrid" class="artifact-grid"></div>
     </div>
+  </main>
+</div>
+
+<!-- ==========================
+     MODAL DETAIL
+     ========================== -->
+<div id="artifactModalOverlay" class="modal-overlay" aria-hidden="true">
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <button id="modalCloseButton" class="modal-close-btn" type="button" aria-label="Tutup modal">
+      ×
+    </button>
+    <div id="modalBody" class="modal-body"></div>
   </div>
+</div>
 
-  <script>
-    // Database Artefak Modivim
-    const artifactsData = [
-      {
-        id: "ART-001",
-        nama: "Nisan Sultan Malik al-Saleh",
-        lokasi: "Samudera Pasai",
-        periode: "Abad ke-13",
-        deskripsi: "Batu nisan berpahat kaligrafi Arab gaya Khat Thuluth yang menandai makam pendiri Kesultanan Samudera Pasai. Menjadi bukti kuat masuknya pengaruh Islam di Nusantara abad ke-13.",
-        pertanyaan: "Bagaimana corak kaligrafi pada nisan ini mencerminkan hubungan akulturasi budaya lokal dengan pedagang Gujarat/Persia?"
-      },
-      {
-        id: "ART-002",
-        nama: "Koin Dirham Kesultanan Cirebon",
-        lokasi: "Cirebon",
-        periode: "Abad ke-16",
-        deskripsi: "Mata uang logam emas/perak yang digunakan dalam transaksi perdagangan pesisir utara Jawa, menunjukkan sistem ekonomi Kesultanan Cirebon yang sudah maju.",
-        pertanyaan: "Apa implikasi penggunaan mata uang resmi ini terhadap kedaulatan politik dan ekonomi Kesultanan Cirebon?"
-      },
-      {
-        id: "ART-003",
-        nama: "Manuskrip Bustan al-Salatin",
-        lokasi: "Aceh",
-        periode: "Abad ke-17",
-        deskripsi: "Karya sastra dan historiografi karangan Syaikh Nuruddin ar-Raniri atas perintah Sultan Iskandar Thani, berisi tentang sejarah kesultanan dan etika kepemimpinan.",
-        pertanyaan: "Mengapa teks historiografi tradisional seperti ini penting dipahami dalam kaitan legitimasi kekuasaan raja-raja Melayu-Islam?"
-      },
-      {
-        id: "ART-004",
-        nama: "Menara Masjid Agung Kudus",
-        lokasi: "Kudus",
-        periode: "Abad ke-15",
-        deskripsi: "Bangunan menara masjid unik menyerupai candi Hindu-Buddha bentukan Sunan Kudus sebagai strategi dakwah kultural (akulturasi).",
-        pertanyaan: "Bagaimana pendekatan arsitektur Sunan Kudus ini mencerminkan prinsip toleransi dan akulturasi budaya dalam penyebaran Islam?"
+<script>
+  const GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+
+  let allArtifacts = [];
+
+  document.addEventListener("DOMContentLoaded", function () {
+    fetchArtifacts();
+
+    document.getElementById("modalCloseButton").addEventListener("click", closeArtifactModal);
+
+    document.getElementById("artifactModalOverlay").addEventListener("click", function(event) {
+      if (event.target === this) {
+        closeArtifactModal();
       }
-    ];
+    });
+  });
 
-    let selectedArtifactId = null;
+  function fetchArtifacts() {
+    fetch(GAS_BASE_URL + "?action=getArtefak", {
+      method: "GET",
+      redirect: "follow"
+    })
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error("HTTP Error " + response.status);
+        }
+        return response.json();
+      })
+      .then(function(result) {
+        document.getElementById("loading").style.display = "none";
+        if (result.success && Array.isArray(result.data)) {
+          allArtifacts = result.data;
+          renderGallery(allArtifacts);
+          checkUrlParamAndOpenModal();
+        } else {
+          showError("Data artefak tidak tersedia.");
+        }
+      })
+      .catch(function(error) {
+        console.error("GAS ERROR:", error);
+        showError("Koleksi artefak belum dapat dimuat.");
+      });
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('year').textContent = new Date().getFullYear();
-      setupMobileSidebar();
-      renderArtifacts(artifactsData);
-      checkUrlParams();
+  function renderGallery(artifacts) {
+    const grid = document.getElementById("artifactGrid");
+    grid.innerHTML = "";
+
+    if (!artifacts.length) {
+      grid.innerHTML = "<p>Belum ada artefak yang tersedia.</p>";
+      return;
+    }
+
+    artifacts.forEach(function(item) {
+      const card = document.createElement("div");
+      card.className = "artifact-card";
+
+      const foto = item.FotoURL && item.FotoURL !== "-" ? item.FotoURL : "";
+
+      const imageHTML = foto
+        ? `<img src="${escapeHTML(foto)}" alt="${escapeHTML(item.NamaArtefak || "Artefak")}" class="card-img" onerror="this.style.display='none'">`
+        : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#777169;">Foto tidak tersedia</div>`;
+
+      card.innerHTML = `
+        <div class="card-img-wrap">
+          ${imageHTML}
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">
+            ${escapeHTML(item.NamaArtefak || "Tanpa Nama")}
+          </h3>
+          <div class="card-subtitle">
+            ${escapeHTML(item.Lokasi || "-")} • ${escapeHTML(item.Periode || "-")}
+          </div>
+          <button class="btn-detail" type="button">
+            Lihat Detail
+          </button>
+        </div>
+      `;
+
+      const button = card.querySelector(".btn-detail");
+      button.addEventListener("click", function() {
+        openArtifactModal(item.ArtefakID);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  function openArtifactModal(artifactId) {
+    const artifact = allArtifacts.find(function(item) {
+      return String(item.ArtefakID).trim() === String(artifactId).trim();
     });
 
-    function setupMobileSidebar() {
-      const toggle = document.getElementById('mobileNavToggle');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebarOverlay');
-      if (toggle && sidebar && overlay) {
-        toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); });
-        overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); });
-      }
+    if (!artifact) {
+      console.error("Artefak tidak ditemukan:", artifactId);
+      alert("Data artefak tidak ditemukan.");
+      return;
     }
 
-    function renderArtifacts(data) {
-      const container = document.getElementById('artifactContainer');
-      container.innerHTML = '';
+    renderArtifactDetail(artifact);
 
-      if(data.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; color: var(--color-ash);">Artefak tidak ditemukan.</p>`;
+    const overlay = document.getElementById("artifactModalOverlay");
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeArtifactModal() {
+    const overlay = document.getElementById("artifactModalOverlay");
+    overlay.classList.remove("active");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+      closeArtifactModal();
+    }
+  });
+
+  function renderArtifactDetail(artifact) {
+    const modalBody = document.getElementById("modalBody");
+    const foto = artifact.FotoURL && artifact.FotoURL !== "-" ? artifact.FotoURL : "";
+    const tahunAbad = artifact.TahunAbad || artifact["Tahun/Abad"] || "-";
+
+    const currentUrl = window.location.origin + window.location.pathname + "?id=" + artifact.ArtefakID;
+    const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentUrl);
+
+    const savedAnswerKey = "modivim_answer_" + artifact.ArtefakID;
+    const existingAnswer = localStorage.getItem(savedAnswerKey) || "";
+
+    modalBody.innerHTML = `
+      <div class="modal-header-image">
+        ${foto ? `<img src="${escapeHTML(foto)}" alt="${escapeHTML(artifact.NamaArtefak || "Artefak")}" class="modal-img">` : `<span>Foto artefak tidak tersedia</span>`}
+      </div>
+
+      <h2 class="modal-title">
+        ${escapeHTML(artifact.NamaArtefak || "Nama Artefak Tidak Tersedia")}
+      </h2>
+
+      <div class="modal-grid-info">
+        ${createInfo("Artefak ID", artifact.ArtefakID)}
+        ${createInfo("Periode", artifact.Periode)}
+        ${createInfo("Tahun / Abad", tahunAbad)}
+        ${createInfo("Jenis Artefak", artifact.JenisArtefak)}
+        ${createInfo("Lokasi", artifact.Lokasi)}
+        ${createInfo("Provinsi / Pulau", (artifact.Provinsi || "-") + " / " + (artifact.Pulau || "-"))}
+      </div>
+
+      <div class="modal-section">
+        <h3>Deskripsi</h3>
+        <p>${escapeHTML(artifact.Deskripsi || "Tidak ada deskripsi.")}</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>Nilai Historis</h3>
+        <p>${escapeHTML(artifact.NilaiHistoris || "Tidak ada catatan nilai historis.")}</p>
+      </div>
+
+      <!-- QR CODE ARTEFAK -->
+      <div class="placeholder-box" style="background: #ffffff; border: 1px solid #ebe8e4; text-align: center;">
+        <h4 style="color: #000; margin-bottom: 12px;">QR CODE ARTEFAK</h4>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <img src="${qrCodeUrl}" alt="QR Code ${escapeHTML(artifact.NamaArtefak)}" style="width: 140px; height: 140px; border-radius: 8px; padding: 4px; background: #fff; border: 1px solid #ebe8e4;">
+          <p style="font-size: 13px; color: #777169; margin: 0;">Scan untuk membagikan atau membuka langsung artefak ini.</p>
+        </div>
+      </div>
+
+      <!-- KOTAK PERTANYAAN HISTORIS & KOLOM JAWABAN MAHASISWA -->
+      <div class="placeholder-box" style="background: #f5f3f1; border: 1px solid #a59f97;">
+        <h4 style="color: #0447ff; margin-bottom: 10px; font-size: 1.05rem;">
+          Lembar Kerja / Pertanyaan Pemantik (Discovery Learning)
+        </h4>
+        <p style="font-weight: 500; color: #000; margin-bottom: 12px; font-size: 14px;">
+          Berdasarkan pengamatan Anda terhadap artefak <strong>${escapeHTML(artifact.NamaArtefak)}</strong> (${escapeHTML(artifact.Periode)}):
+        </p>
+        <ul style="margin: 0 0 16px 0; padding-left: 20px; color: #44403b; line-height: 1.5; font-size: 13.5px;">
+          <li>Bagaimana bentuk akulturasi budaya yang tercermin dari struktur atau corak fisik artefak ini?</li>
+          <li>Peran strategis apa yang dimainkan oleh artefak ini dalam dinamika sejarah Islam di wilayah ${escapeHTML(artifact.Lokasi)}?</li>
+          <li>Bukti empiris apa saja yang menunjukkan keaslian dan signifikansi historis artefak tersebut?</li>
+        </ul>
+
+        <div style="margin-top: 15px;">
+          <label for="studentAnswer" style="display: block; font-weight: 600; font-size: 13px; color: #000; margin-bottom: 6px;">
+            Tuliskan Analisis dan Jawaban Anda di Sini:
+          </label>
+          <textarea 
+            id="studentAnswer" 
+            rows="5" 
+            style="width: 100%; padding: 12px; border: 1px solid #a59f97; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 14px; background: #fff; color: #44403b; resize: vertical;" 
+            placeholder="Ketik analisis kritis-historis Anda di sini..."
+          >${existingAnswer}</textarea>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <button 
+              type="button" 
+              id="btnSaveAnswer" 
+              style="background: #0447ff; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;"
+            >
+              Simpan Jawaban
+            </button>
+            <span id="saveStatus" style="font-size: 12px; color: #2e7d32; font-weight: 500; display: none;">Jawaban tersimpan!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-close-modal" id="modalBottomClose">
+          Tutup
+        </button>
+      </div>
+    `;
+
+    document.getElementById("btnSaveAnswer").addEventListener("click", function() {
+      const answerText = document.getElementById("studentAnswer").value.trim();
+      
+      if (!answerText) {
+        alert("Mohon tuliskan analisis atau jawaban Anda terlebih dahulu.");
         return;
       }
-
-      data.forEach(art => {
-        const card = `
-          <div class="artifact-card" onclick="openModal('${art.id}')">
-            <div class="artifact-img-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a59f97" stroke-width="1">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <path d="M21 15l-5-5L5 21"/>
-              </svg>
-            </div>
-            <div class="artifact-card-body">
-              <div>
-                <span class="font-caption">${art.periode.toUpperCase()} &bull; ${art.lokasi.toUpperCase()}</span>
-                <h3 class="artifact-title" style="margin-top: 4px;">${art.nama}</h3>
-              </div>
-              <button class="btn btn-primary" style="width: 100%; margin-top: 12px; font-size: 12px;">Eksplorasi & Analisis</button>
-            </div>
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', card);
-      });
-    }
-
-    function filterArtifacts() {
-      const searchVal = document.getElementById('searchInput').value.toLowerCase();
-      const lokasiVal = document.getElementById('filterLokasi').value;
-
-      const filtered = artifactsData.filter(art => {
-        const matchSearch = art.nama.toLowerCase().includes(searchVal) || art.lokasi.toLowerCase().includes(searchVal);
-        const matchLokasi = lokasiVal === "" || art.lokasi === lokasiVal;
-        return matchSearch && matchLokasi;
-      });
-
-      renderArtifacts(filtered);
-    }
-
-    function openModal(id) {
-      const art = artifactsData.find(a => a.id === id);
-      if (!art) return;
-
-      selectedArtifactId = id;
-      document.getElementById('modalMeta').textContent = `${art.periode.toUpperCase()} • ${art.lokasi.toUpperCase()}`;
-      document.getElementById('modalTitle').textContent = art.nama;
-      document.getElementById('modalDesc').textContent = art.deskripsi;
-      document.getElementById('modalQuestion').textContent = art.pertanyaan;
       
-      document.getElementById('artifactModal').classList.add('active');
-    }
+      const mahasiswaId = localStorage.getItem("username") || localStorage.getItem("mahasiswaId") || "M001";
+      
+      localStorage.setItem(savedAnswerKey, answerText);
+      
+      const statusSpan = document.getElementById("saveStatus");
+      statusSpan.innerText = "Menyimpan ke database...";
+      statusSpan.style.color = "#0447ff";
+      statusSpan.style.display = "inline";
 
-    function closeModal() {
-      document.getElementById('artifactModal').classList.remove('active');
-      document.getElementById('userAnswer').value = '';
-    }
+      fetch(GAS_BASE_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          action: "saveAnswer",
+          artefakId: artifact.ArtefakID,
+          namaArtefak: artifact.NamaArtefak,
+          mahasiswaId: mahasiswaId,
+          pertanyaanId: "Q001",
+          jawaban: answerText
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          statusSpan.innerText = "Jawaban tersimpan di database!";
+          statusSpan.style.color = "#2e7d32";
+        } else {
+          statusSpan.innerText = "Gagal: " + result.message;
+          statusSpan.style.color = "#d32f2f";
+        }
+        setTimeout(function() {
+          statusSpan.style.display = "none";
+        }, 3000);
+      })
+      .catch(function(error) {
+        console.error("Gagal menyimpan:", error);
+        statusSpan.innerText = "Gagal terhubung ke server.";
+        statusSpan.style.color = "#d32f2f";
+      });
+    });
 
-    function submitAnalysis(e) {
-      e.preventDefault();
-      const answer = document.getElementById('userAnswer').value;
-      if (!answer.trim()) return;
+    document.getElementById("modalBottomClose").addEventListener("click", closeArtifactModal);
+  }
 
-      alert(`Jawaban Anda untuk artefak (${selectedArtifactId}) berhasil disimpan! Nilai analisis akan dikalkulasi.`);
-      closeModal();
-    }
+  function createInfo(label, value) {
+    return `
+      <div class="info-item">
+        <span class="info-label">
+          ${escapeHTML(label)}
+        </span>
+        <span class="info-value">
+          ${escapeHTML(value || "-")}
+        </span>
+      </div>
+    `;
+  }
 
-    function checkUrlParams() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const artId = urlParams.get('id');
-      if (artId) {
-        openModal(artId);
-      }
+  function checkUrlParamAndOpenModal() {
+    const params = new URLSearchParams(window.location.search);
+    const targetId = params.get("id");
+    if (targetId) {
+      openArtifactModal(targetId);
     }
+  }
 
-    function logoutUser() {
-      if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
-        sessionStorage.clear();
-        window.location.href = "login.html";
-      }
+  function showError(message) {
+    const loading = document.getElementById("loading");
+    loading.innerText = message;
+    loading.style.display = "block";
+  }
+
+  function escapeHTML(value) {
+    if (value === null || value === undefined) {
+      return "";
     }
-  </script>
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+</script>
+
 </body>
 </html>
