@@ -107,21 +107,20 @@
       max-width: 480px;
     }
 
-    /* Visual Wrapper untuk Logo Unimed */
+    /* Visual Wrapper - Tanpa Kotak & Background */
     .visual-wrapper {
-      background-color: var(--color-warm-taupe);
-      border-radius: 20px;
-      padding: 32px;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 16px 0;
       display: flex;
       align-items: center;
-      justify-content: center;
-      aspect-ratio: 16 / 9;
+      justify-content: flex-start; /* Atur ke 'center' jika ingin logonya di tengah */
       margin-top: 8px;
-      border: 1px solid var(--color-stone);
     }
 
     .unimed-logo {
-      max-height: 120px;
+      max-height: 200px; /* Ukuran diperbesar dari sebelumnya */
       max-width: 100%;
       object-fit: contain;
     }
