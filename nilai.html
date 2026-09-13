@@ -231,7 +231,7 @@
         </div>
       </section>
 
-      <!-- TABEL DAFTAR NILAIS -->
+      <!-- TABEL DAFTAR NILAI -->
       <section class="table-container">
         <table class="custom-table">
           <thead>
@@ -312,6 +312,8 @@
           const json = await res.json();
           if (json.status === "success") {
             dataList = json.data;
+          } else {
+            dataList = mockDatabaseJawaban;
           }
         } catch (err) {
           console.warn("Menggunakan data fallback:", err);
@@ -342,7 +344,7 @@
       const tbody = document.getElementById('nilaiTableBody');
       tbody.innerHTML = '';
 
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Belum ada jawaban yang dikirimkan.</td></tr>`;
         return;
       }
@@ -351,6 +353,10 @@
         const isDinilai = item.status === 'Dinilai';
         const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
         
+        // Sanitasi teks agar aman dimasukkan ke dalam attribute onclick JS
+        const safeJawaban = (item.jawaban || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
+        const safeFeedback = (item.feedback || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
+
         const row = `
           <tr>
             <td><strong>${item.jawabanId}</strong></td>
@@ -361,7 +367,7 @@
             <td><span class="badge ${badgeClass}">${item.status}</span></td>
             <td>
               <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" 
-                onclick="showFeedbackDetails('${item.jawabanId}', '${item.jawaban}', '${item.nilai}', '${item.feedback}')">
+                onclick="showFeedbackDetails('${item.jawabanId}', '${safeJawaban}', '${item.nilai}', '${safeFeedback}')">
                 Detail
               </button>
             </td>
