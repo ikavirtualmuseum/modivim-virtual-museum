@@ -414,7 +414,7 @@
       document.getElementById('userHeaderName').textContent = user.nama || user.name || "Mahasiswa";
     }
 
-    /* FUNGSI DENGAN PERBAIKAN PADA PROSES FETCH & CEK ID */
+    /* FUNGSI FETCH ARTEFAK BESERTA PERTANYAAN PEMANTIK DARI GAS */
     function fetchArtifacts() {
       fetch(GAS_BASE_URL + "?action=getArtefak", {
         method: "GET",
@@ -432,7 +432,6 @@
             allArtifacts = result.data;
             renderGallery(allArtifacts);
             
-            // Jeda sedikit untuk memastikan data siap sebelum modal dibuka dari link URL
             setTimeout(function() {
               checkUrlParamAndOpenModal();
             }, 50);
@@ -491,7 +490,7 @@
       });
     }
 
-    /* FUNGSI PEMBUKA MODAL DENGAN PENANGANAN COCOK ID (AMABUIGUITY FIX) */
+    /* FUNGSI PEMBUKA MODAL */
     function openArtifactModal(artifactId) {
       if (!artifactId) return;
 
@@ -503,7 +502,7 @@
 
       if (!artifact) {
         console.warn("Artefak tidak ditemukan untuk ID:", artifactId);
-        return; // Dihapus alert-nya agar popup yang mengganggu tidak muncul lagi
+        return;
       }
 
       renderArtifactDetail(artifact);
@@ -527,6 +526,7 @@
       }
     });
 
+    /* RENDER DETAIL MODAL & DOKUMEN JAWABAN DESKRIPSI UTUH */
     function renderArtifactDetail(artifact) {
       const modalBody = document.getElementById("modalBody");
       const foto = artifact.FotoURL && artifact.FotoURL !== "-" ? artifact.FotoURL : "";
@@ -535,8 +535,30 @@
       const currentUrl = window.location.origin + window.location.pathname + "?id=" + artifact.ArtefakID;
       const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentUrl);
 
+      // 1. Dapatkan daftar pertanyaan pemantik dari backend
+      const listPertanyaan = artifact.DaftarPertanyaan || [];
+      let htmlPertanyaanList = "";
+
+      if (Array.isArray(listPertanyaan) && listPertanyaan.length > 0) {
+        htmlPertanyaanList = "<ol style='padding-left: 20px; margin-bottom: 16px; color: var(--color-graphite); font-size: 13.5px; line-height: 1.6;'>";
+        listPertanyaan.forEach((q) => {
+          htmlPertanyaanList += `<li style='margin-bottom: 8px;'>${escapeHTML(q.teksPertanyaan)}</li>`;
+        });
+        htmlPertanyaanList += "</ol>";
+      } else {
+        // Fallback pertanyaan kritis jika belum diisi di sheet PERTANYAAN
+        htmlPertanyaanList = `
+          <ul style="margin: 0 0 16px 0; padding-left: 20px; color: var(--color-smoke); line-height: 1.6; font-size: 13.5px;">
+            <li>Bagaimana bentuk akulturasi budaya yang tercermin dari struktur atau corak fisik artefak ini?</li>
+            <li>Peran strategis apa yang dimainkan oleh artefak ini dalam dinamika sejarah Islam di wilayah ${escapeHTML(artifact.Lokasi || "terkait")}?</li>
+            <li>Bukti empiris apa saja yang menunjukkan keaslian dan signifikansi historis artefak tersebut?</li>
+          </ul>`;
+      }
+
+      // Ambil jawaban dari penyimpanan lokal jika pernah diisi sebelumnya
       const savedAnswerKey = "modivim_answer_" + artifact.ArtefakID;
       const existingAnswer = localStorage.getItem(savedAnswerKey) || "";
+      const defaultPertanyaanId = (listPertanyaan.length > 0 && listPertanyaan[0].pertanyaanId) ? listPertanyaan[0].pertanyaanId : "Q001";
 
       modalBody.innerHTML = `
         <div class="modal-header-image">
@@ -557,7 +579,7 @@
         </div>
 
         <div class="modal-section">
-          <h3>Deskripsi</h3>
+          <h3>Deskripsi Artefak</h3>
           <p>${escapeHTML(artifact.Deskripsi || "Tidak ada deskripsi.")}</p>
         </div>
 
@@ -575,37 +597,35 @@
           </div>
         </div>
 
-        <!-- KOTAK PERTANYAAN HISTORIS & KOLOM JAWABAN MAHASISWA -->
+        <!-- KOTAK PERTANYAAN HISTORIS & DESKRIPSI JAWABAN MAHASISWA -->
         <div class="placeholder-box">
           <h4 style="color: var(--color-violet-spark); margin-bottom: 10px; font-size: 15px; font-weight:600;">
             Lembar Kerja / Pertanyaan Pemantik (Discovery Learning)
           </h4>
           <p style="font-weight: 500; color: var(--color-ink); margin-bottom: 12px; font-size: 14px;">
-            Berdasarkan pengamatan Anda terhadap artefak <strong>${escapeHTML(artifact.NamaArtefak)}</strong> (${escapeHTML(artifact.Periode)}):
+            Berdasarkan pengamatan Anda terhadap artefak <strong>${escapeHTML(artifact.NamaArtefak)}</strong>, jawablah pertanyaan-pertanyaan berikut dalam bentuk deskripsi analisis utuh:
           </p>
-          <ul style="margin: 0 0 16px 0; padding-left: 20px; color: var(--color-smoke); line-height: 1.6; font-size: 13.5px;">
-            <li>Bagaimana bentuk akulturasi budaya yang tercermin dari struktur atau corak fisik artefak ini?</li>
-            <li>Peran strategis apa yang dimainkan oleh artefak ini dalam dinamika sejarah Islam di wilayah ${escapeHTML(artifact.Lokasi)}?</li>
-            <li>Bukti empiris apa saja yang menunjukkan keaslian dan signifikansi historis artefak tersebut?</li>
-          </ul>
 
-          <div style="margin-top: 15px;">
-            <label for="studentAnswer" style="display: block; font-weight: 600; font-size: 13px; color: var(--color-ink); margin-bottom: 6px;">
-              Tuliskan Analisis dan Jawaban Anda di Sini:
+          <!-- LIST PERTANYAAN DARI BACKEND -->
+          ${htmlPertanyaanList}
+
+          <div style="margin-top: 16px;">
+            <label for="studentAnswerInput" style="display: block; font-weight: 600; font-size: 13.5px; color: var(--color-ink); margin-bottom: 6px;">
+              Deskripsi Jawaban & Analisis Mahasiswa:
             </label>
             <textarea 
-              id="studentAnswer" 
-              rows="5" 
-              style="width: 100%; padding: 12px; border: 1px solid var(--color-stone); border-radius: 8px; font-family: var(--font-main); font-size: 14px; background: var(--color-eggshell); color: var(--color-graphite); resize: vertical;" 
-              placeholder="Ketik analisis kritis-historis Anda di sini..."
+              id="studentAnswerInput" 
+              rows="6" 
+              style="width: 100%; padding: 12px; border: 1px solid var(--color-stone); border-radius: 8px; font-family: var(--font-main); font-size: 13.5px; background: #fff; color: var(--color-graphite); resize: vertical; line-height: 1.5;" 
+              placeholder="Tuliskan deskripsi analisis kritis-historis Anda di sini..."
             >${escapeHTML(existingAnswer)}</textarea>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
               <button 
                 type="button" 
                 id="btnSaveAnswer" 
                 class="btn btn-primary"
-                style="padding: 8px 18px; font-size: 13px;"
+                style="padding: 10px 20px; font-size: 13px;"
               >
                 Simpan Jawaban
               </button>
@@ -621,58 +641,67 @@
         </div>
       `;
 
-      document.getElementById("btnSaveAnswer").addEventListener("click", function() {
-        const answerText = document.getElementById("studentAnswer").value.trim();
+      // Event Listener Tombol Simpan
+      const btnSave = document.getElementById("btnSaveAnswer");
+      if (btnSave) {
+        btnSave.addEventListener("click", function() {
+          const answerInput = document.getElementById("studentAnswerInput");
+          const answerText = answerInput ? answerInput.value.trim() : "";
 
-        if (!answerText) {
-          alert("Mohon tuliskan analisis atau jawaban Anda terlebih dahulu.");
-          return;
-        }
-
-        const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-        const mahasiswaId = user.mahasiswaId || user.userID || user.username || "M001";
-
-        localStorage.setItem(savedAnswerKey, answerText);
-
-        const statusSpan = document.getElementById("saveStatus");
-        statusSpan.innerText = "Menyimpan ke database...";
-        statusSpan.style.color = "var(--color-violet-spark)";
-        statusSpan.style.display = "inline";
-
-        fetch(GAS_BASE_URL, {
-          method: "POST",
-          redirect: "follow",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify({
-            action: "saveAnswer",
-            artefakId: artifact.ArtefakID,
-            namaArtefak: artifact.NamaArtefak,
-            mahasiswaId: mahasiswaId,
-            pertanyaanId: "Q001",
-            jawaban: answerText
-          })
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            statusSpan.innerText = "Jawaban tersimpan di database!";
-            statusSpan.style.color = "#065f46";
-          } else {
-            statusSpan.innerText = "Gagal: " + result.message;
-            statusSpan.style.color = "#dc2626";
+          if (!answerText) {
+            alert("Mohon tuliskan deskripsi jawaban Anda terlebih dahulu.");
+            return;
           }
-          setTimeout(function() {
-            statusSpan.style.display = "none";
-          }, 3000);
-        })
-        .catch(function(error) {
-          console.error("Gagal menyimpan:", error);
-          statusSpan.innerText = "Gagal terhubung ke server.";
-          statusSpan.style.color = "#dc2626";
+
+          const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+          const mahasiswaId = user.mahasiswaId || user.userID || user.username || "M001";
+
+          // Backup Jawaban di Browser
+          localStorage.setItem(savedAnswerKey, answerText);
+
+          const statusSpan = document.getElementById("saveStatus");
+          statusSpan.innerText = "Menyimpan ke database...";
+          statusSpan.style.color = "var(--color-violet-spark)";
+          statusSpan.style.display = "inline";
+
+          // Kirim POST ke GAS
+          fetch(GAS_BASE_URL, {
+            method: "POST",
+            redirect: "follow",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify({
+              action: "submitAnswer",
+              artefakId: artifact.ArtefakID,
+              mahasiswaId: mahasiswaId,
+              pertanyaanId: defaultPertanyaanId,
+              jawaban: answerText
+            })
+          })
+          .then(response => response.json())
+          .then(result => {
+            if (result.success) {
+              statusSpan.innerText = "Jawaban deskripsi berhasil disimpan!";
+              statusSpan.style.color = "#065f46";
+            } else {
+              statusSpan.innerText = "Gagal: " + (result.message || "Terjadi kesalahan");
+              statusSpan.style.color = "#dc2626";
+            }
+            setTimeout(function() {
+              statusSpan.style.display = "none";
+            }, 3500);
+          })
+          .catch(function(error) {
+            console.error("Gagal menyimpan:", error);
+            statusSpan.innerText = "Tersimpan secara lokal (Offline mode)";
+            statusSpan.style.color = "#065f46";
+            setTimeout(function() {
+              statusSpan.style.display = "none";
+            }, 3500);
+          });
         });
-      });
+      }
 
       document.getElementById("modalBottomClose").addEventListener("click", closeArtifactModal);
     }
