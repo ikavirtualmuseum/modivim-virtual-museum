@@ -265,9 +265,9 @@
     // --- MOCK DATABASE ---
     const mockUser = { nama: "Mahasiswa", mahasiswaId: "M001" };
     const mockDatabaseJawaban = [
-      { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
-      { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
-      { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
+      { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
+      { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
+      { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -297,12 +297,14 @@
 
     function loadUserProfile() {
       const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-      document.getElementById('userHeaderName').textContent = user.nama;
+      document.getElementById('userHeaderName').textContent = user.nama || user.name || "Mahasiswa";
     }
 
     async function fetchDatabaseNilai() {
       const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-      const mId = user.mahasiswaId || "M001";
+      
+      // Membaca ID Mahasiswa dinamis (MahasiswaID / UserID / Username)
+      const mId = user.mahasiswaId || user.userID || user.username || "M001";
       
       let dataList = [];
 
@@ -353,7 +355,7 @@
         const isDinilai = item.status === 'Dinilai';
         const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
         
-        // Sanitasi teks agar aman dimasukkan ke dalam attribute onclick JS
+        // Sanitasi teks agar aman dimasukkan ke attribute onclick JS
         const safeJawaban = (item.jawaban || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
         const safeFeedback = (item.feedback || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
 
