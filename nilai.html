@@ -1,123 +1,386 @@
-// --- KONFIGURASI WEB APP GOOGLE APPS SCRIPT ---
-// Ganti dengan URL deployment Web App Apps Script Anda jika sudah di-deploy
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Nilai — MODIVIM Virtual Museum</title>
 
-// --- MOCK DATABASE (Sesuai Struktur Screenshot Spreadsheet Anda) ---
-const mockUser = { nama: "Mahasiswa", mahasiswaId: "M001" };
-const mockDatabaseJawaban = [
-  { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
-  { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
-  { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
-];
+  <!-- Font Utama: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('year').textContent = new Date().getFullYear();
-  setupMobileSidebar();
-  loadUserProfile();
-  fetchDatabaseNilai();
-});
+  <style>
+    /* ==================================================
+       DESIGN SYSTEM & VARIABLES
+       ================================================== */
+    :root {
+      --color-eggshell: #fdfcfc;
+      --color-warm-taupe: #f5f3f1;
+      --color-stone: #ebe8e4;
+      --color-ink: #000000;
+      --color-graphite: #44403b;
+      --color-smoke: #777169;
+      --color-ash: #a59f97;
+      --color-violet-spark: #0447ff;
 
-function setupMobileSidebar() {
-  const toggle = document.getElementById('mobileNavToggle');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-
-  if (toggle && sidebar && overlay) {
-    toggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('active');
-    });
-
-    overlay.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('active');
-    });
-  }
-}
-
-function loadUserProfile() {
-  const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-  document.getElementById('userHeaderName').textContent = user.nama;
-}
-
-async function fetchDatabaseNilai() {
-  const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-  const mId = user.mahasiswaId || "M001";
-  
-  let dataList = [];
-
-  if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
-    try {
-      const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
-      const json = await res.json();
-      if (json.status === "success") {
-        dataList = json.data;
-      }
-    } catch (err) {
-      console.warn("Menggunakan data fallback:", err);
-      dataList = mockDatabaseJawaban;
+      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --sidebar-width: 260px;
     }
-  } else {
-    dataList = mockDatabaseJawaban;
-  }
 
-  renderStats(dataList);
-  renderTable(dataList);
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
 
-function renderStats(data) {
-  const assessedItems = data.filter(d => typeof d.nilai === 'number' || (!isNaN(parseFloat(d.nilai)) && d.nilai !== '-'));
-  
-  const totalScore = assessedItems.reduce((acc, curr) => acc + parseFloat(curr.nilai), 0);
-  const avg = assessedItems.length > 0 ? (totalScore / assessedItems.length).toFixed(1) : "0.0";
-  const highest = assessedItems.length > 0 ? Math.max(...assessedItems.map(d => parseFloat(d.nilai))) : 0;
+    body {
+      background-color: var(--color-eggshell);
+      color: var(--color-smoke);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+    }
 
-  document.getElementById('statAvgScore').textContent = avg;
-  document.getElementById('statTotalSubmitted').textContent = data.length;
-  document.getElementById('statEvaluated').textContent = assessedItems.length;
-  document.getElementById('statHighest').textContent = highest;
-}
+    h1, h2, h3 { color: var(--color-ink); font-weight: 300; letter-spacing: -0.02em; }
+    .font-caption { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ash); font-weight: 500; }
 
-function renderTable(data) {
-  const tbody = document.getElementById('nilaiTableBody');
-  tbody.innerHTML = '';
+    /* LAYOUT & SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--color-warm-taupe);
+      border-right: 1px solid var(--color-stone);
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
+      padding: 32px 24px; transition: transform 0.3s ease;
+    }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 2px; text-decoration: none; margin-bottom: 40px; }
+    .sidebar-brand-title { font-size: 20px; font-weight: 600; color: var(--color-ink); }
+    .sidebar-brand-sub { font-size: 11px; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.06em; }
+    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border-radius: 10px; color: var(--color-smoke); text-decoration: none; font-size: 14px; transition: all 0.2s ease;
+    }
+    .sidebar-link svg { width: 18px; height: 18px; stroke: var(--color-smoke); stroke-width: 1.75; fill: none; }
+    .sidebar-link:hover, .sidebar-link.active { color: var(--color-ink); background-color: var(--color-eggshell); font-weight: 500; }
+    .sidebar-link:hover svg, .sidebar-link.active svg { stroke: var(--color-ink); }
 
-  if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Belum ada jawaban yang dikirimkan.</td></tr>`;
-    return;
-  }
+    .sidebar-footer { border-top: 1px solid var(--color-stone); padding-top: 20px; }
+    .btn-logout {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px;
+      border: none; background: transparent; color: var(--color-graphite); font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;
+    }
+    .btn-logout svg { width: 18px; height: 18px; stroke: var(--color-graphite); stroke-width: 1.75; fill: none; }
+    .btn-logout:hover { background-color: rgba(220, 38, 38, 0.08); color: #dc2626; }
+    .btn-logout:hover svg { stroke: #dc2626; }
 
-  data.forEach(item => {
-    const isDinilai = item.status === 'Dinilai';
-    const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
-    
-    const row = `
-      <tr>
-        <td><strong>${item.jawabanId}</strong></td>
-        <td>${item.tanggal} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu}</span></td>
-        <td><strong>${item.artefakId}</strong> / ${item.pertanyaanId}</td>
-        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban}</td>
-        <td><strong style="color: var(--color-ink);">${item.nilai}</strong></td>
-        <td><span class="badge ${badgeClass}">${item.status}</span></td>
-        <td>
-          <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" 
-            onclick="showFeedbackDetails('${item.jawabanId}', '${item.jawaban}', '${item.nilai}', '${item.feedback}')">
-            Detail
-          </button>
-        </td>
-      </tr>
-    `;
-    tbody.insertAdjacentHTML('beforeend', row);
-  });
-}
+    .main-wrapper {
+      margin-left: var(--sidebar-width); flex-grow: 1; min-height: 100vh;
+      display: flex; flex-direction: column; background-color: var(--color-eggshell); width: calc(100% - var(--sidebar-width));
+    }
+    .top-header {
+      padding: 24px 48px; border-bottom: 1px solid var(--color-stone); display: flex;
+      align-items: center; justify-content: space-between; background-color: var(--color-eggshell); position: sticky; top: 0; z-index: 90;
+    }
+    .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
 
-function showFeedbackDetails(id, jawaban, nilai, feedback) {
-  alert(`[DETAIL JAWABAN & FEEDBACK]\n\nJawaban ID: ${id}\nJawaban Anda: "${jawaban}"\nNilai: ${nilai}\nFeedback Dosen: "${feedback}"`);
-}
+    /* STATS & CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .stat-card {
+      background-color: var(--color-warm-taupe); padding: 20px; border-radius: 16px;
+      display: flex; flex-direction: column; gap: 8px; border: 1px solid transparent; transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--color-stone); }
+    .stat-value { font-size: 28px; font-weight: 600; color: var(--color-ink); }
 
-function logoutUser() {
-  if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
-    sessionStorage.clear();
-    window.location.href = "login.html";
-  }
-}
+    /* TABLE DESIGN */
+    .table-container {
+      background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone); overflow: hidden;
+    }
+    .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .custom-table th { background-color: #f0ece9; padding: 16px 20px; color: var(--color-graphite); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-stone); }
+    .custom-table td { padding: 16px 20px; border-bottom: 1px solid var(--color-stone); color: var(--color-smoke); }
+    .custom-table tr:last-child td { border-bottom: none; }
+
+    /* BADGES & BUTTONS */
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .badge-success { background-color: #d1fae5; color: #065f46; }
+    .badge-pending { background-color: #fef3c7; color: #92400e; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; font-weight: 500; cursor: pointer; border: none; transition: background 0.2s; }
+    .btn-primary { background-color: var(--color-ink); color: #fff; }
+    .btn-primary:hover { background-color: var(--color-graphite); }
+
+    .footer { padding: 32px 48px; border-top: 1px solid var(--color-stone); display: flex; justify-content: space-between; font-size: 13px; color: var(--color-ash); margin-top: auto; }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 95; }
+    .mobile-nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--color-ink); }
+
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+      .main-wrapper { margin-left: 0; width: 100%; }
+      .mobile-nav-toggle { display: block; }
+      .content-body, .top-header, .footer { padding: 20px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .table-container { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <a href="dashboard-mahasiswa.html" class="sidebar-brand">
+        <span class="sidebar-brand-title">MODIVIM</span>
+        <span class="sidebar-brand-sub">Virtual Museum</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li>
+          <a href="dashboard-mahasiswa.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="artefak.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>Artefak</span>
+          </a>
+        </li>
+        <li>
+          <a href="timeline.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Timeline</span>
+          </a>
+        </li>
+        <li>
+          <a href="peta.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            <span>Peta</span>
+          </a>
+        </li>
+        <li>
+          <a href="nilai.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Nilai</span>
+          </a>
+        </li>
+        <li>
+          <a href="profil.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logoutUser()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div>
+          <span class="font-caption">PEMBELAJARAN SEJARAH ISLAM</span>
+          <h1 style="font-size: 18px; font-weight: 500;" id="userHeaderName">Mahasiswa</h1>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-body">
+      <div>
+        <span class="font-caption" style="color: var(--color-violet-spark);">REKAPITULASI HASIL</span>
+        <h2 style="font-size: 28px; margin-top: 4px;">Daftar Nilai & Evaluasi</h2>
+      </div>
+
+      <!-- STATISTIK RINGKAS -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="font-caption">RATA-RATA SKOR</span>
+          <div class="stat-value" id="statAvgScore">0.0</div>
+        </div>
+        <div class="stat-card">
+          <span class="font-caption">TOTAL DIKIRIM</span>
+          <div class="stat-value" id="statTotalSubmitted">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="font-caption">SUDAH DINILAI</span>
+          <div class="stat-value" id="statEvaluated">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="font-caption">SKOR TERTINGGI</span>
+          <div class="stat-value" id="statHighest">0</div>
+        </div>
+      </section>
+
+      <!-- TABEL DAFTAR NILAIS -->
+      <section class="table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Waktu Kirim</th>
+              <th>Artefak / Soal</th>
+              <th>Jawaban</th>
+              <th>Nilai</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="nilaiTableBody">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div><strong style="color: var(--color-ink);">MODIVIM</strong> — Virtual Museum Sejarah Islam</div>
+      <div>Universitas Negeri Medan &bull; &copy; <span id="year"></span></div>
+    </footer>
+  </div>
+
+  <script>
+    // --- KONFIGURASI WEB APP GOOGLE APPS SCRIPT ---
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+
+    // --- MOCK DATABASE ---
+    const mockUser = { nama: "Mahasiswa", mahasiswaId: "M001" };
+    const mockDatabaseJawaban = [
+      { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
+      { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
+      { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      setupMobileSidebar();
+      loadUserProfile();
+      fetchDatabaseNilai();
+    });
+
+    function setupMobileSidebar() {
+      const toggle = document.getElementById('mobileNavToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        });
+      }
+    }
+
+    function loadUserProfile() {
+      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+      document.getElementById('userHeaderName').textContent = user.nama;
+    }
+
+    async function fetchDatabaseNilai() {
+      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+      const mId = user.mahasiswaId || "M001";
+      
+      let dataList = [];
+
+      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
+        try {
+          const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
+          const json = await res.json();
+          if (json.status === "success") {
+            dataList = json.data;
+          }
+        } catch (err) {
+          console.warn("Menggunakan data fallback:", err);
+          dataList = mockDatabaseJawaban;
+        }
+      } else {
+        dataList = mockDatabaseJawaban;
+      }
+
+      renderStats(dataList);
+      renderTable(dataList);
+    }
+
+    function renderStats(data) {
+      const assessedItems = data.filter(d => typeof d.nilai === 'number' || (!isNaN(parseFloat(d.nilai)) && d.nilai !== '-'));
+      
+      const totalScore = assessedItems.reduce((acc, curr) => acc + parseFloat(curr.nilai), 0);
+      const avg = assessedItems.length > 0 ? (totalScore / assessedItems.length).toFixed(1) : "0.0";
+      const highest = assessedItems.length > 0 ? Math.max(...assessedItems.map(d => parseFloat(d.nilai))) : 0;
+
+      document.getElementById('statAvgScore').textContent = avg;
+      document.getElementById('statTotalSubmitted').textContent = data.length;
+      document.getElementById('statEvaluated').textContent = assessedItems.length;
+      document.getElementById('statHighest').textContent = highest;
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('nilaiTableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Belum ada jawaban yang dikirimkan.</td></tr>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const isDinilai = item.status === 'Dinilai';
+        const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
+        
+        const row = `
+          <tr>
+            <td><strong>${item.jawabanId}</strong></td>
+            <td>${item.tanggal} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu}</span></td>
+            <td><strong>${item.artefakId}</strong> / ${item.pertanyaanId}</td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban}</td>
+            <td><strong style="color: var(--color-ink);">${item.nilai}</strong></td>
+            <td><span class="badge ${badgeClass}">${item.status}</span></td>
+            <td>
+              <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" 
+                onclick="showFeedbackDetails('${item.jawabanId}', '${item.jawaban}', '${item.nilai}', '${item.feedback}')">
+                Detail
+              </button>
+            </td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    function showFeedbackDetails(id, jawaban, nilai, feedback) {
+      alert(`[DETAIL JAWABAN & FEEDBACK]\n\nJawaban ID: ${id}\nJawaban Anda: "${jawaban}"\nNilai: ${nilai}\nFeedback Dosen: "${feedback}"`);
+    }
+
+    function logoutUser() {
+      if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>
