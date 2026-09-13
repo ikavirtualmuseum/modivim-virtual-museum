@@ -1,0 +1,123 @@
+// --- KONFIGURASI WEB APP GOOGLE APPS SCRIPT ---
+// Ganti dengan URL deployment Web App Apps Script Anda jika sudah di-deploy
+const GAS_WEB_APP_URL = "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA";
+
+// --- MOCK DATABASE (Sesuai Struktur Screenshot Spreadsheet Anda) ---
+const mockUser = { nama: "Mahasiswa", mahasiswaId: "M001" };
+const mockDatabaseJawaban = [
+  { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
+  { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
+  { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "M001", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('year').textContent = new Date().getFullYear();
+  setupMobileSidebar();
+  loadUserProfile();
+  fetchDatabaseNilai();
+});
+
+function setupMobileSidebar() {
+  const toggle = document.getElementById('mobileNavToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  if (toggle && sidebar && overlay) {
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    });
+  }
+}
+
+function loadUserProfile() {
+  const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+  document.getElementById('userHeaderName').textContent = user.nama;
+}
+
+async function fetchDatabaseNilai() {
+  const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+  const mId = user.mahasiswaId || "M001";
+  
+  let dataList = [];
+
+  if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
+    try {
+      const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
+      const json = await res.json();
+      if (json.status === "success") {
+        dataList = json.data;
+      }
+    } catch (err) {
+      console.warn("Menggunakan data fallback:", err);
+      dataList = mockDatabaseJawaban;
+    }
+  } else {
+    dataList = mockDatabaseJawaban;
+  }
+
+  renderStats(dataList);
+  renderTable(dataList);
+}
+
+function renderStats(data) {
+  const assessedItems = data.filter(d => typeof d.nilai === 'number' || (!isNaN(parseFloat(d.nilai)) && d.nilai !== '-'));
+  
+  const totalScore = assessedItems.reduce((acc, curr) => acc + parseFloat(curr.nilai), 0);
+  const avg = assessedItems.length > 0 ? (totalScore / assessedItems.length).toFixed(1) : "0.0";
+  const highest = assessedItems.length > 0 ? Math.max(...assessedItems.map(d => parseFloat(d.nilai))) : 0;
+
+  document.getElementById('statAvgScore').textContent = avg;
+  document.getElementById('statTotalSubmitted').textContent = data.length;
+  document.getElementById('statEvaluated').textContent = assessedItems.length;
+  document.getElementById('statHighest').textContent = highest;
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('nilaiTableBody');
+  tbody.innerHTML = '';
+
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Belum ada jawaban yang dikirimkan.</td></tr>`;
+    return;
+  }
+
+  data.forEach(item => {
+    const isDinilai = item.status === 'Dinilai';
+    const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
+    
+    const row = `
+      <tr>
+        <td><strong>${item.jawabanId}</strong></td>
+        <td>${item.tanggal} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu}</span></td>
+        <td><strong>${item.artefakId}</strong> / ${item.pertanyaanId}</td>
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban}</td>
+        <td><strong style="color: var(--color-ink);">${item.nilai}</strong></td>
+        <td><span class="badge ${badgeClass}">${item.status}</span></td>
+        <td>
+          <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" 
+            onclick="showFeedbackDetails('${item.jawabanId}', '${item.jawaban}', '${item.nilai}', '${item.feedback}')">
+            Detail
+          </button>
+        </td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML('beforeend', row);
+  });
+}
+
+function showFeedbackDetails(id, jawaban, nilai, feedback) {
+  alert(`[DETAIL JAWABAN & FEEDBACK]\n\nJawaban ID: ${id}\nJawaban Anda: "${jawaban}"\nNilai: ${nilai}\nFeedback Dosen: "${feedback}"`);
+}
+
+function logoutUser() {
+  if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
+    sessionStorage.clear();
+    window.location.href = "login.html";
+  }
+}
