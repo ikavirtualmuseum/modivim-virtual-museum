@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Mahasiswa — MODIVIM Virtual Museum</title>
+
+  <!-- Font Utama: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==================================================
+       DESIGN SYSTEM & VARIABLES
+       ================================================== */
+    :root {
+      --color-eggshell: #fdfcfc;
+      --color-warm-taupe: #f5f3f1;
+      --color-stone: #ebe8e4;
+      --color-ink: #000000;
+      --color-graphite: #44403b;
+      --color-smoke: #777169;
+      --color-ash: #a59f97;
+      --color-violet-spark: #0447ff;
+
+      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --sidebar-width: 260px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background-color: var(--color-eggshell);
+      color: var(--color-smoke);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+    }
+
+    h1, h2, h3 { color: var(--color-ink); font-weight: 300; letter-spacing: -0.02em; }
+    .font-caption { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ash); font-weight: 500; }
+
+    /* LAYOUT & SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--color-warm-taupe);
+      border-right: 1px solid var(--color-stone);
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
+      padding: 32px 24px; transition: transform 0.3s ease;
+    }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 2px; text-decoration: none; margin-bottom: 40px; }
+    .sidebar-brand-title { font-size: 20px; font-weight: 600; color: var(--color-ink); }
+    .sidebar-brand-sub { font-size: 11px; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.06em; }
+    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border-radius: 10px; color: var(--color-smoke); text-decoration: none; font-size: 14px; transition: all 0.2s ease;
+    }
+    .sidebar-link svg { width: 18px; height: 18px; stroke: var(--color-smoke); stroke-width: 1.75; fill: none; }
+    .sidebar-link:hover, .sidebar-link.active { color: var(--color-ink); background-color: var(--color-eggshell); font-weight: 500; }
+    .sidebar-link:hover svg, .sidebar-link.active svg { stroke: var(--color-ink); }
+
+    .sidebar-footer { border-top: 1px solid var(--color-stone); padding-top: 20px; }
+    .btn-logout {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px;
+      border: none; background: transparent; color: var(--color-graphite); font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;
+    }
+    .btn-logout svg { width: 18px; height: 18px; stroke: var(--color-graphite); stroke-width: 1.75; fill: none; }
+    .btn-logout:hover { background-color: rgba(220, 38, 38, 0.08); color: #dc2626; }
+    .btn-logout:hover svg { stroke: #dc2626; }
+
+    .main-wrapper {
+      margin-left: var(--sidebar-width); flex-grow: 1; min-height: 100vh;
+      display: flex; flex-direction: column; background-color: var(--color-eggshell); width: calc(100% - var(--sidebar-width));
+    }
+    .top-header {
+      padding: 24px 48px; border-bottom: 1px solid var(--color-stone); display: flex;
+      align-items: center; justify-content: space-between; background-color: var(--color-eggshell); position: sticky; top: 0; z-index: 90;
+    }
+    .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
+
+    /* PROFILE CARD DESIGN */
+    .profile-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; }
+    
+    .profile-card {
+      background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone);
+      padding: 32px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+    }
+    
+    .avatar-wrapper {
+      width: 96px; height: 96px; border-radius: 50%; background-color: var(--color-ink); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 500;
+      border: 3px solid var(--color-stone);
+    }
+
+    .info-card {
+      background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone);
+      padding: 32px; display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .info-group { display: flex; flex-direction: column; gap: 6px; }
+    .info-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-ash); font-weight: 600; }
+    .info-value { font-size: 16px; color: var(--color-ink); font-weight: 400; padding: 10px 14px; background: var(--color-eggshell); border-radius: 8px; border: 1px solid var(--color-stone); }
+
+    .badge-role { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; text-transform: uppercase; background-color: #dbeafe; color: #1e40af; }
+
+    .footer { padding: 32px 48px; border-top: 1px solid var(--color-stone); display: flex; justify-content: space-between; font-size: 13px; color: var(--color-ash); margin-top: auto; }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 95; }
+    .mobile-nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--color-ink); }
+
+    @media (max-width: 1024px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+      .main-wrapper { margin-left: 0; width: 100%; }
+      .mobile-nav-toggle { display: block; }
+      .content-body, .top-header, .footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <a href="dashboard-mahasiswa.html" class="sidebar-brand">
+        <span class="sidebar-brand-title">MODIVIM</span>
+        <span class="sidebar-brand-sub">Virtual Museum</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li>
+          <a href="dashboard-mahasiswa.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="artefak.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>Artefak</span>
+          </a>
+        </li>
+        <li>
+          <a href="timeline.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Timeline</span>
+          </a>
+        </li>
+        <li>
+          <a href="peta.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            <span>Peta</span>
+          </a>
+        </li>
+        <li>
+          <a href="nilai.html" class="sidebar-link">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Nilai</span>
+          </a>
+        </li>
+        <li>
+          <a href="profil.html" class="sidebar-link active">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logoutUser()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div>
+          <span class="font-caption">PEMBELAJARAN SEJARAH ISLAM</span>
+          <h1 style="font-size: 18px; font-weight: 500;" id="userHeaderName">Mahasiswa</h1>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-body">
+      <div>
+        <span class="font-caption" style="color: var(--color-violet-spark);">AKUN PENGGUNA</span>
+        <h2 style="font-size: 28px; margin-top: 4px;">Profil Mahasiswa</h2>
+      </div>
+
+      <div class="profile-grid">
+        <!-- RINGKASAN KARTU PROFIL -->
+        <div class="profile-card">
+          <div class="avatar-wrapper" id="profileAvatar">M</div>
+          <div>
+            <h3 style="font-size: 18px; font-weight: 600;" id="profileCardName">Nama Mahasiswa</h3>
+            <p style="font-size: 13px; color: var(--color-ash);" id="profileCardSub">User ID: -</p>
+          </div>
+          <span class="badge-role">Mahasiswa</span>
+        </div>
+
+        <!-- DETAIL INFORMASI AKUN -->
+        <div class="info-card">
+          <h3 style="font-size: 18px; font-weight: 500; border-bottom: 1px solid var(--color-stone); padding-bottom: 12px;">Detail Informasi</h3>
+          
+          <div class="info-group">
+            <span class="info-label">Nama Lengkap</span>
+            <div class="info-value" id="valNama">-</div>
+          </div>
+
+          <div class="info-group">
+            <span class="info-label">User ID / NIM</span>
+            <div class="info-value" id="valUserID">-</div>
+          </div>
+
+          <div class="info-group">
+            <span class="info-label">Username</span>
+            <div class="info-value" id="valUsername">-</div>
+          </div>
+
+          <div class="info-group">
+            <span class="info-label">Peran (Role)</span>
+            <div class="info-value" id="valRole">Mahasiswa</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div><strong style="color: var(--color-ink);">MODIVIM</strong> — Virtual Museum Sejarah Islam</div>
+      <div>Universitas Negeri Medan &bull; &copy; <span id="year"></span></div>
+    </footer>
+  </div>
+
+  <script>
+    const mockUser = { nama: "Mahasiswa", userID: "U002", username: "mahasiswa01", role: "mahasiswa" };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      setupMobileSidebar();
+      renderUserProfile();
+    });
+
+    function setupMobileSidebar() {
+      const toggle = document.getElementById('mobileNavToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        });
+      }
+    }
+
+    function renderUserProfile() {
+      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+      
+      const nama = user.nama || user.name || "Mahasiswa";
+      const userID = user.userID || user.mahasiswaId || "-";
+      const username = user.username || "-";
+      const role = user.role || "Mahasiswa";
+
+      // Render Header & Kartu
+      document.getElementById('userHeaderName').textContent = nama;
+      document.getElementById('profileCardName').textContent = nama;
+      document.getElementById('profileCardSub').textContent = `User ID: ${userID}`;
+      document.getElementById('profileAvatar').textContent = nama.charAt(0).toUpperCase();
+
+      // Render Detail
+      document.getElementById('valNama').textContent = nama;
+      document.getElementById('valUserID').textContent = userID;
+      document.getElementById('valUsername').textContent = username;
+      document.getElementById('valRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    function logoutUser() {
+      if (confirm("Apakah Anda yakin ingin keluar dari MODIVIM?")) {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>
