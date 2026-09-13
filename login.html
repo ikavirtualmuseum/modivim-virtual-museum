@@ -12,8 +12,8 @@
 
   <style>
     /* ==================================================
-       CSS VARIABLES & DESIGN SYSTEM
-       ================================================== */
+        CSS VARIABLES & DESIGN SYSTEM
+        ================================================== */
     :root {
       --color-eggshell: #fdfcfc;
       --color-warm-taupe: #f5f3f1;
@@ -107,7 +107,7 @@
       max-width: 480px;
     }
 
-    /* SVG Editorial Illustration */
+    /* Visual Wrapper untuk Logo Unimed */
     .visual-wrapper {
       background-color: var(--color-warm-taupe);
       border-radius: 20px;
@@ -117,12 +117,13 @@
       justify-content: center;
       aspect-ratio: 16 / 9;
       margin-top: 8px;
+      border: 1px solid var(--color-stone);
     }
 
-    .artifact-illustration {
-      width: 100%;
-      height: 100%;
-      max-width: 280px;
+    .unimed-logo {
+      max-height: 120px;
+      max-width: 100%;
+      object-fit: contain;
     }
 
     /* Right Side: Login Card */
@@ -357,16 +358,9 @@
           </p>
         </div>
 
-        <!-- Visual Line Art Minimalis -->
+        <!-- Area Logo Unimed Pengganti Visual Lama -->
         <div class="visual-wrapper">
-          <svg class="artifact-illustration" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="220" height="120" rx="8" stroke="#EBE8E4" stroke-width="1" stroke-dasharray="3 3"/>
-            <path d="M80 110V70C80 47.9086 97.9086 30 120 30C142.091 30 160 47.9086 160 70V110" stroke="#000000" stroke-width="1.2" stroke-linecap="round"/>
-            <circle cx="120" cy="70" r="18" stroke="#777169" stroke-width="1"/>
-            <circle cx="160" cy="45" r="3" fill="#0447ff"/>
-            <circle cx="80" cy="95" r="3" fill="#ff4704"/>
-            <line x1="40" y1="110" x2="200" y2="110" stroke="#44403b" stroke-width="1"/>
-          </svg>
+          <img src="logo-unimed.png" alt="Logo Universitas Negeri Medan" class="unimed-logo">
         </div>
       </section>
 
@@ -496,11 +490,11 @@
     // 4. URL Web App Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
-// 5. Fungsi Panggil Backend API
+    // 5. Fungsi Panggil Backend API
     async function loginUser(username, password, role) {
       try {
         const payload = {
-          action: "login", // <--- TAMBAHKAN BARIS INI
+          action: "login",
           username: username,
           password: password,
           role: role
