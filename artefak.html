@@ -414,6 +414,7 @@
       document.getElementById('userHeaderName').textContent = user.nama || user.name || "Mahasiswa";
     }
 
+    /* FUNGSI DENGAN PERBAIKAN PADA PROSES FETCH & CEK ID */
     function fetchArtifacts() {
       fetch(GAS_BASE_URL + "?action=getArtefak", {
         method: "GET",
@@ -430,7 +431,11 @@
           if (result.success && Array.isArray(result.data)) {
             allArtifacts = result.data;
             renderGallery(allArtifacts);
-            checkUrlParamAndOpenModal();
+            
+            // Jeda sedikit untuk memastikan data siap sebelum modal dibuka dari link URL
+            setTimeout(function() {
+              checkUrlParamAndOpenModal();
+            }, 50);
           } else {
             showError("Data artefak tidak tersedia.");
           }
@@ -486,15 +491,19 @@
       });
     }
 
+    /* FUNGSI PEMBUKA MODAL DENGAN PENANGANAN COCOK ID (AMABUIGUITY FIX) */
     function openArtifactModal(artifactId) {
+      if (!artifactId) return;
+
+      const targetIdStr = String(artifactId).trim().toLowerCase();
+
       const artifact = allArtifacts.find(function(item) {
-        return String(item.ArtefakID).trim() === String(artifactId).trim();
+        return item && item.ArtefakID && String(item.ArtefakID).trim().toLowerCase() === targetIdStr;
       });
 
       if (!artifact) {
-        console.error("Artefak tidak ditemukan:", artifactId);
-        alert("Data artefak tidak ditemukan.");
-        return;
+        console.warn("Artefak tidak ditemukan untuk ID:", artifactId);
+        return; // Dihapus alert-nya agar popup yang mengganggu tidak muncul lagi
       }
 
       renderArtifactDetail(artifact);
