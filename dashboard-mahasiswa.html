@@ -173,8 +173,8 @@
           </a>
         </li>
         <li>
-          <!-- DIUBAH: Disesuaikan dengan nama file yang tersedia di GitHub -->
-          <a href="jawaban-mahasiswa.html" class="sidebar-link">
+          <!-- DIPERBAIKI: Mengarah ke nilai.html (bukan jawaban-mahasiswa.html milik dosen) -->
+          <a href="nilai.html" class="sidebar-link">
             <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span>Nilai</span>
           </a>
@@ -268,7 +268,8 @@
     const mockUser = {
       nama: "Ahmad Rizky",
       nim: "2201015001",
-      prodi: "Pendidikan Sejarah"
+      prodi: "Pendidikan Sejarah",
+      role: "MAHASISWA"
     };
 
     const mockStats = {
@@ -323,7 +324,12 @@
     }
 
     function loadUserProfile() {
-      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
+      // Mengambil data user dari sessionStorage atau fallback ke mockUser
+      let user = JSON.parse(sessionStorage.getItem('modivim_user'));
+      if (!user) {
+        user = mockUser;
+        sessionStorage.setItem('modivim_user', JSON.stringify(user));
+      }
       document.getElementById('userHeaderName').textContent = user.nama;
       document.getElementById('welcomeName').textContent = user.nama;
     }
