@@ -12,8 +12,8 @@
 
   <style>
     /* ==================================================
-       DESIGN SYSTEM & VARIABLES (UNIFIED)
-       ================================================== */
+        DESIGN SYSTEM & VARIABLES (UNIFIED)
+        ================================================== */
     :root {
       --color-eggshell: #fdfcfc;
       --color-warm-taupe: #f5f3f1;
@@ -532,9 +532,6 @@
       const foto = artifact.FotoURL && artifact.FotoURL !== "-" ? artifact.FotoURL : "";
       const tahunAbad = artifact.TahunAbad || artifact["Tahun/Abad"] || "-";
 
-      const currentUrl = window.location.origin + window.location.pathname + "?id=" + artifact.ArtefakID;
-      const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent(currentUrl);
-
       // 1. Dapatkan daftar pertanyaan pemantik dari backend
       const listPertanyaan = artifact.DaftarPertanyaan || [];
       let htmlPertanyaanList = "";
@@ -546,7 +543,6 @@
         });
         htmlPertanyaanList += "</ol>";
       } else {
-        // Fallback pertanyaan kritis jika belum diisi di sheet PERTANYAAN
         htmlPertanyaanList = `
           <ul style="margin: 0 0 16px 0; padding-left: 20px; color: var(--color-smoke); line-height: 1.6; font-size: 13.5px;">
             <li>Bagaimana bentuk akulturasi budaya yang tercermin dari struktur atau corak fisik artefak ini?</li>
@@ -588,12 +584,25 @@
           <p>${escapeHTML(artifact.NilaiHistoris || "Tidak ada catatan nilai historis.")}</p>
         </div>
 
-        <!-- QR CODE ARTEFAK -->
+        <!-- QR CODE ARTEFAK DARI DATABASE -->
         <div class="placeholder-box" style="background: var(--color-eggshell); text-align: center;">
           <h4 style="color: var(--color-ink); font-weight:600; font-size: 15px; margin-bottom: 12px;">QR CODE ARTEFAK</h4>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <img src="${qrCodeUrl}" alt="QR Code ${escapeHTML(artifact.NamaArtefak)}" style="width: 140px; height: 140px; border-radius: 12px; padding: 6px; background: #fff; border: 1px solid var(--color-stone);">
-            <p style="font-size: 13px; color: var(--color-smoke); margin: 0;">Scan untuk membagikan atau membuka langsung artefak ini.</p>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;">
+            ${
+              Array.isArray(artifact.DaftarQR) && artifact.DaftarQR.length > 0 
+                ? artifact.DaftarQR.map(qr => `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; background: #fff; padding: 12px; border-radius: 12px; border: 1px solid var(--color-stone); min-width: 140px;">
+                      <img src="${escapeHTML(qr.IsiQRURL)}" alt="${escapeHTML(qr.Judul || "QR Code")}" style="width: 130px; height: 130px; object-fit: contain; border-radius: 8px;" onerror="this.src=''; this.alt='Gagal memuat gambar';">
+                      <span style="font-size: 12px; font-weight: 600; color: var(--color-ink);">${escapeHTML(qr.JenisQR)} - ${escapeHTML(qr.Judul)}</span>
+                      <span style="font-size: 11px; color: var(--color-smoke);">${escapeHTML(qr.Keterangan || "")}</span>
+                    </div>
+                  `).join('')
+                : `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                      <p style="font-size: 13px; color: var(--color-smoke); margin: 0;">Belum ada data QR Code dari database untuk artefak ini.</p>
+                    </div>
+                  `
+            }
           </div>
         </div>
 
