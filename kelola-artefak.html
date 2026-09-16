@@ -275,7 +275,7 @@
     async function fetchArtefakData() {
       let dataList = [];
 
-      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
+      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec") {
         try {
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getArtefak`);
           const json = await res.json();
