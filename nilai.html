@@ -166,7 +166,7 @@
         </button>
         <div>
           <span class="font-caption">PEMBELAJARAN SEJARAH ISLAM</span>
-          <h1 style="font-size: 18px; font-weight: 500;" id="userHeaderName">Mahasiswa</h1>
+          <h1 style="font-size: 18px; font-weight: 500;" id="userHeaderName">Mahasiswa Contoh</h1>
         </div>
       </div>
     </header>
@@ -239,9 +239,7 @@
 
     async function fetchDatabaseNilai() {
       let dataList = [];
-      let fetchedFromSheet = false;
 
-      // Coba ambil dari Google Apps Script
       if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
         try {
           const user = JSON.parse(sessionStorage.getItem('modivim_user')) || { userID: "U002" };
@@ -250,25 +248,11 @@
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
           const json = await res.json();
           
-          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          if (json.success && Array.isArray(json.data)) {
             dataList = json.data;
-            fetchedFromSheet = true;
           }
         } catch (err) {
-          console.warn("Gagal terhubung langsung ke Google Sheets (CORS/Network), beralih memuat riwayat lokal.");
-        }
-      }
-
-      // Jika gagal dari server/sheet, ambil data dari localStorage (riwayat kirim jawaban di browser)
-      if (!fetchedFromSheet) {
-        const localSubmissions = JSON.parse(localStorage.getItem('modivim_submissions')) || [];
-        if (localSubmissions.length > 0) {
-          dataList = localSubmissions;
-        } else {
-          // Fallback terakhir jika localStorage kosong sama sekali
-          dataList = [
-            { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "Contoh jawaban tersimpan", nilai: 80, feedback: "Bagus", status: "Dinilai" }
-          ];
+          console.warn("Gagal terhubung ke Google Sheets:", err);
         }
       }
 
@@ -293,7 +277,7 @@
       tbody.innerHTML = '';
 
       if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Belum ada jawaban yang dikirimkan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 24px; color: var(--color-smoke);">Belum ada jawaban yang dikirimkan.</td></tr>`;
         return;
       }
 
@@ -308,9 +292,9 @@
 
         const row = `
           <tr>
-            <td><strong>${item.jawabanId || 'J-' + Math.floor(Math.random()*1000)}</strong></td>
+            <td><strong>${item.jawabanId || '-'}</strong></td>
             <td>${item.tanggal || '-'} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu || '-'}</span></td>
-            <td><strong>${item.artefakId || 'A001'}</strong> / ${item.pertanyaanId || 'Q001'}</td>
+            <td><strong>${item.artefakId || '-'}</strong> / ${item.pertanyaanId || '-'}</td>
             <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban || '-'}</td>
             <td><strong style="color: var(--color-ink);">${nilaiText}</strong></td>
             <td><span class="badge ${badgeClass}">${statusText}</span></td>
