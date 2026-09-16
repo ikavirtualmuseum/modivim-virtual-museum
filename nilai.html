@@ -12,8 +12,8 @@
 
   <style>
     /* ==================================================
-       DESIGN SYSTEM & VARIABLES
-       ================================================== */
+        DESIGN SYSTEM & VARIABLES
+        ================================================== */
     :root {
       --color-eggshell: #fdfcfc;
       --color-warm-taupe: #f5f3f1;
@@ -312,7 +312,9 @@
         try {
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
           const json = await res.json();
-          if (json.status === "success") {
+          
+          // DIPERBAIKI: Menggunakan json.success sesuai respon Google Apps Script
+          if (json.success) {
             dataList = json.data;
           } else {
             dataList = mockDatabaseJawaban;
