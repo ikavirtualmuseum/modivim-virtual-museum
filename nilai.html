@@ -11,9 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ==================================================
-        DESIGN SYSTEM & VARIABLES
-        ================================================== */
     :root {
       --color-eggshell: #fdfcfc;
       --color-warm-taupe: #f5f3f1;
@@ -23,7 +20,6 @@
       --color-smoke: #777169;
       --color-ash: #a59f97;
       --color-violet-spark: #0447ff;
-
       --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
       --sidebar-width: 260px;
     }
@@ -43,7 +39,7 @@
     h1, h2, h3 { color: var(--color-ink); font-weight: 300; letter-spacing: -0.02em; }
     .font-caption { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ash); font-weight: 500; }
 
-    /* LAYOUT & SIDEBAR */
+    /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-width);
       background-color: var(--color-warm-taupe);
@@ -83,7 +79,7 @@
     }
     .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
 
-    /* STATS & CARDS */
+    /* STATS */
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .stat-card {
       background-color: var(--color-warm-taupe); padding: 20px; border-radius: 16px;
@@ -92,7 +88,7 @@
     .stat-card:hover { border-color: var(--color-stone); }
     .stat-value { font-size: 28px; font-weight: 600; color: var(--color-ink); }
 
-    /* TABLE DESIGN */
+    /* TABLE */
     .table-container {
       background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone); overflow: hidden;
     }
@@ -101,7 +97,6 @@
     .custom-table td { padding: 16px 20px; border-bottom: 1px solid var(--color-stone); color: var(--color-smoke); }
     .custom-table tr:last-child td { border-bottom: none; }
 
-    /* BADGES & BUTTONS */
     .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
     .badge-success { background-color: #d1fae5; color: #065f46; }
     .badge-pending { background-color: #fef3c7; color: #92400e; }
@@ -114,9 +109,7 @@
     .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 95; }
     .mobile-nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--color-ink); }
 
-    @media (max-width: 1024px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
+    @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
@@ -125,7 +118,6 @@
       .mobile-nav-toggle { display: block; }
       .content-body, .top-header, .footer { padding: 20px; }
       .stats-grid { grid-template-columns: 1fr; }
-      .table-container { overflow-x: auto; }
     }
   </style>
 </head>
@@ -133,7 +125,7 @@
 
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- SIDEBAR NAVIGATION -->
+  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div>
       <a href="dashboard-mahasiswa.html" class="sidebar-brand">
@@ -142,42 +134,18 @@
       </a>
 
       <ul class="sidebar-menu">
-        <li>
-          <a href="dashboard-mahasiswa.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="artefak.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-            <span>Artefak</span>
-          </a>
-        </li>
-        <li>
-          <a href="timeline.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Timeline</span>
-          </a>
-        </li>
-        <li>
-          <a href="peta.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-            <span>Peta</span>
-          </a>
-        </li>
-        <li>
-          <a href="nilai.html" class="sidebar-link active">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span>Nilai</span>
-          </a>
-        </li>
-        <li>
-          <a href="profil.html" class="sidebar-link">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Profil</span>
-          </a>
-        </li>
+        <li><a href="dashboard-mahasiswa.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a></li>
+        <li><a href="artefak.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Artefak</span></a></li>
+        <li><a href="timeline.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Timeline</span></a></li>
+        <li><a href="peta.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg><span>Peta</span></a></li>
+        <li><a href="nilai.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Nilai</span></a></li>
+        <li><a href="profil.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></a></li>
       </ul>
     </div>
 
@@ -193,10 +161,8 @@
   <div class="main-wrapper">
     <header class="top-header">
       <div style="display: flex; align-items: center; gap: 16px;">
-        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu Navigasi">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
-          </svg>
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
         </button>
         <div>
           <span class="font-caption">PEMBELAJARAN SEJARAH ISLAM</span>
@@ -211,27 +177,15 @@
         <h2 style="font-size: 28px; margin-top: 4px;">Daftar Nilai & Evaluasi</h2>
       </div>
 
-      <!-- STATISTIK RINGKAS -->
+      <!-- STATISTIK -->
       <section class="stats-grid">
-        <div class="stat-card">
-          <span class="font-caption">RATA-RATA SKOR</span>
-          <div class="stat-value" id="statAvgScore">0.0</div>
-        </div>
-        <div class="stat-card">
-          <span class="font-caption">TOTAL DIKIRIM</span>
-          <div class="stat-value" id="statTotalSubmitted">0</div>
-        </div>
-        <div class="stat-card">
-          <span class="font-caption">SUDAH DINILAI</span>
-          <div class="stat-value" id="statEvaluated">0</div>
-        </div>
-        <div class="stat-card">
-          <span class="font-caption">SKOR TERTINGGI</span>
-          <div class="stat-value" id="statHighest">0</div>
-        </div>
+        <div class="stat-card"><span class="font-caption">RATA-RATA SKOR</span><div class="stat-value" id="statAvgScore">0.0</div></div>
+        <div class="stat-card"><span class="font-caption">TOTAL DIKIRIM</span><div class="stat-value" id="statTotalSubmitted">0</div></div>
+        <div class="stat-card"><span class="font-caption">SUDAH DINILAI</span><div class="stat-value" id="statEvaluated">0</div></div>
+        <div class="stat-card"><span class="font-caption">SKOR TERTINGGI</span><div class="stat-value" id="statHighest">0</div></div>
       </section>
 
-      <!-- TABEL DAFTAR NILAI -->
+      <!-- TABEL -->
       <section class="table-container">
         <table class="custom-table">
           <thead>
@@ -246,7 +200,7 @@
             </tr>
           </thead>
           <tbody id="nilaiTableBody">
-            <!-- Rendered via JS -->
+            <!-- Dinamis via JS -->
           </tbody>
         </table>
       </section>
@@ -259,16 +213,7 @@
   </div>
 
   <script>
-    // --- KONFIGURASI WEB APP GOOGLE APPS SCRIPT ---
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
-
-    // --- MOCK DATABASE ---
-    const mockUser = { nama: "Mahasiswa", userID: "U002" };
-    const mockDatabaseJawaban = [
-      { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
-      { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
-      { jawabanId: "J003", tanggal: "13/08/2026", waktu: "17:20", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "hampir menyerah", nilai: "-", feedback: "-", status: "Terkirim" }
-    ];
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('year').textContent = new Date().getFullYear();
@@ -281,49 +226,50 @@
       const toggle = document.getElementById('mobileNavToggle');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebarOverlay');
-
       if (toggle && sidebar && overlay) {
-        toggle.addEventListener('click', () => {
-          sidebar.classList.toggle('open');
-          overlay.classList.toggle('active');
-        });
-
-        overlay.addEventListener('click', () => {
-          sidebar.classList.remove('open');
-          overlay.classList.remove('active');
-        });
+        toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); });
       }
     }
 
     function loadUserProfile() {
-      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-      document.getElementById('userHeaderName').textContent = user.nama || user.name || "Mahasiswa";
+      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || { nama: "Mahasiswa Contoh", userID: "U002" };
+      document.getElementById('userHeaderName').textContent = user.nama || user.name || "Mahasiswa Contoh";
     }
 
     async function fetchDatabaseNilai() {
-      const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
-      
-      // DIPERBAIKI: Mengutamakan userID agar sesuai dengan data session ("U002")
-      const mId = user.userID || user.mahasiswaId || user.username || "U002";
-      
       let dataList = [];
+      let fetchedFromSheet = false;
 
+      // Coba ambil dari Google Apps Script
       if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
         try {
+          const user = JSON.parse(sessionStorage.getItem('modivim_user')) || { userID: "U002" };
+          const mId = user.userID || user.mahasiswaId || "U002";
+          
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
           const json = await res.json();
           
-          if (json.success) {
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
             dataList = json.data;
-          } else {
-            dataList = mockDatabaseJawaban;
+            fetchedFromSheet = true;
           }
         } catch (err) {
-          console.warn("Menggunakan data fallback:", err);
-          dataList = mockDatabaseJawaban;
+          console.warn("Gagal terhubung langsung ke Google Sheets (CORS/Network), beralih memuat riwayat lokal.");
         }
-      } else {
-        dataList = mockDatabaseJawaban;
+      }
+
+      // Jika gagal dari server/sheet, ambil data dari localStorage (riwayat kirim jawaban di browser)
+      if (!fetchedFromSheet) {
+        const localSubmissions = JSON.parse(localStorage.getItem('modivim_submissions')) || [];
+        if (localSubmissions.length > 0) {
+          dataList = localSubmissions;
+        } else {
+          // Fallback terakhir jika localStorage kosong sama sekali
+          dataList = [
+            { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "Contoh jawaban tersimpan", nilai: 80, feedback: "Bagus", status: "Dinilai" }
+          ];
+        }
       }
 
       renderStats(dataList);
@@ -331,8 +277,7 @@
     }
 
     function renderStats(data) {
-      const assessedItems = data.filter(d => typeof d.nilai === 'number' || (!isNaN(parseFloat(d.nilai)) && d.nilai !== '-'));
-      
+      const assessedItems = data.filter(d => d.nilai !== '-' && d.nilai !== null && d.nilai !== undefined && !isNaN(parseFloat(d.nilai)));
       const totalScore = assessedItems.reduce((acc, curr) => acc + parseFloat(curr.nilai), 0);
       const avg = assessedItems.length > 0 ? (totalScore / assessedItems.length).toFixed(1) : "0.0";
       const highest = assessedItems.length > 0 ? Math.max(...assessedItems.map(d => parseFloat(d.nilai))) : 0;
@@ -353,23 +298,25 @@
       }
 
       data.forEach(item => {
-        const isDinilai = item.status === 'Dinilai';
+        const isDinilai = item.status === 'Dinilai' || (item.nilai !== '-' && item.nilai !== undefined);
         const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
-        
+        const statusText = isDinilai ? 'Dinilai' : 'Terkirim';
+        const nilaiText = (item.nilai !== undefined && item.nilai !== null && item.nilai !== '') ? item.nilai : '-';
+
         const safeJawaban = (item.jawaban || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
-        const safeFeedback = (item.feedback || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
+        const safeFeedback = (item.feedback || '-').replace(/'/g, "\\'").replace(/\n/g, ' ');
 
         const row = `
           <tr>
-            <td><strong>${item.jawabanId}</strong></td>
-            <td>${item.tanggal} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu}</span></td>
-            <td><strong>${item.artefakId}</strong> / ${item.pertanyaanId}</td>
-            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban}</td>
-            <td><strong style="color: var(--color-ink);">${item.nilai}</strong></td>
-            <td><span class="badge ${badgeClass}">${item.status}</span></td>
+            <td><strong>${item.jawabanId || 'J-' + Math.floor(Math.random()*1000)}</strong></td>
+            <td>${item.tanggal || '-'} <span style="font-size: 11px; color: var(--color-ash);">&bull; ${item.waktu || '-'}</span></td>
+            <td><strong>${item.artefakId || 'A001'}</strong> / ${item.pertanyaanId || 'Q001'}</td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.jawaban || '-'}</td>
+            <td><strong style="color: var(--color-ink);">${nilaiText}</strong></td>
+            <td><span class="badge ${badgeClass}">${statusText}</span></td>
             <td>
               <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" 
-                onclick="showFeedbackDetails('${item.jawabanId}', '${safeJawaban}', '${item.nilai}', '${safeFeedback}')">
+                onclick="showFeedbackDetails('${item.jawabanId || ''}', '${safeJawaban}', '${nilaiText}', '${safeFeedback}')">
                 Detail
               </button>
             </td>
@@ -380,7 +327,7 @@
     }
 
     function showFeedbackDetails(id, jawaban, nilai, feedback) {
-      alert(`[DETAIL JAWABAN & FEEDBACK]\n\nJawaban ID: ${id}\nJawaban Anda: "${jawaban}"\nNilai: ${nilai}\nFeedback Dosen: "${feedback}"`);
+      alert(`[DETAIL JAWABAN & FEEDBACK]\n\nID: ${id}\nJawaban Anda: "${jawaban}"\nNilai: ${nilai}\nFeedback Dosen: "${feedback}"`);
     }
 
     function logoutUser() {
