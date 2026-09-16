@@ -302,9 +302,9 @@
 
       data.forEach(item => {
         const id = item.artefakId || item.ArtefakID || item.id || item.ID || '-';
-        const nama = item.nama || item.Nama || item.namaArtefak || item.title || '-';
-        const kategori = item.kategori || item.Kategori || item.era || item.category || '-';
-        const lokasi = item.lokasi || item.Lokasi || item.location || '-';
+        const nama = item.nama || item.Nama || item.namaArtefak || item.NamaArtefak || item.title || item.Title || '-';
+        const kategori = item.kategori || item.Kategori || item.kategoriEra || item.KategoriEra || item.era || item.Era || item.category || item.Category || '-';
+        const lokasi = item.lokasi || item.Lokasi || item.lokasiPenyimpanan || item.LokasiPenyimpanan || item.location || item.Location || '-';
 
         const row = `
           <tr>
@@ -346,22 +346,6 @@
       const nama = document.getElementById('inputNama').value;
       const kategori = document.getElementById('inputKategori').value;
       const lokasi = document.getElementById('inputLokasi').value;
-
-      // Contoh integrasi opsional ke GAS jika Anda ingin langsung mengirim ke Google Sheets saat tombol Simpan diklik:
-      /*
-      try {
-        const response = await fetch(GAS_WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'addArtefak', artefakId: id, nama, kategori, lokasi })
-        });
-        const res = await response.json();
-        if(res.success) {
-          alert("Artefak berhasil disimpan ke Google Sheets!");
-        }
-      } catch(err) {
-        console.error(err);
-      }
-      */
 
       alert(`Artefak "${nama}" (${id}) berhasil disiapkan untuk ditambahkan.`);
       closeAddModal();
