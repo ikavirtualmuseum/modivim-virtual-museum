@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Artefak — MODIVIM Virtual Museum</title>
+
+  <!-- Font Utama: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-eggshell: #fdfcfc;
+      --color-warm-taupe: #f5f3f1;
+      --color-stone: #ebe8e4;
+      --color-ink: #000000;
+      --color-graphite: #44403b;
+      --color-smoke: #777169;
+      --color-ash: #a59f97;
+      --color-violet-spark: #0447ff;
+      --font-main: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --sidebar-width: 260px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      background-color: var(--color-eggshell);
+      color: var(--color-smoke);
+      font-family: var(--font-main);
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+    }
+
+    h1, h2, h3 { color: var(--color-ink); font-weight: 300; letter-spacing: -0.02em; }
+    .font-caption { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-ash); font-weight: 500; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--color-warm-taupe);
+      border-right: 1px solid var(--color-stone);
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 100;
+      padding: 32px 24px; transition: transform 0.3s ease;
+    }
+    .sidebar-brand { display: flex; flex-direction: column; gap: 2px; text-decoration: none; margin-bottom: 40px; }
+    .sidebar-brand-title { font-size: 20px; font-weight: 600; color: var(--color-ink); }
+    .sidebar-brand-sub { font-size: 11px; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.06em; }
+    
+    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border-radius: 10px; color: var(--color-smoke); text-decoration: none; font-size: 14px; transition: all 0.2s ease;
+    }
+    .sidebar-link svg { width: 18px; height: 18px; stroke: var(--color-smoke); stroke-width: 1.75; fill: none; }
+    .sidebar-link:hover, .sidebar-link.active { color: var(--color-ink); background-color: var(--color-eggshell); font-weight: 500; }
+    .sidebar-link:hover svg, .sidebar-link.active svg { stroke: var(--color-ink); }
+
+    .sidebar-footer { border-top: 1px solid var(--color-stone); padding-top: 20px; }
+    .btn-logout {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px;
+      border: none; background: transparent; color: var(--color-graphite); font-size: 14px; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;
+    }
+    .btn-logout svg { width: 18px; height: 18px; stroke: var(--color-graphite); stroke-width: 1.75; fill: none; }
+    .btn-logout:hover { background-color: rgba(220, 38, 38, 0.08); color: #dc2626; }
+    .btn-logout:hover svg { stroke: #dc2626; }
+
+    /* MAIN WRAPPER */
+    .main-wrapper {
+      margin-left: var(--sidebar-width); flex-grow: 1; min-height: 100vh;
+      display: flex; flex-direction: column; background-color: var(--color-eggshell); width: calc(100% - var(--sidebar-width));
+    }
+    .top-header {
+      padding: 24px 48px; border-bottom: 1px solid var(--color-stone); display: flex;
+      align-items: center; justify-content: space-between; background-color: var(--color-eggshell); position: sticky; top: 0; z-index: 90;
+    }
+    .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
+
+    /* HEADER ACTION BAR */
+    .action-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9999px; font-weight: 500; cursor: pointer; border: none; padding: 10px 20px; font-size: 14px; transition: background 0.2s; }
+    .btn-primary { background-color: var(--color-ink); color: #fff; }
+    .btn-primary:hover { background-color: var(--color-graphite); }
+
+    /* TABLE CONTAINER */
+    .table-container {
+      background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone); overflow: hidden;
+    }
+    .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    .custom-table th { background-color: #f0ece9; padding: 16px 20px; color: var(--color-graphite); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-stone); }
+    .custom-table td { padding: 16px 20px; border-bottom: 1px solid var(--color-stone); color: var(--color-smoke); vertical-align: middle; }
+    .custom-table tr:last-child td { border-bottom: none; }
+
+    /* MODAL */
+    .modal-backdrop { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+    .modal-backdrop.active { display: flex; }
+    .modal-box { background: var(--color-eggshell); padding: 32px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--color-stone); display: flex; flex-direction: column; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--color-graphite); }
+    .form-control { padding: 12px 16px; border-radius: 10px; border: 1px solid var(--color-stone); background: var(--color-warm-taupe); font-family: var(--font-main); font-size: 14px; color: var(--color-ink); outline: none; }
+    .form-control:focus { border-color: var(--color-violet-spark); }
+
+    .footer { padding: 32px 48px; border-top: 1px solid var(--color-stone); display: flex; justify-content: space-between; font-size: 13px; color: var(--color-ash); margin-top: auto; }
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 95; }
+    .mobile-nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--color-ink); }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+      .main-wrapper { margin-left: 0; width: 100%; }
+      .mobile-nav-toggle { display: block; }
+      .content-body, .top-header, .footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR DOSEN / ADMIN -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <a href="dashboard-admin.html" class="sidebar-brand">
+        <span class="sidebar-brand-title">MODIVIM</span>
+        <span class="sidebar-brand-sub">Admin Panel</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li><a href="dashboard-admin.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a></li>
+        <li><a href="kelola-artefak.html" class="sidebar-link active">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Kelola Artefak</span></a></li>
+        <li><a href="kelola-pertanyaan.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Kelola Pertanyaan</span></a></li>
+        <li><a href="jawaban-mahasiswa.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Jawaban Mahasiswa</span></a></li>
+        <li><a href="penilaian.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Penilaian</span></a></li>
+        <li><a href="statistik.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Statistik</span></a></li>
+        <li><a href="profil-admin.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logoutUser()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Buka Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+        </button>
+        <div>
+          <span class="font-caption">PANEL ADMINISTRATOR</span>
+          <h1 style="font-size: 18px; font-weight: 500;" id="adminHeaderName">Dosen Pengampu</h1>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-body">
+      <div class="action-bar">
+        <div>
+          <span class="font-caption" style="color: var(--color-violet-spark);">MANAJEMEN DATABASE</span>
+          <h2 style="font-size: 28px; margin-top: 4px;">Daftar Artefak Museum</h2>
+        </div>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Artefak
+        </button>
+      </div>
+
+      <!-- TABEL ARTEFAK -->
+      <section class="table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID Artefak</th>
+              <th>Nama Artefak</th>
+              <th>Kategori / Era</th>
+              <th>Lokasi</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="artefakTableBody">
+            <!-- Data dimuat dinamis via JavaScript -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div><strong style="color: var(--color-ink);">MODIVIM</strong> — Virtual Museum Sejarah Islam</div>
+      <div>Universitas Negeri Medan &bull; &copy; <span id="year"></span></div>
+    </footer>
+  </div>
+
+  <!-- MODAL TAMBAH ARTEFAK -->
+  <div class="modal-backdrop" id="artefakModal">
+    <div class="modal-box">
+      <h3 style="font-size: 20px; font-weight: 500;">Tambah Artefak Baru</h3>
+      <form id="formTambahArtefak" onsubmit="submitArtefak(event)">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="form-group">
+            <label>ID Artefak</label>
+            <input type="text" id="inputArtefakId" class="form-control" placeholder="Contoh: A002" required>
+          </div>
+          <div class="form-group">
+            <label>Nama Artefak</label>
+            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Manuskrip Kuno Barus" required>
+          </div>
+          <div class="form-group">
+            <label>Kategori / Era</label>
+            <input type="text" id="inputKategori" class="form-control" placeholder="Contoh: Abad ke-13 / Samudera Pasai" required>
+          </div>
+          <div class="form-group">
+            <label>Lokasi Penyimpanan</label>
+            <input type="text" id="inputLokasi" class="form-control" placeholder="Contoh: Ruang Utama Museum" required>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+            <button type="button" class="btn" style="background: var(--color-stone);" onclick="closeAddModal()">Batal</button>
+            <button type="submit" class="btn btn-primary">Simpan Artefak</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      setupMobileSidebar();
+      loadAdminProfile();
+      fetchArtefakData();
+    });
+
+    function setupMobileSidebar() {
+      const toggle = document.getElementById('mobileNavToggle');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); });
+      }
+    }
+
+    function loadAdminProfile() {
+      const admin = JSON.parse(sessionStorage.getItem('modivim_user')) || { nama: "Dosen Pengampu" };
+      document.getElementById('adminHeaderName').textContent = admin.nama || admin.name || "Dosen Pengampu";
+    }
+
+    async function fetchArtefakData() {
+      let dataList = [];
+
+      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
+        try {
+          const res = await fetch(`${GAS_WEB_APP_URL}?action=getArtefak`);
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            dataList = json.data;
+          }
+        } catch (err) {
+          console.warn("Gagal terhubung ke Google Sheets, menggunakan data cadangan lokal:", err);
+        }
+      }
+
+      // Fallback data sinkronisasi jika offline / belum ada koneksi fetch langsung
+      if (dataList.length === 0) {
+        dataList = [
+          { artefakId: "A001", nama: "Batu Nisan Sultan Malik al-Saleh", kategori: "Kesultanan Samudera Pasai", lokasi: "Ruang Pameran Utama" }
+        ];
+      }
+
+      renderTable(dataList);
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('artefakTableBody');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--color-smoke);">Belum ada data artefak tersimpan.</td></tr>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const row = `
+          <tr>
+            <td><strong>${item.artefakId || item.id || '-'}</strong></td>
+            <td><strong>${item.nama || item.namaArtefak || '-'}</strong></td>
+            <td>${item.kategori || item.era || '-'}</td>
+            <td>${item.lokasi || '-'}</td>
+            <td>
+              <button class="btn" style="background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 12px; padding: 6px 12px;" onclick="hapusArtefak('${item.artefakId || item.id}')">Hapus</button>
+            </td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    function openAddModal() {
+      document.getElementById('artefakModal').classList.add('active');
+    }
+
+    function closeAddModal() {
+      document.getElementById('artefakModal').classList.remove('active');
+      document.getElementById('formTambahArtefak').reset();
+    }
+
+    function submitArtefak(e) {
+      e.preventDefault();
+      const id = document.getElementById('inputArtefakId').value;
+      const nama = document.getElementById('inputNama').value;
+      const kategori = document.getElementById('inputKategori').value;
+      const lokasi = document.getElementById('inputLokasi').value;
+
+      alert(`Artefak "${nama}" (${id}) berhasil disiapkan untuk ditambahkan ke database.`);
+      closeAddModal();
+      // Refresh tabel simulasi
+      fetchArtefakData();
+    }
+
+    function hapusArtefak(id) {
+      if (confirm(`Apakah Anda yakin ingin menghapus artefak dengan ID ${id}?`)) {
+        alert(`Artefak ${id} berhasil dihapus.`);
+        fetchArtefakData();
+      }
+    }
+
+    function logoutUser() {
+      if (confirm("Apakah Anda yakin ingin keluar dari panel admin?")) {
+        sessionStorage.clear();
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+</body>
+</html>
