@@ -263,7 +263,7 @@
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec";
 
     // --- MOCK DATABASE ---
-    const mockUser = { nama: "Mahasiswa", mahasiswaId: "M001" };
+    const mockUser = { nama: "Mahasiswa", userID: "U002" };
     const mockDatabaseJawaban = [
       { jawabanId: "J001", tanggal: "12/08/2026", waktu: "14:25", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "[jawaban mahasiswa]", nilai: 80, feedback: "Ok. Bagus", status: "Dinilai" },
       { jawabanId: "J002", tanggal: "13/08/2026", waktu: "14:55", mahasiswaId: "U002", artefakId: "A001", pertanyaanId: "Q001", jawaban: "test", nilai: "-", feedback: "-", status: "Terkirim" },
@@ -303,17 +303,16 @@
     async function fetchDatabaseNilai() {
       const user = JSON.parse(sessionStorage.getItem('modivim_user')) || mockUser;
       
-      // Membaca ID Mahasiswa dinamis (MahasiswaID / UserID / Username)
-      const mId = user.mahasiswaId || user.userID || user.username || "M001";
+      // DIPERBAIKI: Mengutamakan userID agar sesuai dengan data session ("U002")
+      const mId = user.userID || user.mahasiswaId || user.username || "U002";
       
       let dataList = [];
 
-      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec") {
+      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "GANTI_DENGAN_URL_WEB_APP_GAS_ANDA") {
         try {
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getNilaiMahasiswa&mahasiswaId=${mId}`);
           const json = await res.json();
           
-          // DIPERBAIKI: Menggunakan json.success sesuai respon Google Apps Script
           if (json.success) {
             dataList = json.data;
           } else {
@@ -357,7 +356,6 @@
         const isDinilai = item.status === 'Dinilai';
         const badgeClass = isDinilai ? 'badge-success' : 'badge-pending';
         
-        // Sanitasi teks agar aman dimasukkan ke attribute onclick JS
         const safeJawaban = (item.jawaban || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
         const safeFeedback = (item.feedback || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
 
