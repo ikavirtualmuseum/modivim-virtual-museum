@@ -52,14 +52,24 @@
     .sidebar-brand-title { font-size: 20px; font-weight: 600; color: var(--color-ink); }
     .sidebar-brand-sub { font-size: 11px; color: var(--color-ash); text-transform: uppercase; letter-spacing: 0.06em; }
     
-    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
     .sidebar-link {
       display: flex; align-items: center; gap: 12px; padding: 10px 14px;
       border-radius: 10px; color: var(--color-smoke); text-decoration: none; font-size: 14px; transition: all 0.2s ease;
     }
     .sidebar-link svg { width: 18px; height: 18px; stroke: var(--color-smoke); stroke-width: 1.75; fill: none; }
-    .sidebar-link:hover, .sidebar-link.active { color: var(--color-ink); background-color: var(--color-eggshell); font-weight: 500; }
-    .sidebar-link:hover svg, .sidebar-link.active svg { stroke: var(--color-ink); }
+    .sidebar-link:hover { color: var(--color-ink); background-color: rgba(0, 0, 0, 0.04); }
+    .sidebar-link:hover svg { stroke: var(--color-ink); }
+
+    /* MENU AKTIF SEPERTI GAMBAR REFERENSI */
+    .sidebar-link.active {
+      color: #ffffff !important;
+      background-color: var(--color-ink) !important;
+      font-weight: 500;
+    }
+    .sidebar-link.active svg {
+      stroke: #ffffff !important;
+    }
 
     .sidebar-footer { border-top: 1px solid var(--color-stone); padding-top: 20px; }
     .btn-logout {
@@ -81,15 +91,12 @@
     }
     .content-body { padding: 40px 48px; display: flex; flex-direction: column; gap: 32px; flex-grow: 1; }
 
-    /* HEADER ACTION BAR */
     .action-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 
-    /* BUTTONS */
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9999px; font-weight: 500; cursor: pointer; border: none; padding: 10px 20px; font-size: 14px; transition: background 0.2s; }
     .btn-primary { background-color: var(--color-ink); color: #fff; }
     .btn-primary:hover { background-color: var(--color-graphite); }
 
-    /* TABLE CONTAINER */
     .table-container {
       background-color: var(--color-warm-taupe); border-radius: 16px; border: 1px solid var(--color-stone); overflow: hidden;
     }
@@ -98,7 +105,6 @@
     .custom-table td { padding: 16px 20px; border-bottom: 1px solid var(--color-stone); color: var(--color-smoke); vertical-align: middle; }
     .custom-table tr:last-child td { border-bottom: none; }
 
-    /* MODAL */
     .modal-backdrop { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
     .modal-backdrop.active { display: flex; }
     .modal-box { background: var(--color-eggshell); padding: 32px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--color-stone); display: flex; flex-direction: column; gap: 20px; }
@@ -125,7 +131,7 @@
 
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- SIDEBAR DOSEN / ADMIN -->
+  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar" id="sidebar">
     <div>
       <a href="dashboard-admin.html" class="sidebar-brand">
@@ -168,7 +174,7 @@
         </button>
         <div>
           <span class="font-caption">PANEL ADMINISTRATOR</span>
-          <h1 style="font-size: 18px; font-weight: 500;" id="adminHeaderName">Dosen Pengampu</h1>
+          <h1 style="font-size: 18px; font-weight: 500;" id="adminHeaderName">Admin MODIVIM</h1>
         </div>
       </div>
     </header>
@@ -218,19 +224,19 @@
         <div style="display: flex; flex-direction: column; gap: 16px;">
           <div class="form-group">
             <label>ID Artefak</label>
-            <input type="text" id="inputArtefakId" class="form-control" placeholder="Contoh: A002" required>
+            <input type="text" id="inputArtefakId" class="form-control" placeholder="Contoh: A001" required>
           </div>
           <div class="form-group">
             <label>Nama Artefak</label>
-            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Manuskrip Kuno Barus" required>
+            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Batu Nisan Sultan Malik al-Saleh" required>
           </div>
           <div class="form-group">
             <label>Kategori / Era</label>
-            <input type="text" id="inputKategori" class="form-control" placeholder="Contoh: Abad ke-13 / Samudera Pasai" required>
+            <input type="text" id="inputKategori" class="form-control" placeholder="Contoh: Kesultanan Samudera Pasai" required>
           </div>
           <div class="form-group">
             <label>Lokasi Penyimpanan</label>
-            <input type="text" id="inputLokasi" class="form-control" placeholder="Contoh: Ruang Utama Museum" required>
+            <input type="text" id="inputLokasi" class="form-control" placeholder="Contoh: Ruang Pameran Utama" required>
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
             <button type="button" class="btn" style="background: var(--color-stone);" onclick="closeAddModal()">Batal</button>
@@ -262,8 +268,8 @@
     }
 
     function loadAdminProfile() {
-      const admin = JSON.parse(sessionStorage.getItem('modivim_user')) || { nama: "Dosen Pengampu" };
-      document.getElementById('adminHeaderName').textContent = admin.nama || admin.name || "Dosen Pengampu";
+      const admin = JSON.parse(sessionStorage.getItem('modivim_user')) || { nama: "Admin MODIVIM" };
+      document.getElementById('adminHeaderName').textContent = admin.nama || admin.name || "Admin MODIVIM";
     }
 
     async function fetchArtefakData() {
@@ -273,7 +279,7 @@
         try {
           const res = await fetch(`${GAS_WEB_APP_URL}?action=getArtefak`);
           const json = await res.json();
-          if (json.success && Array.isArray(json.data)) {
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
             dataList = json.data;
           }
         } catch (err) {
@@ -281,7 +287,6 @@
         }
       }
 
-      // Fallback data sinkronisasi jika offline / belum ada koneksi fetch langsung
       if (dataList.length === 0) {
         dataList = [
           { artefakId: "A001", nama: "Batu Nisan Sultan Malik al-Saleh", kategori: "Kesultanan Samudera Pasai", lokasi: "Ruang Pameran Utama" }
@@ -301,14 +306,19 @@
       }
 
       data.forEach(item => {
+        const id = item.artefakId || item.id || item.ID || '-';
+        const nama = item.nama || item.namaArtefak || item.title || '-';
+        const kategori = item.kategori || item.era || item.category || '-';
+        const lokasi = item.lokasi || item.location || '-';
+
         const row = `
           <tr>
-            <td><strong>${item.artefakId || item.id || '-'}</strong></td>
-            <td><strong>${item.nama || item.namaArtefak || '-'}</strong></td>
-            <td>${item.kategori || item.era || '-'}</td>
-            <td>${item.lokasi || '-'}</td>
+            <td><strong>${id}</strong></td>
+            <td><strong>${nama}</strong></td>
+            <td>${kategori}</td>
+            <td>${lokasi}</td>
             <td>
-              <button class="btn" style="background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 12px; padding: 6px 12px;" onclick="hapusArtefak('${item.artefakId || item.id}')">Hapus</button>
+              <button class="btn" style="background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 12px; padding: 6px 12px;" onclick="hapusArtefak('${id}')">Hapus</button>
             </td>
           </tr>
         `;
@@ -332,9 +342,8 @@
       const kategori = document.getElementById('inputKategori').value;
       const lokasi = document.getElementById('inputLokasi').value;
 
-      alert(`Artefak "${nama}" (${id}) berhasil disiapkan untuk ditambahkan ke database.`);
+      alert(`Artefak "${nama}" (${id}) berhasil disiapkan untuk ditambahkan.`);
       closeAddModal();
-      // Refresh tabel simulasi
       fetchArtefakData();
     }
 
