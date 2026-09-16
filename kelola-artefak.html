@@ -273,27 +273,22 @@
     }
 
     async function fetchArtefakData() {
-      let dataList = [];
+      const tbody = document.getElementById('artefakTableBody');
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--color-smoke);">Memuat data artefak dari Google Sheets...</td></tr>`;
 
-      if (GAS_WEB_APP_URL && GAS_WEB_APP_URL !== "https://script.google.com/macros/s/AKfycbyzCNmwFcb-Se7bP17O6XC73bpLuDUV0-ykXx9iS27-FSn0oG5ul1K2jUTJ4BsofQmz/exec") {
-        try {
-          const res = await fetch(`${GAS_WEB_APP_URL}?action=getArtefak`);
-          const json = await res.json();
-          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-            dataList = json.data;
-          }
-        } catch (err) {
-          console.warn("Gagal terhubung ke Google Sheets, menggunakan data cadangan lokal:", err);
+      try {
+        const response = await fetch(`${GAS_WEB_APP_URL}?action=getArtefak`);
+        const result = await response.json();
+
+        if (result.success && Array.isArray(result.data)) {
+          renderTable(result.data);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--color-smoke);">Belum ada data artefak tersimpan di Google Sheets.</td></tr>`;
         }
+      } catch (error) {
+        console.error("API Error:", error);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: #dc2626;">Gagal memuat data dari Google Sheets. Periksa koneksi atau URL GAS Anda.</td></tr>`;
       }
-
-      if (dataList.length === 0) {
-        dataList = [
-          { artefakId: "A001", nama: "Batu Nisan Sultan Malik al-Saleh", kategori: "Kesultanan Samudera Pasai", lokasi: "Ruang Pameran Utama" }
-        ];
-      }
-
-      renderTable(dataList);
     }
 
     function renderTable(data) {
@@ -306,24 +301,34 @@
       }
 
       data.forEach(item => {
-        const id = item.artefakId || item.id || item.ID || '-';
-        const nama = item.nama || item.namaArtefak || item.title || '-';
-        const kategori = item.kategori || item.era || item.category || '-';
-        const lokasi = item.lokasi || item.location || '-';
+        const id = item.artefakId || item.ArtefakID || item.id || item.ID || '-';
+        const nama = item.nama || item.Nama || item.namaArtefak || item.title || '-';
+        const kategori = item.kategori || item.Kategori || item.era || item.category || '-';
+        const lokasi = item.lokasi || item.Lokasi || item.location || '-';
 
         const row = `
           <tr>
-            <td><strong>${id}</strong></td>
-            <td><strong>${nama}</strong></td>
-            <td>${kategori}</td>
-            <td>${lokasi}</td>
+            <td><strong>${escapeHtml(id)}</strong></td>
+            <td><strong>${escapeHtml(nama)}</strong></td>
+            <td>${escapeHtml(kategori)}</td>
+            <td>${escapeHtml(lokasi)}</td>
             <td>
-              <button class="btn" style="background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 12px; padding: 6px 12px;" onclick="hapusArtefak('${id}')">Hapus</button>
+              <button class="btn" style="background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 12px; padding: 6px 12px;" onclick="hapusArtefak('${escapeHtml(id)}')">Hapus</button>
             </td>
           </tr>
         `;
         tbody.insertAdjacentHTML('beforeend', row);
       });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function openAddModal() {
@@ -335,12 +340,28 @@
       document.getElementById('formTambahArtefak').reset();
     }
 
-    function submitArtefak(e) {
+    async function submitArtefak(e) {
       e.preventDefault();
       const id = document.getElementById('inputArtefakId').value;
       const nama = document.getElementById('inputNama').value;
       const kategori = document.getElementById('inputKategori').value;
       const lokasi = document.getElementById('inputLokasi').value;
+
+      // Contoh integrasi opsional ke GAS jika Anda ingin langsung mengirim ke Google Sheets saat tombol Simpan diklik:
+      /*
+      try {
+        const response = await fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'addArtefak', artefakId: id, nama, kategori, lokasi })
+        });
+        const res = await response.json();
+        if(res.success) {
+          alert("Artefak berhasil disimpan ke Google Sheets!");
+        }
+      } catch(err) {
+        console.error(err);
+      }
+      */
 
       alert(`Artefak "${nama}" (${id}) berhasil disiapkan untuk ditambahkan.`);
       closeAddModal();
